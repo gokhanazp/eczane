@@ -1,0 +1,217 @@
+
+<!-- Hero -->
+<div class="relative">
+  <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
+    <div class="text-center">
+      <h1 class="text-4xl sm:text-6xl font-bold text-gray-800 dark:text-red-600">
+        Nöbetçi Eczane
+      </h1>
+
+      <p class="mt-3 text-gray-600 dark:text-neutral-400">
+        Sağlığınız İçin Hep Yanınızdayız - Nöbetçi Eczaneler 7/24 Hizmetinizde
+      </p>
+
+      <div class="mt-7 sm:mt-12 mx-auto max-w-xl relative">
+        <div class="flex flex-row gap-x-4 items-center justify-center w-full ilcesec">
+          <label for="district" class="text-lg font-semibold dark:text-gray-200">ilçe Seç:</label>
+          <select id="district" name="district" class="relative dark:text-gray-200 z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20" onchange="changeDistrict(value)">
+            <option value="" <% if(!district)
+                { %> selected <% } %>>Tümü</option>
+            <% districts.forEach((dist, index) => { %>
+            <option value="<%= dist.split(" ")[0].trim(); %>" <% if(dist.split(" ")[0].trim().toLocaleUpperCase('tr-TR') === district.toLocaleUpperCase('tr-TR'))
+                { %> selected <% } %>>
+              <%= dist[0].toLocaleUpperCase('tr-TR') + dist.slice(1).toLocaleLowerCase('tr-TR') %>
+            </option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- SVG Element -->
+        <div class="hidden md:block absolute top-0 end-0 -translate-y-12 translate-x-20">
+          <svg class="w-16 h-auto text-orange-500" width="121" height="135" viewBox="0 0 121 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 16.4754C11.7688 27.4499 21.2452 57.3224 5 89.0164" stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+            <path d="M33.6761 112.104C44.6984 98.1239 74.2618 57.6776 83.4821 5" stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+            <path d="M50.5525 130C68.2064 127.495 110.731 117.541 116 78.0874" stroke="currentColor" stroke-width="10" stroke-linecap="round" />
+          </svg>
+        </div>
+        <!-- End SVG Element -->
+
+        <!-- SVG Element -->
+        <div class="hidden md:block absolute bottom-0 start-0 translate-y-10 -translate-x-32">
+          <svg class="w-40 h-auto text-cyan-500" width="347" height="188" viewBox="0 0 347 188" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 82.4591C54.7956 92.8751 30.9771 162.782 68.2065 181.385C112.642 203.59 127.943 78.57 122.161 25.5053C120.504 2.2376 93.4028 -8.11128 89.7468 25.5053C85.8633 61.2125 130.186 199.678 180.982 146.248L214.898 107.02C224.322 95.4118 242.9 79.2851 258.6 107.02C274.299 134.754 299.315 125.589 309.861 117.539L343 93.4426" stroke="currentColor" stroke-width="7" stroke-linecap="round" />
+          </svg>
+        </div>
+        <!-- End SVG Element -->
+      </div>
+
+      <div class="mt-10 sm:mt-20">
+        <a class="m-1 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" href="/nobetcieczane/istanbul">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+          İstanbul
+        </a>
+        <a class="m-1 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" href="/nobetcieczane/ankara">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          Ankara
+        </a>
+        <a class="m-1 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" href="/nobetcieczane/izmir">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+          </svg>
+          İzmir
+        </a>
+        <a class="m-1 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" href="/nobetcieczane/bursa">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+            <path d="M9 18h6" />
+            <path d="M10 22h4" />
+          </svg>
+          Bursa
+        </a>
+        <a class="m-1 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" href="/nobetcieczane/antalya">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+            <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+            <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
+            <path d="M10 6h4" />
+            <path d="M10 10h4" />
+            <path d="M10 14h4" />
+            <path d="M10 18h4" />
+          </svg>
+          Antalya
+        </a>
+        <a class="m-1 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" href="/nobetcieczane/adana">
+          <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+          </svg>
+          Adana
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Hero -->
+<div class="flex flex-col container mx-auto p-4 items-center justify-center w-full">
+  <hr class="my-4" />
+  <h2 class="text-xl self-center mb-9 font-bold dark:text-gray-200">
+    <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %>  <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %>  <% } %>İlçesindeki nöbetçi eczaneler
+  </h2>
+  
+
+ 
+
+  <% if(dutyPharmacies.length === 0) { %>
+  <div class="flex flex-col w-full items-center justify-center">
+    <h2 class="text-xl font-semibold">Nöbetçi eczane bulunamadı!</h2>
+  </div>
+  <% } else { %>
+  <div class="pharmacy-container">
+    <% dutyPharmacies.forEach((pharmacy, index) => { %>
+    <div class="max-w-sm overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 pharmacy-card">
+
+      <div class="flex items-center px-6 py-3 bg-gray-900 eczanetitle">
+        <svg version="1.1" viewBox="0 0 2000 1986" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+          <path transform="translate(1306,281)" d="m0 0h265v310h-752v225h691v292h-689v287h766v321l-1 1h-1205l-1-1v-1432l182-1z" fill="#E61417" />
+          <path transform="translate(27)" d="m0 0h1946l10 3 8 6 6 8 3 8v1936l-5 12-8 8-9 4-4 1h-1948l-11-4-9-8-4-8-2-8v-1930l3-10 6-9 8-6zm5 31-1 1v1922l1 1h1937v-1924z" fill="#E61518" />
+        </svg>
+
+        <h1 class="mx-3 text-base font-semibold text-black"><%= pharmacy.name %> (<%= pharmacy.district %>)</h1>
+      </div>
+
+      <div class="px-6 py-4">
+
+
+        <p class="py-2 text-gray-700 dark:text-gray-400">Caminin yanındaki marketin sağında</p>
+
+        <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
+          <svg aria-label="location pin icon" class="w-6 h-6 fill-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M16.2721 10.2721C16.2721 12.4813 14.4813 14.2721 12.2721 14.2721C10.063 14.2721 8.27214 12.4813 8.27214 10.2721C8.27214 8.063 10.063 6.27214 12.2721 6.27214C14.4813 6.27214 16.2721 8.063 16.2721 10.2721ZM14.2721 10.2721C14.2721 11.3767 13.3767 12.2721 12.2721 12.2721C11.1676 12.2721 10.2721 11.3767 10.2721 10.2721C10.2721 9.16757 11.1676 8.27214 12.2721 8.27214C13.3767 8.27214 14.2721 9.16757 14.2721 10.2721Z" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.79417 16.5183C2.19424 13.0909 2.05438 7.3941 5.48178 3.79418C8.90918 0.194258 14.6059 0.0543983 18.2059 3.48179C21.8058 6.90919 21.9457 12.606 18.5183 16.2059L12.3124 22.7241L5.79417 16.5183ZM17.0698 14.8268L12.243 19.8965L7.17324 15.0698C4.3733 12.404 4.26452 7.9732 6.93028 5.17326C9.59603 2.37332 14.0268 2.26454 16.8268 4.93029C19.6267 7.59604 19.7355 12.0269 17.0698 14.8268Z" />
+          </svg>
+
+          <h1 class="px-2 text-sm"><%= pharmacy.address %></h1>
+        </div>
+
+        <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
+          <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 93.169 93.169" xml:space="preserve">
+            <g>
+              <path d="M64.902,0H28.265c-3.711,0-6.72,3.009-6.72,6.72v79.729c0,3.712,3.008,6.72,6.72,6.72h36.637
+           c3.713,0,6.722-3.008,6.722-6.72V6.72C71.623,3.009,68.615,0,64.902,0z M42.088,3.973h8.991c0.323,0,0.586,0.263,0.586,0.587
+           c0,0.323-0.263,0.586-0.586,0.586h-8.991c-0.324,0-0.586-0.263-0.586-0.586C41.502,4.236,41.765,3.973,42.088,3.973z M33.126,2.563
+           c0.518,0,0.938,0.42,0.938,0.938c0,0.518-0.419,0.938-0.938,0.938s-0.938-0.42-0.938-0.938C32.188,2.983,32.608,2.563,33.126,2.563
+           z M28.876,2.001c0.829,0,1.5,0.672,1.5,1.5c0,0.828-0.671,1.5-1.5,1.5s-1.5-0.672-1.5-1.5C27.376,2.673,28.047,2.001,28.876,2.001z
+            M48.93,89.758h-4.691c-1.488,0-2.693-1.205-2.693-2.691c0-1.487,1.205-2.692,2.693-2.692h4.691c1.488,0,2.693,1.205,2.693,2.692
+           C51.623,88.553,50.418,89.758,48.93,89.758z M68.777,82.248H24.391V10.92h44.386V82.248z" />
+            </g>
+          </svg>
+
+          <a href="tel:+90<%= pharmacy.phone.slice(1) %>" class="px-2 text-sm">+90<%= pharmacy.phone.slice(1) %></a>
+        </div>
+
+        <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
+          <a href="https://www.google.com/maps/search/?api=1&query=<%=pharmacy.getLocation%>" class="inline-flex items-center justify-center p-2 mr-5 text-sm text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 32 32">
+              <g fill-rule="evenodd">
+                <path d="M.273 29.123V6.347a2.4 2.4 0 0 1 2.398-2.399h22.775z" fill="#1ea361" />
+                <path d="M.273 29.6v-.478L25.447 3.95h.478a2.4 2.4 0 0 1 2.399 2.398v.48L3.15 32H2.67a2.4 2.4 0 0 1-2.398-2.399" fill="#fedb43" />
+                <path d="M3.15 32L14.3 20.852 25.447 32z" fill="#5384c4" />
+                <path d="M25.447 32L14.298 20.85l2.876-2.877 11.15 11.15v.478A2.4 2.4 0 0 1 25.925 32h-.478z" fill="#fff" />
+                <path d="M28.324 29.123l-11.15-11.15 11.15-11.15z" fill="#c2c2c1" />
+              </g>
+              <path d="M5.276 7.05c1.427-.653 3.213-.387 4.372.682l-1.108 1.1c-1.16-1.15-3.337-.605-3.88.917-.7 1.498.47 3.467 2.14 3.488 1.093.127 2.184-.605 2.415-1.694-.764.001-1.526-.006-2.288.006l-.014-1.413 3.84.052c.096.933.03 1.923-.472 2.74-.787 1.464-2.644 2.104-4.216 1.734-1.943-.403-3.397-2.396-3.132-4.37C3.068 8.9 4 7.627 5.276 7.05" fill="#efefef" />
+              <path d="M23.424 0h.912c2.273.13 4.495 1.24 5.872 3.067.902 1.154 1.406 2.586 1.52 4.04v.54c-.053 2.82-1.857 5.134-3.42 7.327-1.754 2.478-3.374 5.18-3.824 8.233-.12.517.024 1.242-.594 1.475-.145-.113-.315-.207-.417-.365-.183-1.707-.6-3.394-1.338-4.953-.827-1.817-1.977-3.46-3.147-5.065-.712-.963-1.383-1.96-1.938-3.024-.872-1.593-1.197-3.475-.84-5.262.292-1.4 1.03-2.72 2.053-3.73C19.64.936 21.503.12 23.424 0m-.177 4.966c-1.078.24-1.983 1.194-2.074 2.3a2.61 2.61 0 0 0 1.426 2.552 2.85 2.85 0 0 0 3.179-.401 2.59 2.59 0 0 0 .663-2.873c-.487-1.218-1.93-1.912-3.194-1.6" fill="#dc4b3e" />
+              <path d="M23.247 4.966c1.263-.323 2.708.37 3.194 1.6.4.973.124 2.176-.663 2.873a2.85 2.85 0 0 1-3.179.401c-.93-.46-1.54-1.513-1.426-2.552.1-1.116.996-2.07 2.074-2.3" fill="#802c27" />
+            </svg>
+            <span class="w-full">Google</span>
+          </a>
+          <a href="https://yandex.com.tr/harita/?text=1&query=<%=pharmacy.getLocation%>" class="inline-flex items-center justify-center p-2 text-sm mr-5 text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" height="25" width="30" viewBox="-59.61 -99.35 516.62 596.1">
+              <g transform="translate(57.6 57)">
+                <linearGradient gradientTransform="matrix(397.4168 0 0 -397.4168 214590.16 209259.78)" y2="526.693" x2="-539.107" y1="525.693" x1="-540.107" gradientUnits="userSpaceOnUse" id="a">
+                  <stop offset="0" stop-color="#fc0" />
+                  <stop offset="1" stop-color="#ffe992" />
+                </linearGradient>
+                <path fill="url(#a)" d="M116.3 166.6l62.1 173.8L339.8-57-57.6 104.5z" />
+                <path fill="#fc0" d="M178.4 340.4L339.8-57 110.1 172.8z" />
+                <path fill="#eca704" d="M153.5 129.3l-211.1-24.8L103.9 179l74.5 161.4z" />
+              </g>
+            </svg>
+            <span class="w-full">Yandex</span><br>
+          </a>
+          <a href="http://maps.apple.com/?ssl=1&query=<%=pharmacy.getLocation%>" class="inline-flex items-center justify-center p-2 text-sm  text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg aria-hidden="true" class="w-5 h-5 me-3" viewBox="0 0 22 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_4151_63004)">
+                <path d="M5.50085 30.1242C8.53625 30.1242 10.9998 27.8749 10.9998 25.1035V20.0828H5.50085C2.46546 20.0828 0.00195312 22.332 0.00195312 25.1035C0.00195312 27.8749 2.46546 30.1242 5.50085 30.1242Z" fill="#0ACF83" />
+                <path d="M0.00195312 15.062C0.00195312 12.2905 2.46546 10.0413 5.50085 10.0413H10.9998V20.0827H5.50085C2.46546 20.0827 0.00195312 17.8334 0.00195312 15.062Z" fill="#A259FF" />
+                <path d="M0.00195312 5.02048C0.00195312 2.24904 2.46546 -0.000244141 5.50085 -0.000244141H10.9998V10.0412H5.50085C2.46546 10.0412 0.00195312 7.79193 0.00195312 5.02048Z" fill="#F24E1E" />
+                <path d="M11 -0.000244141H16.4989C19.5343 -0.000244141 21.9978 2.24904 21.9978 5.02048C21.9978 7.79193 19.5343 10.0412 16.4989 10.0412H11V-0.000244141Z" fill="#FF7262" />
+                <path d="M21.9978 15.062C21.9978 17.8334 19.5343 20.0827 16.4989 20.0827C13.4635 20.0827 11 17.8334 11 15.062C11 12.2905 13.4635 10.0413 16.4989 10.0413C19.5343 10.0413 21.9978 12.2905 21.9978 15.062Z" fill="#1ABCFE" />
+              </g>
+              <defs>
+                <clipPath id="clip0_4151_63004">
+                  <rect width="22" height="30.1244" fill="white" transform="translate(0 -0.000244141)" />
+                </clipPath>
+              </defs>
+            </svg>
+            <span class="w-full">Apple</span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+  <% } %>
+</div>
+
+<script type=" text/javascript">
+  async function changeDistrict(value) {
+    window.location.href = `/nobetcieczane/<%= city %>/${value}`;
+  }
+</script>
