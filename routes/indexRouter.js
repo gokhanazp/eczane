@@ -164,7 +164,6 @@ router.get(
 
       const pharmacies = await _getPharmacies(currentCity);
 
-      console.log(pharmacies[currentCity]);
       dutyPharmacies = pharmacies[currentCity];
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
@@ -196,14 +195,13 @@ router.get(
     next();
   },
   async (req, res) => {
-    let { city, district = "" } = req.params;
+    let { city, district } = req.params;
 
     decodeURIComponent(req.params);
     let dutyPharmacies = [];
     let districts = [];
     let cities = [];
     let currentDistrict;
-    const cachedDistricts = {};
     let currentCity;
 
     try {
@@ -216,6 +214,12 @@ router.get(
 
         return p1 === p2;
       }).cities;
+      currentDistrict = districts.find(d => {
+        const p1 = translateEnglish({ text: d }).text.toLowerCase();
+        const p2 = translateEnglish({ text: district }).text.toLowerCase();
+
+        return p1 === p2;
+      });
 
       const pharmacies = await _getPharmacies(currentCity);
       dutyPharmacies = pharmacies[currentCity].filter(p => {
@@ -228,7 +232,7 @@ router.get(
     }
 
     const error = req.flash("error");
-    const titleDist = district[0].toLocaleUpperCase("tr-TR") + district.slice(1);
+    const titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
     res.status(200).render("pages/dutyPharmacies/index", {
       title: `${city}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
@@ -239,30 +243,5 @@ router.get(
     });
   }
 );
-
-router.get("/districts/:city", async (req, res) => {
-  const { city } = req.params;
-  let districts = [];
-  const cachedDistricts = {};
-
-  try {
-    if (cachedDistricts && cachedDistricts[city]) {
-      districts = cachedDistricts[city];
-    } else {
-      districts = await DutyPharmacyService.getDistricts(city);
-      // if (districts) setCookie(res, CookieNames.DISTRICTS, { ...cachedDistricts, [city]: districts });
-    }
-  } catch (error) {
-    req.flash("error", "Districts not found");
-  }
-
-  const error = req.flash("error");
-  res.status(200).render("pages/districts/index", {
-    title: "Districts",
-    error,
-    districts,
-    city,
-  });
-});
 
 module.exports = router;
