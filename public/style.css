@@ -25,3 +25,19 @@ h1.mx-3.text-lg.font-semibold.text-white {
 .ilcesec #district {
   width: 66%;
 }
+
+@media (max-width: 640px) {
+  .pharmacy-card {
+      flex: 1 1 100%;
+      max-width: 100%;
+  }
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+.logo-container img {
+  margin-right: 8px; /* Logo ile yazı arasındaki boşluk */
+  width:50px;
+  margin-right:10px;
+}
