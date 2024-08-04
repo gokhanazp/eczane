@@ -25,3 +25,10 @@ h1.mx-3.text-lg.font-semibold.text-white {
 .ilcesec #district {
   width: 66%;
 }
+
+@media (max-width: 640px) {
+  .pharmacy-card {
+      flex: 1 1 100%;
+      max-width: 100%;
+  }
+}
