@@ -1,17 +1,5 @@
 class DutyPharmacyModel {
-  constructor(
-    id,
-    name,
-    address,
-    city,
-    district,
-    directions,
-    phone,
-    pharmacyDutyStart,
-    pharmacyDutyEnd,
-    latitude,
-    longitude
-  ) {
+  constructor(id, name, address, city, district, directions, phone, dutyStart, dutyEnd, latitude, longitude) {
     this.id = id;
     this.name = name;
     this.address = address;
@@ -19,21 +7,30 @@ class DutyPharmacyModel {
     this.district = district;
     this.directions = directions;
     this.phone = phone;
-    this.pharmacyDutyStart = pharmacyDutyStart;
-    this.pharmacyDutyEnd = pharmacyDutyEnd;
+    this.dutyStart = dutyStart;
+    this.dutyEnd = dutyEnd;
     this.latitude = latitude;
     this.longitude = longitude;
   }
 
   static fromJson(json) {
+    let phoneRep = json.phone;
+    if (phoneRep.startsWith("0")) {
+      phoneRep = `+9${phoneRep}`;
+    } else if (phoneRep.startsWith("90")) {
+      phoneRep = `+${phoneRep}`;
+    } else {
+      phoneRep = `+90${phoneRep}`;
+    }
+
     return new DutyPharmacyModel(
-      json.pharmacyId,
+      json.pharmacyID,
       json.pharmacyName,
       json.address,
       json.city,
       json.district,
       json.directions,
-      json.phone,
+      phoneRep,
       json.pharmacyDutyStart,
       json.pharmacyDutyEnd,
       json.latitude,

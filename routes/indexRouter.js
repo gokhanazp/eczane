@@ -1,13 +1,14 @@
 const { Router } = require("express");
 const DutyPharmacyService = require("../services/DutyPharmacyService");
 const translateEnglish = require("../utils/translateEnglish");
-const { getCookie, CookieName, setCookie, clearCookie, CookieNames } = require("../utils/cookieManage");
+const { getCookie, setCookie, CookieNames } = require("../utils/cookieManage");
+const { cacheManage, CacheNames } = require("../utils/cacheManage");
+const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 
 const router = Router();
 
-async function _getPharmacies(req, res, city = "", district = "") {
-  let cachedPharmacies = {};
-  let pharmacyByCities = {};
+async function _getPharmacies(city, district = "") {
+  let cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
 
   try {
     const cities = await DutyPharmacyService.getCities();
@@ -18,27 +19,49 @@ async function _getPharmacies(req, res, city = "", district = "") {
       } else {
         cachedPharmacies = await DutyPharmacyService.getDutyPharmacies();
       }
-
-      pharmacyByCities = _getPharmaciesByCities(cachedPharmacies);
     }
 
-    return { cities: cities, pharmacies: cachedPharmacies, pharmacyByCities };
+    return { cities: cities, pharmacies: cachedPharmacies };
   } catch (error) {
     throw error;
   }
 }
 
-function _getPharmaciesByCities(pharmacies) {
-  const result = {};
-  for (let index = 0; index < pharmacies.length; index++) {
-    const pharmacy = pharmacies[index];
-    const city = pharmacy.city;
-    // const filtered = pharmacies.filter(p => p.city === pharmacies[index].city);
-    if (!result[city]) result[city] = [];
-    if (!result[city].includes(pharmacy)) result[city].push(pharmacy);
+/**
+ * @param {string} city - for districts of city
+ */
+async function _getPharmaciesByCities(cityCount, city = "") {
+  let pharmacyByCities = (await cacheManage.getCache(CacheNames.PHARMACY_BY_CITIES)) ?? {};
+  let pharmacyByDistricts = (await cacheManage.getCache(CacheNames.PHARMACY_BY_DISTRICTS)) ?? {};
+  const ttl = dutyTTLGenerate();
+
+  if (city) {
+    if (!pharmacyByDistricts || !pharmacyByDistricts[city]) {
+      const countsByDistricts = await DutyPharmacyService.getDutyPharmaciesCountOnCity(city);
+
+      for (let index = 0; index < countsByDistricts.length; index++) {
+        const cityDuty = countsByDistricts[index];
+
+        pharmacyByDistricts[city][cityDuty.cities] = cityDuty.dutyPharmacyCount;
+      }
+    }
+
+    await cacheManage.setCache(CacheNames.PHARMACY_BY_DISTRICTS, pharmacyByDistricts, ttl);
+  } else {
+    if (!pharmacyByCities || Object.keys(pharmacyByCities).length !== cityCount) {
+      const countsByCities = await DutyPharmacyService.getDutyPharmaciesCountOnCity();
+
+      for (let index = 0; index < countsByCities.length; index++) {
+        const cityDuty = countsByCities[index];
+
+        pharmacyByCities[cityDuty.cities] = cityDuty.dutyPharmacyCount;
+      }
+
+      await cacheManage.setCache(CacheNames.PHARMACY_BY_CITIES, pharmacyByCities, ttl);
+    }
   }
 
-  return result;
+  return { pharmacyByCities, pharmacyByDistricts };
 }
 
 router.get("/", async function (req, res) {
@@ -46,12 +69,18 @@ router.get("/", async function (req, res) {
   const selectedCity = getCookie(req, CookieNames.SELECTED_CITY) ?? "";
   const selectableDistricts = getCookie(req, CookieNames.SELECTABLE_DISTRICTS) ?? [];
   let pharmacyByCities = {};
+  let allDutyPharmaciesCount = 0;
 
   try {
-    const getPharmaciesRes = await _getPharmacies(req, res);
+    cities = await DutyPharmacyService.getCities();
+    cities = cities.map(c => c.cities);
 
-    cities = getPharmaciesRes.cities.map(c => c.cities);
-    pharmacyByCities = getPharmaciesRes.pharmacyByCities;
+    const dutyCountRes = await _getPharmaciesByCities(cities.length);
+
+    pharmacyByCities = dutyCountRes.pharmacyByCities;
+    for (const city in pharmacyByCities) {
+      allDutyPharmaciesCount += pharmacyByCities[city];
+    }
   } catch (error) {
     req.flash("error", "Cities not found");
   }
@@ -66,6 +95,7 @@ router.get("/", async function (req, res) {
     selectedCity,
     selectableDistricts,
     pharmacyByCities,
+    allDutyPharmaciesCount,
   });
 });
 
@@ -115,22 +145,16 @@ router.get(
     let dutyPharmacies = [];
     let districts = [];
     let cities = [];
-    const cachedDistricts = {};
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
-      const pharmacies = await _getPharmacies(req, res, city);
+
+      districts = await DutyPharmacyService.getDistricts(city);
+      cities = await DutyPharmacyService.getCities();
+
+      const pharmacies = await _getPharmacies(city);
 
       dutyPharmacies = pharmacies.pharmacies;
-
-      if (cachedDistricts && cachedDistricts[city]) {
-        districts = cachedDistricts[city];
-      } else {
-        districts = await DutyPharmacyService.getDistricts(city);
-        // if (districts) setCookie(res, CookieNames.DISTRICTS, { ...cachedDistricts, [city]: districts });
-      }
-
-      cities = await DutyPharmacyService.getCities();
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
     }
@@ -138,14 +162,13 @@ router.get(
     const currentCity = cities.find(c => {
       const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
       const p2 = translateEnglish({ text: city }).text.toLowerCase();
-      console.log(p1, p2);
 
       return p1 === p2;
     }).cities;
 
     const error = req.flash("error");
     res.status(200).render("pages/dutyPharmacies/index", {
-      title: "Duty Pharmacies",
+      title: `${city} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
       dutyPharmacies,
       district: "",
@@ -180,7 +203,7 @@ router.get(
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
-      const pharmacies = await _getPharmacies(req, res, city, district);
+      const pharmacies = await _getPharmacies(city, district);
       dutyPharmacies = pharmacies.pharmacies;
 
       if (cachedDistricts && cachedDistricts[city]) {
@@ -208,8 +231,9 @@ router.get(
     }
 
     const error = req.flash("error");
+    const titleDist = district[0].toLocaleUpperCase("tr-TR") + district.slice(1);
     res.status(200).render("pages/dutyPharmacies/index", {
-      title: "Duty Pharmacies",
+      title: `${city}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
       dutyPharmacies,
       city: currentCity ?? city,

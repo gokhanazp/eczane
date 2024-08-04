@@ -14,9 +14,9 @@
             <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
               <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %>
             </h3>
-            <% if (pharmacyByCities && pharmacyByCities[city] && Array.isArray(pharmacyByCities[city])) { %>
+            <% if (pharmacyByCities && pharmacyByCities[city]) { %>
             <p class="text-sm text-gray-500 dark:text-neutral-500">
-              <%= pharmacyByCities[city].length %> tane nöbetçi eczane
+              <%= pharmacyByCities[city] %> tane nöbetçi eczane
             </p>
             <% } else { %>
             <p class="text-sm text-gray-500 dark:text-neutral-500">

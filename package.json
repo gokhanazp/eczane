@@ -19,6 +19,8 @@
     "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.0",
+    "keyv": "^4.5.4",
+    "keyv-file": "^0.3.1",
     "path": "^0.12.7"
   },
   "devDependencies": {

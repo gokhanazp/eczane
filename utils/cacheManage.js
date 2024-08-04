@@ -1,24 +1,33 @@
-const cacheManager = require("cache-manager");
+const Keyv = require("keyv");
+const { KeyvFile } = require("keyv-file");
 
-const memoryCache = cacheManager.caching({
-  store: "memory",
+const cacheInstance = new Keyv({
+  store: new KeyvFile({
+    filename: "./caches/cache.json",
+    encode: JSON.stringify,
+    decode: JSON.parse,
+  }),
 });
 
 const CacheNames = {
-  PHARMACIES: {
-    name: "pharmacies",
-  },
-  DISTRICTS: {
-    name: "districts",
-  },
+  PHARMACIES: "pharmacies",
+  PHARMACY_BY_CITIES: "pharmacyByCities",
+  PHARMACY_BY_DISTRICTS: "pharmacyByDistricts",
 };
 
 const cacheManage = {
   getCache: async cacheName => {
-    return memoryCache.get(key);
+    const value = await cacheInstance.get(cacheName);
+    return value;
   },
-  setCache: async (cacheName, value) => {
-    return memoryCache.set(key, value, { ttl: 60 * 60 * 24 });
+  setCache: async (cacheName, value, ttl = null) => {
+    console.log("cacheName", cacheName);
+
+    await cacheInstance.set(cacheName, value, ttl);
+    return value;
+  },
+  deleteCache: async cacheName => {
+    await cacheInstance.delete(cacheName);
   },
 };
 
