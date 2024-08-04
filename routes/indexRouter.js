@@ -7,22 +7,26 @@ const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 
 const router = Router();
 
-async function _getPharmacies(city, district = "") {
+async function _getPharmacies(city) {
   let cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
 
   try {
-    const cities = await DutyPharmacyService.getCities();
+    if (!cachedPharmacies || !cachedPharmacies[city]) {
+      const pharmacies = await DutyPharmacyService.getDutyPharmaciesBy(city);
 
-    if (!cachedPharmacies || cachedPharmacies.length !== cities.length) {
-      if (city) {
-        cachedPharmacies = await DutyPharmacyService.getDutyPharmaciesBy(city, district);
-      } else {
-        cachedPharmacies = await DutyPharmacyService.getDutyPharmacies();
+      if (pharmacies) {
+        if (!cachedPharmacies) cachedPharmacies = {};
+        cachedPharmacies[city] = pharmacies;
       }
+    } else {
+      console.log("Cached Pharmacies");
     }
 
-    return { cities: cities, pharmacies: cachedPharmacies };
+    await cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
+
+    return cachedPharmacies;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }
@@ -33,7 +37,6 @@ async function _getPharmacies(city, district = "") {
 async function _getPharmaciesByCities(cityCount, city = "") {
   let pharmacyByCities = (await cacheManage.getCache(CacheNames.PHARMACY_BY_CITIES)) ?? {};
   let pharmacyByDistricts = (await cacheManage.getCache(CacheNames.PHARMACY_BY_DISTRICTS)) ?? {};
-  const ttl = dutyTTLGenerate();
 
   if (city) {
     if (!pharmacyByDistricts || !pharmacyByDistricts[city]) {
@@ -44,9 +47,9 @@ async function _getPharmaciesByCities(cityCount, city = "") {
 
         pharmacyByDistricts[city][cityDuty.cities] = cityDuty.dutyPharmacyCount;
       }
-    }
+    } else console.log("Cached Districts");
 
-    await cacheManage.setCache(CacheNames.PHARMACY_BY_DISTRICTS, pharmacyByDistricts, ttl);
+    await cacheManage.setCache(CacheNames.PHARMACY_BY_DISTRICTS, pharmacyByDistricts, dutyTTLGenerate());
   } else {
     if (!pharmacyByCities || Object.keys(pharmacyByCities).length !== cityCount) {
       const countsByCities = await DutyPharmacyService.getDutyPharmaciesCountOnCity();
@@ -57,8 +60,8 @@ async function _getPharmaciesByCities(cityCount, city = "") {
         pharmacyByCities[cityDuty.cities] = cityDuty.dutyPharmacyCount;
       }
 
-      await cacheManage.setCache(CacheNames.PHARMACY_BY_CITIES, pharmacyByCities, ttl);
-    }
+      await cacheManage.setCache(CacheNames.PHARMACY_BY_CITIES, pharmacyByCities, dutyTTLGenerate());
+    } else console.log("Cached Cities");
   }
 
   return { pharmacyByCities, pharmacyByDistricts };
@@ -145,30 +148,31 @@ router.get(
     let dutyPharmacies = [];
     let districts = [];
     let cities = [];
+    let currentCity;
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
-
-      districts = await DutyPharmacyService.getDistricts(city);
       cities = await DutyPharmacyService.getCities();
+      currentCity = cities.find(c => {
+        const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
+        const p2 = translateEnglish({ text: city }).text.toLowerCase();
 
-      const pharmacies = await _getPharmacies(city);
+        return p1 === p2;
+      }).cities;
 
-      dutyPharmacies = pharmacies.pharmacies;
+      districts = await DutyPharmacyService.getDistricts(currentCity);
+
+      const pharmacies = await _getPharmacies(currentCity);
+
+      console.log(pharmacies[currentCity]);
+      dutyPharmacies = pharmacies[currentCity];
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
     }
 
-    const currentCity = cities.find(c => {
-      const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
-      const p2 = translateEnglish({ text: city }).text.toLowerCase();
-
-      return p1 === p2;
-    }).cities;
-
     const error = req.flash("error");
     res.status(200).render("pages/dutyPharmacies/index", {
-      title: `${city} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
+      title: `${currentCity} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
       dutyPharmacies,
       district: "",
@@ -200,34 +204,27 @@ router.get(
     let cities = [];
     let currentDistrict;
     const cachedDistricts = {};
+    let currentCity;
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
-      const pharmacies = await _getPharmacies(city, district);
-      dutyPharmacies = pharmacies.pharmacies;
-
-      if (cachedDistricts && cachedDistricts[city]) {
-        districts = cachedDistricts[city];
-      } else {
-        districts = await DutyPharmacyService.getDistricts(city);
-        // if (districts) setCookie(res, CookieNames.DISTRICTS, { ...cachedDistricts, [city]: districts });
-      }
-
+      districts = await DutyPharmacyService.getDistricts(city);
       cities = await DutyPharmacyService.getCities();
+      currentCity = cities.find(c => {
+        const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
+        const p2 = translateEnglish({ text: city }).text.toLowerCase();
+
+        return p1 === p2;
+      }).cities;
+
+      const pharmacies = await _getPharmacies(currentCity);
+      dutyPharmacies = pharmacies[currentCity].filter(p => {
+        const p1 = translateEnglish({ text: p.district }).text.toLowerCase();
+        const p2 = translateEnglish({ text: district }).text.toLowerCase();
+        return p1 === p2;
+      });
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
-    }
-
-    let currentCity;
-    const p1 = translateEnglish({ text: city }).text.toLowerCase();
-    for (let index = 0; index < cities.length; index++) {
-      const element = cities[index].cities;
-      const p2 = translateEnglish({ text: element }).text.toLowerCase();
-
-      if (p1 === p2) {
-        currentCity = element;
-        break;
-      }
     }
 
     const error = req.flash("error");

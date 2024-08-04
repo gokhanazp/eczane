@@ -21,8 +21,6 @@ const cacheManage = {
     return value;
   },
   setCache: async (cacheName, value, ttl = null) => {
-    console.log("cacheName", cacheName);
-
     await cacheInstance.set(cacheName, value, ttl);
     return value;
   },
