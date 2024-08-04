@@ -33,7 +33,7 @@
           
           <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-6">
         
-            <select id="districtsCity" name="districtsCity" class="relative text-white z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20" onchange="onChangeCity(event)" required>
+            <select id="districtsCity" name="districtsCity" class="relative dark:text-white z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20" onchange="onChangeCity(event)" required>
               <option value="" disabled selected>İl Seç</option>
               <% cities.forEach(city => { %>
               <option value="<%= city %>" <%= (typeof selectedCity !== 'undefined' && selectedCity.toLocaleLowerCase('tr-TR')==city.toLocaleLowerCase('tr-TR')) ? 'selected' : '' %>>
@@ -41,7 +41,7 @@
               </option>
               <% }); %>
             </select>
-            <select id="districtsDistrict" name="districtsDistrict" class="relative text-white z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20">
+            <select id="districtsDistrict" name="districtsDistrict" class="relative dark:text-white z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20">
               <option value="" disabled selected>İlçe Seç</option>
               <% if(typeof selectableDistricts !== 'undefined' && selectableDistricts && selectableDistricts.length > 0) { %>
               <% selectableDistricts.forEach(district => { %>
