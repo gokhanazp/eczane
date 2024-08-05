@@ -91,7 +91,7 @@ router.get("/", async function (req, res) {
   const error = req.flash("error");
   const success = req.flash("success");
   res.status(200).render("index", {
-    title: "Home",
+    title: "Türkiye Nöbetçi Eczane | Şehrinizdeki Güncel Nöbetçi Eczaneler - TurkiyeNobetciEczane.com",
     error: error,
     success: success,
     cities: cities,

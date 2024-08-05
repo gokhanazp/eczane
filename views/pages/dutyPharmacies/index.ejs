@@ -113,15 +113,15 @@
   <% } else { %>
   <div class="pharmacy-container">
     <% dutyPharmacies.forEach((pharmacy, index) => { %>
-    <div class="w-full max-w-sm overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 md:max-w-sm pharmacy-card">
+    <div class="w-full max-w-sm overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-900 md:max-w-sm pharmacy-card">
 
-      <div class="flex items-center px-6 py-3 bg-gray-900 eczanetitle">
+      <div class="flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-950 eczanetitle">
         <svg version="1.1" viewBox="0 0 2000 1986" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
           <path transform="translate(1306,281)" d="m0 0h265v310h-752v225h691v292h-689v287h766v321l-1 1h-1205l-1-1v-1432l182-1z" fill="#E61417" />
           <path transform="translate(27)" d="m0 0h1946l10 3 8 6 6 8 3 8v1936l-5 12-8 8-9 4-4 1h-1948l-11-4-9-8-4-8-2-8v-1930l3-10 6-9 8-6zm5 31-1 1v1922l1 1h1937v-1924z" fill="#E61518" />
         </svg>
 
-        <h1 class="mx-3 text-base font-semibold text-black"><%= pharmacy.name %> (<%= pharmacy.district %>)</h1>
+        <h1 class="mx-3 text-base dark:text-white font-semibold text-black"><%= pharmacy.name %> (<%= pharmacy.district %>)</h1>
       </div>
 
       <div class="px-6 py-4">
