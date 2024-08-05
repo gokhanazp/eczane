@@ -22,7 +22,7 @@ async function _getPharmacies(city) {
       console.log("Cached Pharmacies");
     }
 
-    await cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
+    cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
 
     return cachedPharmacies;
   } catch (error) {
@@ -49,7 +49,7 @@ async function _getPharmaciesByCities(cityCount, city = "") {
       }
     } else console.log("Cached Districts");
 
-    await cacheManage.setCache(CacheNames.PHARMACY_BY_DISTRICTS, pharmacyByDistricts, dutyTTLGenerate());
+    cacheManage.setCache(CacheNames.PHARMACY_BY_DISTRICTS, pharmacyByDistricts, dutyTTLGenerate());
   } else {
     if (!pharmacyByCities || Object.keys(pharmacyByCities).length !== cityCount) {
       const countsByCities = await DutyPharmacyService.getDutyPharmaciesCountOnCity();
@@ -60,7 +60,7 @@ async function _getPharmaciesByCities(cityCount, city = "") {
         pharmacyByCities[cityDuty.cities] = cityDuty.dutyPharmacyCount;
       }
 
-      await cacheManage.setCache(CacheNames.PHARMACY_BY_CITIES, pharmacyByCities, dutyTTLGenerate());
+      cacheManage.setCache(CacheNames.PHARMACY_BY_CITIES, pharmacyByCities, dutyTTLGenerate());
     } else console.log("Cached Cities");
   }
 
@@ -68,6 +68,7 @@ async function _getPharmaciesByCities(cityCount, city = "") {
 }
 
 router.get("/", async function (req, res) {
+  console.log("Index Page");
   let cities = [];
   const selectedCity = getCookie(req, CookieNames.SELECTED_CITY) ?? "";
   const selectableDistricts = getCookie(req, CookieNames.SELECTABLE_DISTRICTS) ?? [];
@@ -138,7 +139,7 @@ router.get(
     const newUrl = `/nobetcieczane/${city.toLowerCase()}`;
     req.url = newUrl;
     if (city !== city.toLowerCase()) {
-      return res.redirect(301, newUrl);
+      return res.redirect(newUrl);
     }
     next();
   },
@@ -174,6 +175,7 @@ router.get(
       title: `${currentCity} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
       dutyPharmacies,
+      cities,
       district: "",
       city: currentCity ?? city,
       districts,
@@ -190,7 +192,7 @@ router.get(
     req.url = newUrl;
 
     if (params.city !== params.city.toLowerCase() || params.district !== params.district.toLowerCase()) {
-      return res.redirect(301, newUrl);
+      return res.redirect(newUrl);
     }
     next();
   },
@@ -237,6 +239,7 @@ router.get(
       title: `${city}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
       dutyPharmacies,
+      cities,
       city: currentCity ?? city,
       district: currentDistrict ?? district,
       districts,

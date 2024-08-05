@@ -6,21 +6,23 @@
   <script src="/js/ejs.min.js"></script>
   <link href="/style.css" type="text/css" rel="stylesheet" media="screen" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <meta name="description" content="İzmir'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
-  <meta name="keywords" content="İzmir nöbetçi eczaneler, İzmir eczane, bugün nöbetçi eczane, İzmir eczane adresleri, İzmir eczane telefonları">
+  <% cities.forEach(city => { %>
+  <meta name="description" content="<%=city%>'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
+  <meta name="keywords" content="<%=city%> nöbetçi eczaneler, <%=city%> eczane, bugün nöbetçi eczane, <%=city%> eczane adresleri, <%=city%> eczane telefonları">
   <meta name="author" content="Türkiye Nöbetçi Eczaneleri">
-  <link rel="canonical" href="https://www.turkiyenobetcieczane.com/izmir-nobetci-eczaneler">
+  <link rel="canonical" href="https://www.turkiyenobetcieczane.com/<%=city%>-nobetci-eczaneler">
   <!-- Open Graph Meta Tags for Social Media -->
-  <meta property="og:title" content="İzmir Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
-  <meta property="og:description" content="İzmir'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
+  <meta property="og:title" content="<%=city%> Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
+  <meta property="og:description" content="<%=city%>'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.turkiyenobetcieczane.com/izmir-nobetci-eczaneler">
+  <meta property="og:url" content="https://www.turkiyenobetcieczane.com/<%=city%>-nobetci-eczaneler">
   <meta property="og:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="İzmir Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
-  <meta name="twitter:description" content="İzmir'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
+  <meta name="twitter:title" content="<%=city%> Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
+  <meta name="twitter:description" content="<%=city%>'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
   <meta name="twitter:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
+  <% }) %>
   <!-- Additional SEO Best Practices -->
   <meta name="robots" content="index, follow">
 </head>

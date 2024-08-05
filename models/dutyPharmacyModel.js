@@ -19,6 +19,8 @@ class DutyPharmacyModel {
       phoneRep = `+9${phoneRep}`;
     } else if (phoneRep.startsWith("90")) {
       phoneRep = `+${phoneRep}`;
+    } else if (phoneRep.startsWith("+90")) {
+      phoneRep = `${phoneRep}`;
     } else {
       phoneRep = `+90${phoneRep}`;
     }
