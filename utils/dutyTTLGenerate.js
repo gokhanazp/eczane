@@ -4,6 +4,6 @@ module.exports.dutyTTLGenerate = function () {
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(8, 0, 0, 0);
   const diff = tomorrow - now;
-  const ttl = Math.floor(diff / 1000);
-  return ttl;
+  console.log("TTL:", diff);
+  return diff;
 };
