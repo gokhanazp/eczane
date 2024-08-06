@@ -126,7 +126,12 @@
       <div class="px-6 py-4">
 
         <% if(pharmacy.directions) { %>
-        <p class="py-2 text-gray-700 dark:text-gray-400"><%=pharmacy.directions%></p>
+
+        <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+          <%=pharmacy.directions%>
+        </div>
+
+
         <% } %>
 
         <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
