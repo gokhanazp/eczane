@@ -11,6 +11,7 @@ function translateEnglish(params) {
       .replace(/Ğ/g, "G")
       .replace(/i/g, "i")
       .replace(/ı/g, "i")
+      .replace("i̇", "i")
       .replace(/I/g, "I")
       .replace(/İ/g, "I")
       .replace(/o/g, "o")

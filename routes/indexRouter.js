@@ -58,9 +58,8 @@ async function _getPharmaciesOnlyDistrict(city, district) {
     cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
 
     const result = cachedPharmacies[city].filter(p => {
-      const p1 = translateEnglish({ text: p.district }).text.trim().replace("i̇", "i");
-      const p2 = translateEnglish({ text: district }).text.trim().replace("i̇", "i");
-      console.log(p1, p2, p1 == p2);
+      const p1 = translateEnglish({ text: p.district }).text.trim();
+      const p2 = translateEnglish({ text: district }).text.trim();
       return p1 == p2;
     });
 
@@ -262,6 +261,8 @@ router.get(
 
         return p1 === p2;
       });
+
+      console.log("Current District", currentDistrict);
 
       dutyPharmacies = await _getPharmaciesOnlyDistrict(currentCity, currentDistrict);
     } catch (error) {
