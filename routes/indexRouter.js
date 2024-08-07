@@ -58,10 +58,9 @@ async function _getPharmaciesOnlyDistrict(city, district) {
     cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
 
     const result = cachedPharmacies[city].filter(p => {
-      const p1 = translateEnglish({ text: p.district }).text.toLowerCase().trim();
-      const p2 = translateEnglish({ text: district }).text.toLowerCase().trim();
-      console.log(p1, p2, p1 == p2);
-      return p1 == p2;
+      const p1 = translateEnglish({ text: p.district }).text.trim();
+      const p2 = translateEnglish({ text: district }).text.trim();
+      return p1.replace("i̇", "i") == p2.replace("i̇", "i");
     });
 
     return result;

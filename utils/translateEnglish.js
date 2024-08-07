@@ -24,8 +24,7 @@ function translateEnglish(params) {
       .replace(/u/g, "u")
       .replace(/ü/g, "u")
       .replace(/U/g, "U")
-      .replace(/Ü/g, "U")
-      .normalize("NFD");
+      .replace(/Ü/g, "U");
   }
 
   return params;
