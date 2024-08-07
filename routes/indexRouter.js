@@ -262,8 +262,6 @@ router.get(
         return p1 === p2;
       });
 
-      console.log("Current District", currentDistrict);
-
       dutyPharmacies = await _getPharmaciesOnlyDistrict(currentCity, currentDistrict);
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
@@ -271,6 +269,8 @@ router.get(
 
     const error = req.flash("error");
     const titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
+
+    console.log(district, currentDistrict);
 
     res.status(200).render("pages/dutyPharmacies/index", {
       title: `${city}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
