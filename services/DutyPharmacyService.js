@@ -40,8 +40,56 @@ class DutyPharmacyService {
 
   async getDutyPharmaciesBy(city, district) {
     try {
-      const slug = translateEnglish({ text: city }).text.toLowerCase();
-      const url = `${DUTY_API_URL}?city=${slug}${district ? `&district=${district}` : ""}`;
+      const citiesRes = await fetch(`${DUTY_API_URL}/cities`, {
+        method: "GET",
+        headers: baseHeaders,
+      });
+
+      const citiesResJson = await citiesRes.json();
+
+      if (citiesResJson.status !== "success") {
+        throw new Error(`Failed to fetch duty pharmacy: ${citiesResJson.message}`);
+      }
+
+      citiesResJson.data = citiesResJson.data.find(c => {
+        const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
+        const p2 = translateEnglish({ text: city }).text.toLowerCase();
+        return p1 === p2;
+      });
+
+      if (!citiesResJson.data) {
+        throw new Error(`Failed to fetch duty pharmacy: City not found`);
+      }
+
+      const citySlug = citiesResJson.data.slug;
+
+      let districtSlug;
+      if (district) {
+        const districtsRes = await fetch(`${DUTY_API_URL}/cities?city=${citySlug}`, {
+          method: "GET",
+          headers: baseHeaders,
+        });
+
+        const districtsResJson = await districtsRes.json();
+
+        if (districtsResJson.status !== "success") {
+          throw new Error(`Failed to fetch duty pharmacy: ${districtsResJson.message}`);
+        }
+
+        const districtSlugData = districtsResJson.data.find(d => {
+          const p1 = translateEnglish({ text: d.cities }).text.toLowerCase();
+          const p2 = translateEnglish({ text: district }).text.toLowerCase();
+          return p1 === p2;
+        });
+
+        if (!districtSlugData) {
+          throw new Error(`Failed to fetch duty pharmacy: District not found`);
+        }
+
+        districtSlug = districtSlugData.slug;
+      }
+
+      const url = `${DUTY_API_URL}?city=${citySlug}${districtSlug ? `&district=${districtSlug}` : ""}`;
       const response = await fetch(url, {
         method: "GET",
         headers: baseHeaders,

@@ -31,6 +31,46 @@ async function _getPharmacies(city) {
   }
 }
 
+async function _getPharmaciesOnlyDistrict(city, district) {
+  let cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
+
+  try {
+    if (
+      !cachedPharmacies ||
+      !cachedPharmacies[city] ||
+      !cachedPharmacies[city].find(p => {
+        const p1 = translateEnglish({ text: p.district }).text.toLowerCase();
+        const p2 = translateEnglish({ text: district }).text.toLowerCase();
+        return p1 === p2;
+      })
+    ) {
+      const pharmacies = await DutyPharmacyService.getDutyPharmaciesBy(city, district);
+
+      if (pharmacies) {
+        if (!cachedPharmacies) cachedPharmacies = {};
+        if (!cachedPharmacies[city]) cachedPharmacies[city] = [];
+        cachedPharmacies[city].push(...pharmacies);
+      }
+    } else {
+      console.log("Cached Pharmacies");
+    }
+
+    cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
+
+    const result = cachedPharmacies[city].filter(p => {
+      const p1 = translateEnglish({ text: p.district }).text.toLowerCase().trim();
+      const p2 = translateEnglish({ text: district }).text.toLowerCase().trim();
+      console.log(p1, p2, p1 == p2);
+      return p1 == p2;
+    });
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 /**
  * @param {string} city - for districts of city
  */
@@ -223,18 +263,14 @@ router.get(
         return p1 === p2;
       });
 
-      const pharmacies = await _getPharmacies(currentCity);
-      dutyPharmacies = pharmacies[currentCity].filter(p => {
-        const p1 = translateEnglish({ text: p.district }).text.toLowerCase();
-        const p2 = translateEnglish({ text: district }).text.toLowerCase();
-        return p1 === p2;
-      });
+      dutyPharmacies = await _getPharmaciesOnlyDistrict(currentCity, currentDistrict);
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
     }
 
     const error = req.flash("error");
     const titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
+
     res.status(200).render("pages/dutyPharmacies/index", {
       title: `${city}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       error,
