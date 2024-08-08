@@ -285,11 +285,13 @@ router.get(
 );
 
 router.get("/enyakinnobetcieczane", async (req, res) => {
+  const { latitute, longitude } = req.query;
   let pharmacies = [];
 
   try {
-    const ip = req.headers["true-client-ip"] || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-    pharmacies = await DutyPharmacyService.getNearestPharmacies(ip);
+    if (latitute && longitude) {
+      pharmacies = await DutyPharmacyService.getNearestPharmacies(latitute, longitude);
+    }
   } catch (error) {
     req.flash("error", "Duty Pharmacies not found");
   }

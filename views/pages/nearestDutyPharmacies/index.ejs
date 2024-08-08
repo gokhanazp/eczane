@@ -199,3 +199,20 @@
   </div>
   <% } %>
 </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const latitude = params.get('latitude');
+  const longitude = params.get('longitude');
+
+  if (!latitude || !longitude) {
+    navigator.geolocation.getCurrentPosition(successCallback, (_) => {});
+
+    function successCallback(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      window.location.href = `/nearestDutyPharmacies?latitude=${latitude}&longitude=${longitude}`;
+    }
+  }
+</script>
