@@ -10,7 +10,7 @@ const indexRouter = require("./routes/indexRouter");
 
 const PORT = 3000;
 const corsOptions = {
-  origin: "localhost",
+  origin: ["http://localhost:3000", "https://turkiyenobetcieczane.com"],
   methods: "GET",
   preflightContinue: false,
 };
