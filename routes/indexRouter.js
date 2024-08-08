@@ -284,4 +284,21 @@ router.get(
   }
 );
 
+router.get("/enyakinnobetcieczane", async (req, res) => {
+  let pharmacies = [];
+
+  try {
+    pharmacies = await DutyPharmacyService.getNearestPharmacies();
+  } catch (error) {
+    req.flash("error", "Duty Pharmacies not found");
+  }
+
+  const error = req.flash("error");
+  res.status(200).render("pages/nearestDutyPharmacies", {
+    title: "En Yakın Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler",
+    error,
+    pharmacies,
+  });
+});
+
 module.exports = router;

@@ -184,7 +184,45 @@ class DutyPharmacyService {
       }
 
       return resJson.data;
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(`An error occurred while fetching duty pharmacies count: ${error.message}`);
+    }
+  }
+
+  async getNearestPharmacies() {
+    try {
+      const ipUrl = `http://ip-api.com/json`;
+      const ipResponse = await fetch(ipUrl, {
+        method: "GET",
+      });
+
+      const ipResJson = await ipResponse.json();
+
+      if (ipResJson.status !== "success") {
+        throw new Error(`Failed to fetch nearest pharmacies: ${ipResJson.message}`);
+      }
+
+      const lat = ipResJson.lat;
+      const lon = ipResJson.lon;
+
+      const url = `${DUTY_API_URL}/locations?latitude=${lat}&longitude=${lon}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: baseHeaders,
+      });
+
+      let resJson = await response.json();
+
+      if (resJson.status !== "success") {
+        throw new Error(`Failed to fetch nearest pharmacies: ${resJson.message}`);
+      }
+
+      resJson.data = resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
+
+      return resJson.data;
+    } catch (error) {
+      throw new Error(`An error occurred while fetching nearest pharmacies: ${error.message}`);
+    }
   }
 }
 
