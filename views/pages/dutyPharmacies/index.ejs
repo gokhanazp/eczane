@@ -160,7 +160,7 @@
         </div>
 
         <div class="flex items-center mt-4 text-gray-700 dark:text-gray-200">
-          <a href="https://www.google.com/maps/search/?api=1&query=<%=pharmacy.getLocation%>" class="inline-flex items-center justify-center p-2 mr-5 text-sm text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=<%=pharmacy.latitude%>,<%=pharmacy.longitude%>" class="inline-flex items-center justify-center p-2 mr-5 text-sm text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 32 32">
               <g fill-rule="evenodd">
                 <path d="M.273 29.123V6.347a2.4 2.4 0 0 1 2.398-2.399h22.775z" fill="#1ea361" />
@@ -189,7 +189,7 @@
             </svg>
             <span class="w-full ml-3">Yandex</span><br>
           </a>
-          <a href="http://maps.apple.com/?ssl=1&query=<%=pharmacy.getLocation%>" class="inline-flex items-center justify-center p-2 text-sm  text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
+          <a href="http://maps.apple.com/?daddr=<%=pharmacy.latitude%>,<%=pharmacy.longitude%>" class="inline-flex items-center justify-center p-2 text-sm  text-gray-500 rounded-lg bg-gray-50 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white">
             <svg
             xmlns:dc="http://purl.org/dc/elements/1.1/"
             xmlns:cc="http://creativecommons.org/ns#"
