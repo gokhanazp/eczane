@@ -199,6 +199,7 @@ class DutyPharmacyService {
       const ipResJson = await ipResponse.json();
 
       if (ipResJson.status !== "success") {
+        console.error("Failed to fetch nearest pharmacies: ", ipResJson.message);
         throw new Error(`Failed to fetch nearest pharmacies: ${ipResJson.message}`);
       }
 
@@ -214,6 +215,7 @@ class DutyPharmacyService {
       let resJson = await response.json();
 
       if (resJson.status !== "success") {
+        console.error("Failed to fetch nearest pharmacies: ", resJson.message);
         throw new Error(`Failed to fetch nearest pharmacies: ${resJson.message}`);
       }
 
@@ -221,6 +223,7 @@ class DutyPharmacyService {
 
       return resJson.data;
     } catch (error) {
+      console.error("An error occurred while fetching nearest pharmacies: ", error.message);
       throw new Error(`An error occurred while fetching nearest pharmacies: ${error.message}`);
     }
   }
