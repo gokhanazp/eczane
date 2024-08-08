@@ -191,19 +191,19 @@ class DutyPharmacyService {
 
   async getNearestPharmacies() {
     try {
-      const ipUrl = `http://ip-api.com/json`;
+      const ipUrl = `https://get.geojs.io/v1/ip/geo.json`;
       const ipResponse = await fetch(ipUrl, {
         method: "GET",
       });
 
-      const ipResJson = await ipResponse.json();
-
-      if (ipResJson.status !== "success") {
-        throw new Error(`Failed to fetch nearest pharmacies: ${ipResJson.message}`);
+      if (!ipResponse.ok) {
+        throw new Error(`Failed to fetch nearest pharmacies: ${ipResponse.statusText}`);
       }
 
-      const lat = ipResJson.lat;
-      const lon = ipResJson.lon;
+      const ipResJson = await ipResponse.json();
+
+      const lat = ipResJson.latitude;
+      const lon = ipResJson.longitude;
 
       const url = `${DUTY_API_URL}/locations?latitude=${lat}&longitude=${lon}`;
       const response = await fetch(url, {
