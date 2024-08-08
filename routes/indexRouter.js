@@ -285,7 +285,7 @@ router.get(
 );
 
 router.get("/enyakinnobetcieczane", async (req, res) => {
-  const { latitute, longitude } = req.body;
+  const { latitute, longitude } = req.query;
   let pharmacies = [];
 
   try {
