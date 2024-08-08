@@ -2,6 +2,7 @@ require("dotenv").config();
 const path = require("path");
 const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 const translateEnglish = require("../utils/translateEnglish");
+const geoip = require("geoip-lite");
 
 const DUTY_API_URL = process.env.DUTY_API_URL;
 const DUTY_API_KEY = process.env.DUTY_API_KEY;
@@ -189,21 +190,19 @@ class DutyPharmacyService {
     }
   }
 
-  async getNearestPharmacies() {
+  async getNearestPharmacies(ip) {
     try {
-      const ipUrl = `https://get.geojs.io/v1/ip/geo.json`;
-      const ipResponse = await fetch(ipUrl, {
-        method: "GET",
-      });
+      console.log("ip: ", ip);
+      const ipLocation = geoip.lookup(ip);
 
-      if (!ipResponse.ok) {
-        throw new Error(`Failed to fetch nearest pharmacies: ${ipResponse.statusText}`);
+      console.log("ipLocation: ", ipLocation);
+      if (!ipLocation) {
+        throw new Error("Failed to fetch nearest pharmacies: IP location not found");
       }
 
-      const ipResJson = await ipResponse.json();
-
-      const lat = ipResJson.latitude;
-      const lon = ipResJson.longitude;
+      const ll = ipLocation.ll;
+      const lat = ll[0];
+      const lon = ll[1];
 
       const url = `${DUTY_API_URL}/locations?latitude=${lat}&longitude=${lon}`;
       const response = await fetch(url, {

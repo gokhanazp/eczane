@@ -288,7 +288,8 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
   let pharmacies = [];
 
   try {
-    pharmacies = await DutyPharmacyService.getNearestPharmacies();
+    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    pharmacies = await DutyPharmacyService.getNearestPharmacies(ip);
   } catch (error) {
     req.flash("error", "Duty Pharmacies not found");
   }
