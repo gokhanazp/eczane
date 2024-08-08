@@ -286,11 +286,12 @@ router.get(
 
 router.get("/enyakinnobetcieczane", async (req, res) => {
   const { latitude, longitude } = req.query;
-  console.log(latitude, longitude);
   let pharmacies = [];
+  let isLoading = true;
 
   try {
     if (latitude && longitude) {
+      isLoading = false;
       pharmacies = await DutyPharmacyService.getNearestPharmacies(latitude, longitude);
     }
   } catch (error) {
@@ -300,6 +301,7 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
   const error = req.flash("error");
   res.status(200).render("pages/nearestDutyPharmacies", {
     title: "En Yakın Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler",
+    isLoading,
     error,
     pharmacies,
   });
