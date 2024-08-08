@@ -192,14 +192,15 @@ class DutyPharmacyService {
 
   async getNearestPharmacies(ip) {
     try {
-      const ipLocation = await geoip(ip);
+      const ipLocFetch = await fetch(`http://ip-api.com/json/${ip}`);
+      const ipLocationRes = await ipLocFetch.json();
 
-      if (!ipLocation) {
-        throw new Error("Failed to fetch nearest pharmacies: IP location not found");
+      if (ipLocationRes.status !== "success") {
+        throw new Error(`Failed to fetch IP location: ${ipLocationRes.message}`);
       }
 
-      const lat = ipLocation.latitude;
-      const lon = ipLocation.longitude;
+      const lat = ipLocationRes.lat;
+      const lon = ipLocationRes.lon;
 
       const url = `${DUTY_API_URL}/locations?latitude=${lat}&longitude=${lon}`;
       const response = await fetch(url, {
