@@ -195,7 +195,6 @@ class DutyPharmacyService {
       console.log("ip: ", ip);
       const ipLocation = geoip.lookup(ip);
 
-      console.log("ipLocation: ", ipLocation);
       if (!ipLocation) {
         throw new Error("Failed to fetch nearest pharmacies: IP location not found");
       }
