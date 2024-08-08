@@ -285,12 +285,13 @@ router.get(
 );
 
 router.get("/enyakinnobetcieczane", async (req, res) => {
-  const { latitute, longitude } = req.query;
+  const { latitude, longitude } = req.query;
+  console.log(latitude, longitude);
   let pharmacies = [];
 
   try {
-    if (latitute && longitude) {
-      pharmacies = await DutyPharmacyService.getNearestPharmacies(latitute, longitude);
+    if (latitude && longitude) {
+      pharmacies = await DutyPharmacyService.getNearestPharmacies(latitude, longitude);
     }
   } catch (error) {
     req.flash("error", "Duty Pharmacies not found");
