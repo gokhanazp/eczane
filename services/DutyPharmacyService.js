@@ -2,7 +2,7 @@ require("dotenv").config();
 const path = require("path");
 const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 const translateEnglish = require("../utils/translateEnglish");
-const geoip = require("geoip-lite");
+const geoip = require("ip-location");
 
 const DUTY_API_URL = process.env.DUTY_API_URL;
 const DUTY_API_KEY = process.env.DUTY_API_KEY;
@@ -192,16 +192,14 @@ class DutyPharmacyService {
 
   async getNearestPharmacies(ip) {
     try {
-      console.log("ip: ", ip);
-      const ipLocation = geoip.lookup(ip);
+      const ipLocation = await geoip(ip);
 
       if (!ipLocation) {
         throw new Error("Failed to fetch nearest pharmacies: IP location not found");
       }
 
-      const ll = ipLocation.ll;
-      const lat = ll[0];
-      const lon = ll[1];
+      const lat = ipLocation.latitude;
+      const lon = ipLocation.longitude;
 
       const url = `${DUTY_API_URL}/locations?latitude=${lat}&longitude=${lon}`;
       const response = await fetch(url, {
