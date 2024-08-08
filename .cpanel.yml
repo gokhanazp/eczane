@@ -1,4 +1,4 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/turkiyen/public_html/
-    - /bin/cp * $DEPLOYPATH
+    - export DEPLOYPATH=/home/turkiyen/app-jd
+    - /bin/cp -r * $DEPLOYPATH
