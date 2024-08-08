@@ -289,9 +289,7 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
 
   try {
     pharmacies = await DutyPharmacyService.getNearestPharmacies();
-    console.log(pharmacies);
   } catch (error) {
-    console.log(error);
     req.flash("error", "Duty Pharmacies not found");
   }
 
