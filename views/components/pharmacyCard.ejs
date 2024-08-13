@@ -28,6 +28,7 @@
         <!-- Distance will be calculated here -->
       </h1>
     </div>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=false"></script>
     <script>
       getDist(<%-JSON.stringify(pharmacy)%>);
 
@@ -37,9 +38,11 @@
             let lat = pos.coords.latitude;
             let lon = pos.coords.longitude;
 
-
             if (lat && lon) {
-              let distance = calculateDistance(lat, lon, pharmacy.latitude, pharmacy.longitude).toFixed(3) + " km";
+              const start = new google.maps.LatLng(lat, lon);
+              const end = new google.maps.LatLng(pharmacy.latitude, pharmacy.longitude);
+              // let distance = calculateDistance(lat, lon, pharmacy.latitude, pharmacy.longitude).toFixed(3) + " km";
+              let distance = (estimateDrivingDistance(start, end) / 1000).toFixed(3) + " km";
               document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = distance;
             } else {
               document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = "Unable to determine location.";
@@ -67,6 +70,12 @@
 
       function deg2rad(deg) {
         return deg * (Math.PI / 180);
+      }
+
+      function estimateDrivingDistance(origin, destination) {
+        const straightLineDistance = google.maps.geometry.spherical.computeDistanceBetween(origin, destination);
+        const estimatedDrivingDistance = straightLineDistance * 1.5;
+        return estimatedDrivingDistance;
       }
     </script>
 
