@@ -2,9 +2,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%=title%></title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <script src="/js/ejs.min.js"></script>
   <link href="/style.css" type="text/css" rel="stylesheet" media="screen" />
+  <link href="/dist/tailwindout.css" rel="stylesheet">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <!--~ Cities ~-->
   <% if(typeof city !== 'undefined' && city !== null) { %>
@@ -24,31 +25,34 @@
   <meta name="twitter:description" content="<%=city%>'deki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Hangi eczane bugün nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
   <meta name="twitter:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
   <% } else {%>
-    <meta name="description" content="Türkiye genelindeki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Bugün hangi eczane nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
-    <meta name="author" content="Türkiye Nöbetçi Eczaneleri">
-    <link rel="canonical" href="https://www.turkiyenobetcieczane.com/">
-    <!-- Open Graph Meta Tags for Social Media -->
-    <meta property="og:title" content="Türkiye Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
-    <meta property="og:description" content="Türkiye genelindeki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Bugün hangi eczane nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.turkiyenobetcieczane.com/">
-    <meta property="og:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Türkiye Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
-    <meta name="twitter:description" content="Türkiye genelindeki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Bugün hangi eczane nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
-    <meta name="twitter:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
+  <meta name="description" content="Türkiye genelindeki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Bugün hangi eczane nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
+  <meta name="author" content="Türkiye Nöbetçi Eczaneleri">
+  <link rel="canonical" href="https://www.turkiyenobetcieczane.com/">
+  <!-- Open Graph Meta Tags for Social Media -->
+  <meta property="og:title" content="Türkiye Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
+  <meta property="og:description" content="Türkiye genelindeki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Bugün hangi eczane nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.turkiyenobetcieczane.com/">
+  <meta property="og:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Türkiye Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler">
+  <meta name="twitter:description" content="Türkiye genelindeki güncel nöbetçi eczanelerin listesi ve iletişim bilgileri. Bugün hangi eczane nöbetçi? Adres ve telefon bilgileriyle hızlıca ulaşın.">
+  <meta name="twitter:image" content="https://www.turkiyenobetcieczane.com/path/to/image.jpg">
   <% } %>
   <!--~ Cities End ~-->
   <!-- Additional SEO Best Practices -->
   <meta name="robots" content="index, follow">
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PHYB82PEB2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PHYB82PEB2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-PHYB82PEB2');
-</script>
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-PHYB82PEB2');
+  </script>
 </head>
