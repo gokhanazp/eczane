@@ -42,7 +42,7 @@
               const start = new google.maps.LatLng(lat, lon);
               const end = new google.maps.LatLng(pharmacy.latitude, pharmacy.longitude);
               // let distance = calculateDistance(lat, lon, pharmacy.latitude, pharmacy.longitude).toFixed(3) + " km";
-              let distance = (estimateDrivingDistance(start, end) / 1000).toFixed(3) + " km";
+              let distance = (estimateDrivingDistance(start, end) / 1000).toFixed(1) + " km";
               document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = distance;
             } else {
               document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = "Unable to determine location.";
