@@ -1,0 +1,19 @@
+<% 
+getDistanceUser= function (pharmacy) {
+  if (navigator.geolocation) {
+    let lat, lon;
+    navigator.geolocation.getCurrentPosition((pos) => {
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    });
+
+    if (lat && lon) {
+      return pharmacy.calculateDistance(lat, lon);
+    } else {
+      return "";
+    }
+  }else{
+    return "";
+  }
+}
+%>
