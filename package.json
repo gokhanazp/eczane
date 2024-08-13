@@ -22,11 +22,11 @@
     "express-session": "^1.18.0",
     "keyv": "^4.5.4",
     "keyv-file": "^0.3.1",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "tailwindcss": "^3.4.9"
   },
   "devDependencies": {
     "dotenv": "^16.4.5",
-    "nodemon": "^3.1.4",
-    "tailwindcss": "^3.4.9"
+    "nodemon": "^3.1.4"
   }
 }
