@@ -148,10 +148,7 @@ class DutyPharmacyService {
         throw new Error(`Failed to fetch districts: ${resJson.message}`);
       }
 
-      // distirict.cities = district name
-      const districts = resJson.data.map(district => district.cities);
-
-      return districts;
+      return resJson.data;
     } catch (error) {
       console.error("Fetch Error: ", error.message);
       throw new Error(`An error occurred while fetching districts: ${error.message}`);

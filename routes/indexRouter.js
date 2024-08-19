@@ -163,6 +163,7 @@ router.get("/onSelectCity/:selectedCity", async (req, res) => {
       // if (districts) setCookie(res, CookieNames.DISTRICTS, { ...cachedDistricts, [selectedCity]: districts });
     }
 
+    districts = districts.map(d => d.cities);
     setCookie(res, CookieNames.SELECTABLE_DISTRICTS, districts);
   } catch (error) {
     req.flash("error", "Districts not found");
@@ -201,6 +202,7 @@ router.get(
       }).cities;
 
       districts = await DutyPharmacyService.getDistricts(currentCity);
+      districts = districts.map(d => d.cities);
 
       const pharmacies = await _getPharmacies(currentCity);
 
@@ -248,6 +250,7 @@ router.get(
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
       districts = await DutyPharmacyService.getDistricts(city);
+      districts = districts.map(d => d.cities);
       cities = await DutyPharmacyService.getCities();
       currentCity = cities.find(c => {
         const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
