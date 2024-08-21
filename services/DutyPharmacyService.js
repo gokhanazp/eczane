@@ -207,6 +207,30 @@ class DutyPharmacyService {
       throw new Error(`An error occurred while fetching nearest pharmacies: ${error.message}`);
     }
   }
+
+  async getPharmacyById(id) {
+    try {
+      const url = `${DUTY_API_URL}?detailsID=${id}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: baseHeaders,
+      });
+
+      let resJson = await response.json();
+
+      if (resJson.status !== "success") {
+        throw new Error(`Failed to fetch pharmacy: ${resJson.message}`);
+      }
+
+      if (!resJson.data || resJson.data.length === 0) {
+        throw new Error(`Failed to fetch pharmacy: Pharmacy not found`);
+      }
+
+      return DutyPharmacyModel.fromJson(resJson.data[0]);
+    } catch (error) {
+      throw new Error(`An error occurred while fetching pharmacy: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new DutyPharmacyService();

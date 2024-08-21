@@ -4,17 +4,12 @@
 
 <body class="flex dark:bg-neutral-950 flex-col h-screen mx-auto w-full">
 
-  <% if(typeof error !== 'undefined') { %>
-  <%- include('../components/toastShow', { message:error,color:"#FF2020", textColor:"#FBFBFB" }); %>
-  <% } else if(typeof success !== 'undefined') { %>
-  <%- include('../components/toastShow', { message:success,color:"#00A300", textColor:"#FBFBFB" }); %>
-  <% } %>
-
   <%- include('../partials/navbar') %>
 
-  <main class="container w-full flex flex-col mx-auto p-4">
+  <main class="container w-full flex flex-col mx-auto p-4 my-auto">
     <%- body %>
   </main>
+
   <%- include('../partials/footer') %>
 
   <script src="/js/global.js"></script>

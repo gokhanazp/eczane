@@ -1,0 +1,58 @@
+<div class="flex items-center text-gray-700 dark:text-gray-200">
+  <svg aria-label="location pin icon" class="w-6 h-6 fill-current" viewBox="0 0 576 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M256 32l-74.8 0c-27.1 0-51.3 17.1-60.3 42.6L3.1 407.2C1.1 413 0 419.2 0 425.4C0 455.5 24.5 480 54.6 480L256 480l0-64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 64 201.4 0c30.2 0 54.6-24.5 54.6-54.6c0-6.2-1.1-12.4-3.1-18.2L455.1 74.6C446 49.1 421.9 32 394.8 32L320 32l0 64c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-64zm64 192l0 64c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32s32 14.3 32 32z" />
+  </svg>
+  <h1 id="pharmacy-<%=pharmacy.id%>-d" class="px-2 text-lg font-semibold">
+    <!-- Distance will be calculated here -->
+  </h1>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=false"></script>
+<script>
+  getDist(<%-JSON.stringify(pharmacy)%>);
+
+  function getDist(pharmacy) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+
+        if (lat && lon) {
+          const start = new google.maps.LatLng(lat, lon);
+          const end = new google.maps.LatLng(pharmacy.latitude, pharmacy.longitude);
+          // let distance = calculateDistance(lat, lon, pharmacy.latitude, pharmacy.longitude).toFixed(3) + " km";
+          let distance = (estimateDrivingDistance(start, end) / 1000).toFixed(1) + " km";
+          document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = distance;
+        } else {
+          document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = "Unable to determine location.";
+        }
+      });
+    } else {
+      document.getElementById(`pharmacy-${pharmacy.id}-d`).textContent = "Location permission denied.";
+    }
+  }
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Dünyanın yarıçapı (km)
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Kilometre cinsinden mesafe
+    return distance;
+  }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+  }
+
+  function estimateDrivingDistance(origin, destination) {
+    const straightLineDistance = google.maps.geometry.spherical.computeDistanceBetween(origin, destination);
+    const estimatedDrivingDistance = straightLineDistance * 1.5;
+    return estimatedDrivingDistance;
+  }
+</script>

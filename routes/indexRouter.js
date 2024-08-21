@@ -7,6 +7,32 @@ const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 
 const router = Router();
 
+async function _getPharmacyById(id) {
+  let cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
+
+  try {
+    for (const city in cachedPharmacies) {
+      const pharmacy = cachedPharmacies[city].find(p => p.id === id);
+      if (pharmacy) return pharmacy;
+    }
+
+    const pharmacy = await DutyPharmacyService.getPharmacyById(id);
+
+    if (pharmacy) {
+      if (!cachedPharmacies) cachedPharmacies = {};
+      if (!cachedPharmacies[pharmacy.city]) cachedPharmacies[pharmacy.city] = [];
+      cachedPharmacies[pharmacy.city].push(pharmacy);
+    }
+
+    cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
+
+    return pharmacy;
+  } catch (error) {
+    // console.log(error);
+    throw error;
+  }
+}
+
 async function _getPharmacies(city) {
   let cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
 
@@ -19,14 +45,14 @@ async function _getPharmacies(city) {
         cachedPharmacies[city] = pharmacies;
       }
     } else {
-      console.log("Cached Pharmacies");
+      // console.log("Cached Pharmacies");
     }
 
     cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
 
     return cachedPharmacies;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     throw error;
   }
 }
@@ -52,7 +78,7 @@ async function _getPharmaciesOnlyDistrict(city, district) {
         cachedPharmacies[city].push(...pharmacies);
       }
     } else {
-      console.log("Cached Pharmacies");
+      // console.log("Cached Pharmacies");
     }
 
     cacheManage.setCache(CacheNames.PHARMACIES, cachedPharmacies, dutyTTLGenerate());
@@ -65,7 +91,7 @@ async function _getPharmaciesOnlyDistrict(city, district) {
 
     return result;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     throw error;
   }
 }
@@ -86,7 +112,9 @@ async function _getPharmaciesByCities(cityCount, city = "") {
 
         pharmacyByDistricts[city][cityDuty.cities] = cityDuty.dutyPharmacyCount;
       }
-    } else console.log("Cached Districts");
+    } else {
+      // console.log("Cached Districts");
+    }
 
     cacheManage.setCache(CacheNames.PHARMACY_BY_DISTRICTS, pharmacyByDistricts, dutyTTLGenerate());
   } else {
@@ -100,14 +128,15 @@ async function _getPharmaciesByCities(cityCount, city = "") {
       }
 
       cacheManage.setCache(CacheNames.PHARMACY_BY_CITIES, pharmacyByCities, dutyTTLGenerate());
-    } else console.log("Cached Cities");
+    } else {
+      // console.log("Cached Cities");
+    }
   }
 
   return { pharmacyByCities, pharmacyByDistricts };
 }
 
 router.get("/", async function (req, res) {
-  console.log("Index Page");
   let cities = [];
   const selectedCity = getCookie(req, CookieNames.SELECTED_CITY) ?? "";
   const selectableDistricts = getCookie(req, CookieNames.SELECTABLE_DISTRICTS) ?? [];
@@ -246,6 +275,8 @@ router.get(
     let cities = [];
     let currentDistrict;
     let currentCity;
+    let titleCity = "";
+    let titleDist = "";
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
@@ -266,17 +297,19 @@ router.get(
       });
 
       dutyPharmacies = await _getPharmaciesOnlyDistrict(currentCity, currentDistrict);
+      titleCity = currentCity[0].toLocaleUpperCase("tr-TR") + currentCity.slice(1);
+      titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
     }
 
     const error = req.flash("error");
-    const titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
-
-    console.log(district, currentDistrict);
 
     res.status(200).render("pages/dutyPharmacies/index", {
-      title: `${city}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
+      title:
+        titleCity && titleDist
+          ? `${titleCity}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`
+          : `Eczane Bulunamadı`,
       error,
       dutyPharmacies,
       cities,
@@ -307,6 +340,24 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
     isLoading,
     error,
     pharmacies,
+  });
+});
+
+router.get("/eczaneler/:id", async (req, res) => {
+  const { id } = req.params;
+  let pharmacy = null;
+
+  try {
+    pharmacy = await _getPharmacyById(id);
+  } catch (error) {
+    req.flash("error", "Pharmacy not found");
+  }
+
+  const error = req.flash("error");
+  res.status(200).render("pages/pharmacy", {
+    title: pharmacy ? `${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district} Nöbetçi Eczane` : "Eczane Bulunamadı",
+    error,
+    pharmacy,
   });
 });
 

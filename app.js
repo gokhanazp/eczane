@@ -36,6 +36,11 @@ app.use(
 );
 
 app.use("/", indexRouter);
+app.use("*", (req, res) => {
+  res.status(404).render("error", {
+    title: "404 - Sayfa Bulunamadı",
+  });
+});
 
 const start = () => {
   try {
