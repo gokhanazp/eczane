@@ -343,24 +343,38 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
   });
 });
 
-router.get("/eczaneler/:nameAndId", async (req, res) => {
-  const { nameAndId } = req.params;
-  const paramValues = nameAndId.split("-");
-  const id = paramValues[paramValues.length - 1];
-  let pharmacy = null;
+router.get(
+  "/eczaneler/:nameAndId",
+  (req, res, next) => {
+    const params = translateEnglish(req.params);
+    const newUrl = `/eczaneler/${params.nameAndId.toLocaleLowerCase("en-US")}`;
+    req.url = newUrl;
+    if (params.nameAndId !== params.nameAndId.toLocaleLowerCase("en-US")) {
+      return res.redirect(newUrl);
+    }
+    next();
+  },
+  async (req, res) => {
+    const { nameAndId } = req.params;
+    const paramValues = nameAndId.split("-");
+    const id = paramValues[paramValues.length - 1];
+    let pharmacy = null;
 
-  try {
-    pharmacy = await _getPharmacyById(id);
-  } catch (error) {
-    req.flash("error", "Pharmacy not found");
+    try {
+      pharmacy = await _getPharmacyById(id);
+    } catch (error) {
+      req.flash("error", "Pharmacy not found");
+    }
+
+    const error = req.flash("error");
+    res.status(200).render("pages/pharmacy", {
+      title: pharmacy
+        ? `${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district} Nöbetçi Eczane`
+        : "Eczane Bulunamadı",
+      error,
+      pharmacy,
+    });
   }
-
-  const error = req.flash("error");
-  res.status(200).render("pages/pharmacy", {
-    title: pharmacy ? `${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district} Nöbetçi Eczane` : "Eczane Bulunamadı",
-    error,
-    pharmacy,
-  });
-});
+);
 
 module.exports = router;
