@@ -343,8 +343,10 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
   });
 });
 
-router.get("/eczaneler/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/eczaneler/:nameAndId", async (req, res) => {
+  const { nameAndId } = req.params;
+  const paramValues = nameAndId.split("-");
+  const id = paramValues[paramValues.length - 1];
   let pharmacy = null;
 
   try {
