@@ -25,10 +25,10 @@
     "keyv-file": "^0.3.1",
     "path": "^0.12.7",
     "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.9"
+    "tailwindcss": "^3.4.9",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5",
     "nodemon": "^3.1.4"
   }
 }
