@@ -161,7 +161,7 @@ router.get("/", async function (req, res) {
   const success = req.flash("success");
   res.status(200).render("index", {
     title: "Türkiye Nöbetçi Eczane | Şehrinizdeki Güncel Nöbetçi Eczaneler - TurkiyeNobetciEczane.com",
-    breadcrumbList: [],
+    breadcrumbList: undefined,
     error: error,
     success: success,
     cities: cities,
