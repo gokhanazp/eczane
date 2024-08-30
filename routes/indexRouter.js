@@ -161,6 +161,7 @@ router.get("/", async function (req, res) {
   const success = req.flash("success");
   res.status(200).render("index", {
     title: "Türkiye Nöbetçi Eczane | Şehrinizdeki Güncel Nöbetçi Eczaneler - TurkiyeNobetciEczane.com",
+    breadcrumbList: [],
     error: error,
     success: success,
     cities: cities,
@@ -243,6 +244,10 @@ router.get(
     const error = req.flash("error");
     res.status(200).render("pages/dutyPharmacies/index", {
       title: `${currentCity} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
+      breadcrumbList: [
+        { name: "Nöbetçi Eczaneler", url: undefined },
+        { name: currentCity, url: `/nobetcieczane/${currentCity}` },
+      ],
       error,
       dutyPharmacies,
       cities,
@@ -310,6 +315,11 @@ router.get(
         titleCity && titleDist
           ? `${titleCity}-${titleDist} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`
           : `Eczane Bulunamadı`,
+      breadcrumbList: [
+        { name: "Nöbetçi Eczaneler", url: undefined },
+        { name: currentCity, url: `/nobetcieczane/${currentCity}` },
+        { name: currentDistrict, url: `/nobetcieczane/${currentCity}/${currentDistrict}` },
+      ],
       error,
       dutyPharmacies,
       cities,
@@ -337,6 +347,7 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
   const error = req.flash("error");
   res.status(200).render("pages/nearestDutyPharmacies", {
     title: "En Yakın Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler",
+    breadcrumbList: [{ name: "En Yakın Nöbetçi Eczaneler", url: "/enyakinnobetcieczane" }],
     isLoading,
     error,
     pharmacies,
@@ -371,6 +382,12 @@ router.get(
       title: pharmacy
         ? `${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district} Nöbetçi Eczane`
         : "Eczane Bulunamadı",
+      breadcrumbList: [
+        { name: "Nöbetçi Eczaneler", url: undefined },
+        { name: pharmacy?.city, url: `/nobetcieczane/${pharmacy?.city}` },
+        { name: pharmacy?.district, url: `/nobetcieczane/${pharmacy?.city}/${pharmacy?.district}` },
+        { name: pharmacy?.name, url: `/eczaneler/${pharmacy?.name}-${pharmacy?.id}` },
+      ],
       error,
       pharmacy,
     });
