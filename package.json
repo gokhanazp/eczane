@@ -23,8 +23,8 @@
     "express-session": "^1.18.0",
     "keyv": "^4.5.4",
     "keyv-file": "^0.3.1",
-    "path": "^0.12.7",
-    "tailwindcss": "^3.4.9"
+    "tailwindcss": "^3.4.9",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
