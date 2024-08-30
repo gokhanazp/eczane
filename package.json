@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "npm run build:tailwind && node app.js",
-    "dev": "npm run build:tailwind && nodemon app.js",
+    "start": "npm install && npm run build:tailwind && node app.js",
+    "dev": "npm install && npm run build:tailwind && nodemon app.js",
     "build:tailwind": "tailwindcss build -i public/tailwind.css -o public/dist/tailwindout.css"
   },
   "type": "commonjs",
