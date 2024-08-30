@@ -2,7 +2,7 @@ const fs = require("fs");
 const DutyPharmacyService = require("../services/dutyPharmacyService");
 const path = require("path");
 
-const sitemapGenerator = async () => {
+const sitemapGeneratorMainDistrictCityNear = async () => {
   try {
     let districtsByCity = {};
     const cities = await DutyPharmacyService.getCities();
@@ -45,7 +45,10 @@ const sitemapGenerator = async () => {
     }
     sitemap += "\n</urlset>";
 
-    const sitemapPath = path.resolve(__dirname, "../public/sitemap.xml");
+    const sitemapPath = path.resolve(__dirname, "./output/sitemap1.xml");
+    if (!fs.existsSync(path.resolve(__dirname, "./output"))) {
+      fs.mkdirSync(path.resolve(__dirname, "./output"));
+    }
     fs.writeFileSync(sitemapPath, sitemap);
     console.log("Sitemap generated successfully!");
   } catch (error) {
@@ -53,4 +56,4 @@ const sitemapGenerator = async () => {
   }
 };
 
-sitemapGenerator();
+sitemapGeneratorMainDistrictCityNear();
