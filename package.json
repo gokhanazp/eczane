@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "npm install && npm run build:tailwind && node app.js",
+    "start": "npm install && node app.js",
     "dev": "npm install && npm run build:tailwind && nodemon app.js",
-    "build:tailwind": "tailwindcss -i public/style.css -o public/dist/tailwindout.css --minify"
+    "build:tailwind": "tailwindcss -i public/style.css -o public/tailwindout.css"
   },
   "type": "commonjs",
   "author": "",
