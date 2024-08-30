@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "autoprefixer": "^10.4.20",
     "cache-manager": "^5.7.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
@@ -23,6 +24,7 @@
     "keyv": "^4.5.4",
     "keyv-file": "^0.3.1",
     "path": "^0.12.7",
+    "postcss": "^8.4.41",
     "tailwindcss": "^3.4.9"
   },
   "devDependencies": {
