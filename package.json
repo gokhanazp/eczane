@@ -5,18 +5,18 @@
   "scripts": {
     "start": "npm install && npm run build:tailwind && node app.js",
     "dev": "npm install && npm run build:tailwind && nodemon app.js",
-    "build:tailwind": "tailwindcss build -i public/tailwind.css -o public/dist/tailwindout.css"
+    "build:tailwind": "tailwindcss -i public/style.css -o public/dist/tailwindout.css --minify"
   },
   "type": "commonjs",
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "autoprefixer": "^10.4.20",
     "cache-manager": "^5.7.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-ejs-layouts": "^2.5.1",
@@ -24,9 +24,7 @@
     "keyv": "^4.5.4",
     "keyv-file": "^0.3.1",
     "path": "^0.12.7",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.9",
-    "dotenv": "^16.4.5"
+    "tailwindcss": "^3.4.9"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
