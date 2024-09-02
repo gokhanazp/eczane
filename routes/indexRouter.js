@@ -242,7 +242,7 @@ router.get(
     }
 
     const error = req.flash("error");
-    res.status(200).render("pages/dutyPharmacies/index", {
+    res.status(200).render("pages/districts/index", {
       title: `${currentCity} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       breadcrumbList: [
         { name: "Nöbetçi Eczaneler", url: undefined },
