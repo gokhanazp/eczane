@@ -394,41 +394,50 @@ router.get(
   }
 );
 
-router.get("/sitene-ekle", async (req, res) => {
-  const { city, district } = req.query;
-  let cities = [];
-  let selectableDistricts = [];
-  let pharmacyByCities = {};
-  let selectedCity = "";
-  let selectedDistrict = district || "";
-
-  try {
-    cities = await DutyPharmacyService.getCities();
-    cities = cities.map(c => c.cities);
-
-    if (city) {
-      selectedCity = city;
-      selectableDistricts = await DutyPharmacyService.getDistricts(city);
-      selectableDistricts = selectableDistricts.map(d => d.cities);
-      pharmacyByCities = await _getPharmaciesByCities(cities.length, city);
+router.get(
+  "/sitene-ekle",
+  (req, res, next) => {
+    const { city } = req.query;
+    if (!city) {
+      return res.redirect("/sitene-ekle?city=İstanbul");
     }
-  } catch (error) {
-    req.flash("error", "Cities not found");
+    next();
+  },
+  async (req, res) => {
+    const { city, district } = req.query;
+    let cities = [];
+    let selectableDistricts = [];
+    let pharmacyByCities = {};
+    let selectedCity = city || "İstanbul";
+    let selectedDistrict = district || "";
+
+    try {
+      cities = await DutyPharmacyService.getCities();
+      cities = cities.map(c => c.cities);
+
+      if (city) {
+        selectableDistricts = await DutyPharmacyService.getDistricts(city);
+        selectableDistricts = selectableDistricts.map(d => d.cities);
+        pharmacyByCities = await _getPharmaciesByCities(cities.length, city);
+      }
+    } catch (error) {
+      req.flash("error", "Cities not found");
+    }
+
+    const error = req.flash("error");
+
+    res.status(200).render("pages/addToSite", {
+      title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
+      breadcrumbList: [{ name: "Sitene Ekle", url: "/sitene-ekle" }],
+      error,
+      cities,
+      selectedCity,
+      selectedDistrict,
+      selectableDistricts,
+      pharmacyByCities,
+    });
   }
-
-  const error = req.flash("error");
-
-  res.status(200).render("pages/addToSite", {
-    title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
-    breadcrumbList: [{ name: "Sitene Ekle", url: "/sitene-ekle" }],
-    error,
-    cities,
-    selectedCity,
-    selectedDistrict,
-    selectableDistricts,
-    pharmacyByCities,
-  });
-});
+);
 
 router.get("/sitene-ekle-iframe", async (req, res) => {
   const { city, district } = req.query;
