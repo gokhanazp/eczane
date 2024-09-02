@@ -394,4 +394,72 @@ router.get(
   }
 );
 
+router.get("/sitene-ekle", async (req, res) => {
+  const { city, district } = req.query;
+  let cities = [];
+  let selectableDistricts = [];
+  let pharmacyByCities = {};
+  let selectedCity = "";
+  let selectedDistrict = district || "";
+
+  try {
+    cities = await DutyPharmacyService.getCities();
+    cities = cities.map(c => c.cities);
+
+    if (city) {
+      selectedCity = city;
+      selectableDistricts = await DutyPharmacyService.getDistricts(city);
+      selectableDistricts = selectableDistricts.map(d => d.cities);
+      pharmacyByCities = await _getPharmaciesByCities(cities.length, city);
+    }
+  } catch (error) {
+    req.flash("error", "Cities not found");
+  }
+
+  const error = req.flash("error");
+
+  res.status(200).render("pages/addToSite", {
+    title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
+    breadcrumbList: [{ name: "Sitene Ekle", url: "/sitene-ekle" }],
+    error,
+    cities,
+    selectedCity,
+    selectedDistrict,
+    selectableDistricts,
+    pharmacyByCities,
+  });
+});
+
+router.get("/sitene-ekle-iframe", async (req, res) => {
+  const { city, district } = req.query;
+  let pharmacies = [];
+  let selectedCity = "";
+  let selectedDistrict = "";
+
+  try {
+    if (city && district) {
+      selectedCity = city;
+      selectedDistrict = district;
+      pharmacies = await _getPharmaciesOnlyDistrict(city, district);
+    } else if (city) {
+      selectedCity = city;
+      const pharms = await _getPharmacies(city);
+      if (pharms && pharms[city]) pharmacies = pharms[city];
+    }
+  } catch (error) {
+    req.flash("error", "Cities not found");
+  }
+
+  const error = req.flash("error");
+
+  res.status(200).render("pages/addToSiteIframe", {
+    title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
+    removeNavbar: true,
+    error,
+    selectedCity,
+    selectedDistrict,
+    pharmacies,
+  });
+});
+
 module.exports = router;
