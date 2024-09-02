@@ -37,7 +37,15 @@ async function _getPharmacies(city) {
   let cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
 
   try {
-    if (!cachedPharmacies || !cachedPharmacies[city]) {
+    if (
+      !cachedPharmacies ||
+      !cachedPharmacies[city] ||
+      !cachedPharmacies[city].find(p => {
+        const p1 = translateEnglish({ text: p.city }).text.toLowerCase();
+        const p2 = translateEnglish({ text: city }).text.toLowerCase();
+        return p1 === p2;
+      })
+    ) {
       const pharmacies = await DutyPharmacyService.getDutyPharmaciesBy(city);
 
       if (pharmacies) {
