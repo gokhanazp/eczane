@@ -110,10 +110,11 @@ router.get(
   async (req, res) => {
     let { city } = req.params;
     decodeURIComponent(req.params);
-    let dutyPharmacies = [];
+    let dutyPharmacies = {};
     let districts = [];
     let cities = [];
     let currentCity;
+    let allDutyPharmaciesCount = 0;
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
@@ -131,6 +132,9 @@ router.get(
       const pharmacies = await _getPharmacies();
 
       dutyPharmacies = pharmacies[currentCity];
+      for (const district in dutyPharmacies) {
+        allDutyPharmaciesCount += dutyPharmacies[district].length;
+      }
     } catch (error) {
       req.flash("error", "Duty Pharmacies not found");
     }
@@ -144,6 +148,7 @@ router.get(
       ],
       error,
       dutyPharmacies,
+      allDutyPharmaciesCount,
       cities,
       district: "",
       city: currentCity ?? city,
