@@ -107,7 +107,7 @@
 
   <% if(dutyPharmacies.length === 0) { %>
   <div class="flex flex-col w-full items-center justify-center">
-    <h2 class="text-xl font-semibold">Nöbetçi eczane bulunamadı!</h2>
+    <h3 class="text-xl font-semibold">Nöbetçi eczane bulunamadı!</h3>
   </div>
   <% } else { %>
   <div class="pharmacy-container">
@@ -118,42 +118,42 @@
   <% } %>
 </div>
 <div class="container mx-auto px-4 py-8">
-  <h1 class="text-4xl font-bold text-center text-gray-800 mb-8"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczaneler - 7/24 Açık Eczaneler</h1>
+  <h2 class="text-4xl font-bold text-center text-gray-800 mb-8"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczaneler - 7/24 Açık Eczaneler</h1>
 
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da Nöbetçi Eczane Bulma Rehberi</h2>
-    <p class="text-gray-600 leading-relaxed">
-      <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>, Türkiye'nin önemli şehirlerinden biri olarak, sağlık hizmetlerinin her an ulaşılabilir olmasını sağlayan nöbetçi eczanelere sahiptir. Bu şehirde, acil ilaç ihtiyaçlarınız için nöbetçi eczaneler önemli bir hizmet sunar. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da 7/24 açık nöbetçi eczaneleri bulmak artık çok daha kolay. Sitemiz üzerinden <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'nın tüm ilçelerindeki nöbetçi eczanelerin güncel listesini görüntüleyebilir, harita üzerinde konumlarını inceleyebilir ve yol tarifi alabilirsiniz.
-    </p>
-  </section>
+    <section class="mb-8">
+      <h3 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da Nöbetçi Eczane Bulma Rehberi</h3>
+      <p class="text-gray-600 leading-relaxed">
+        <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>, Türkiye'nin önemli şehirlerinden biri olarak, sağlık hizmetlerinin her an ulaşılabilir olmasını sağlayan nöbetçi eczanelere sahiptir. Bu şehirde, acil ilaç ihtiyaçlarınız için nöbetçi eczaneler önemli bir hizmet sunar. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da 7/24 açık nöbetçi eczaneleri bulmak artık çok daha kolay. Sitemiz üzerinden <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'nın tüm ilçelerindeki nöbetçi eczanelerin güncel listesini görüntüleyebilir, harita üzerinde konumlarını inceleyebilir ve yol tarifi alabilirsiniz.
+      </p>
+    </section>
 
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczanelerinin Önemi</h2>
-    <p class="text-gray-600 leading-relaxed">
-      <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> gibi büyük bir şehirde, hastalıkların aniden ortaya çıkabileceği birçok farklı durumla karşılaşabilirsiniz. Gecenin bir yarısında ya da hafta sonu acil bir ilaç ihtiyacı doğduğunda, <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da hizmet veren nöbetçi eczaneler sağlığınız için hayati bir rol oynar. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'daki nöbetçi eczaneler, sizlere en yakın konumda 7/24 hizmet vererek sağlık ihtiyaçlarınızı karşılar.
-    </p>
-  </section>
+    <section class="mb-8">
+      <h3 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczanelerinin Önemi</h3>
+      <p class="text-gray-600 leading-relaxed">
+        <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> gibi büyük bir şehirde, hastalıkların aniden ortaya çıkabileceği birçok farklı durumla karşılaşabilirsiniz. Gecenin bir yarısında ya da hafta sonu acil bir ilaç ihtiyacı doğduğunda, <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da hizmet veren nöbetçi eczaneler sağlığınız için hayati bir rol oynar. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'daki nöbetçi eczaneler, sizlere en yakın konumda 7/24 hizmet vererek sağlık ihtiyaçlarınızı karşılar.
+      </p>
+    </section>
 
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da En Yakın Nöbetçi Eczane Nasıl Bulunur?</h2>
-    <p class="text-gray-600 leading-relaxed">
-      <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'nın yoğunluğunda, size en yakın nöbetçi eczaneyi bulmak önemlidir. Web sitemiz, bulunduğunuz konuma en yakın nöbetçi eczaneleri kolayca bulmanızı sağlar. Konumunuzu belirleyin ve size en yakın nöbetçi eczaneyi saniyeler içinde keşfedin.
-    </p>
-  </section>
+    <section class="mb-8">
+      <h3 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da En Yakın Nöbetçi Eczane Nasıl Bulunur?</h3>
+      <p class="text-gray-600 leading-relaxed">
+        <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'nın yoğunluğunda, size en yakın nöbetçi eczaneyi bulmak önemlidir. Web sitemiz, bulunduğunuz konuma en yakın nöbetçi eczaneleri kolayca bulmanızı sağlar. Konumunuzu belirleyin ve size en yakın nöbetçi eczaneyi saniyeler içinde keşfedin.
+      </p>
+    </section>
 
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczane Listesi - Güncel ve Doğru Bilgi</h2>
-    <p class="text-gray-600 leading-relaxed">
-      Sitemizde <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'nın tüm ilçelerindeki nöbetçi eczaneler yer almakta olup, bu bilgiler düzenli olarak güncellenmektedir. Her nöbetçi eczanenin adresi, telefon numarası ve çalışma saatleri gibi detayları bulabilirsiniz. Böylece, aradığınız ilaç için <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'daki herhangi bir nöbetçi eczaneye gitmeden önce, ihtiyacınız olan bilgiyi edinebilirsiniz.
-    </p>
-  </section>
+    <section class="mb-8">
+      <h3 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczane Listesi - Güncel ve Doğru Bilgi</h3>
+      <p class="text-gray-600 leading-relaxed">
+        Sitemizde <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'nın tüm ilçelerindeki nöbetçi eczaneler yer almakta olup, bu bilgiler düzenli olarak güncellenmektedir. Her nöbetçi eczanenin adresi, telefon numarası ve çalışma saatleri gibi detayları bulabilirsiniz. Böylece, aradığınız ilaç için <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'daki herhangi bir nöbetçi eczaneye gitmeden önce, ihtiyacınız olan bilgiyi edinebilirsiniz.
+      </p>
+    </section>
 
-  <section class="mb-8">
-    <h2 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczane Rehberi - Sağlığınız İçin 7/24 Hizmet</h2>
-    <p class="text-gray-600 leading-relaxed">
-      Sağlığınız en değerli varlığınızdır. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da herhangi bir acil durumda ihtiyacınız olan ilaçları temin etmek için nöbetçi eczaneler daima hizmetinizdedir. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'daki nöbetçi eczanelerin güncel bilgilerini sitemizden takip edebilir, en yakın eczaneye kolayca ulaşabilirsiniz.
-    </p>
-  </section>
+    <section class="mb-8">
+      <h3 class="text-2xl font-semibold text-gray-700 mb-4"> <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %> Nöbetçi Eczane Rehberi - Sağlığınız İçin 7/24 Hizmet</h3>
+      <p class="text-gray-600 leading-relaxed">
+        Sağlığınız en değerli varlığınızdır. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'da herhangi bir acil durumda ihtiyacınız olan ilaçları temin etmek için nöbetçi eczaneler daima hizmetinizdedir. <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <% if(district) { %> <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %> <% } %>'daki nöbetçi eczanelerin güncel bilgilerini sitemizden takip edebilir, en yakın eczaneye kolayca ulaşabilirsiniz.
+      </p>
+    </section>
 </div>
 <script type="text/javascript">
   async function changeDistrict(value) {
