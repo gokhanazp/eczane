@@ -14,10 +14,9 @@
             <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
               <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %>
             </h3>
-            <% includeDistrictPharmacy = dutyPharmacies != undefined ? dutyPharmacies?.filter(dutyPharmacy => dutyPharmacy.district === district) : [] %>
-            <% if (includeDistrictPharmacy) { %>
+            <% if (dutyPharmacies[district]) { %>
             <p class="text-sm text-gray-500 dark:text-neutral-500">
-              <%= includeDistrictPharmacy.length %> nöbetçi eczane
+              <%= dutyPharmacies[district].length %> nöbetçi eczane
             </p>
             <% } else { %>
             <p class="text-sm text-gray-500 dark:text-neutral-500">

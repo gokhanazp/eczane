@@ -11,8 +11,6 @@ const cacheInstance = new Keyv({
 
 const CacheNames = {
   PHARMACIES: "pharmacies",
-  PHARMACY_BY_CITIES: "pharmacyByCities",
-  PHARMACY_BY_DISTRICTS: "pharmacyByDistricts",
 };
 
 const cacheManage = {
