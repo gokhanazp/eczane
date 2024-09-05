@@ -275,7 +275,7 @@ router.get(
       const pharmacies = await _getPharmacies();
       for (const city in pharmacies) {
         for (const district in pharmacies[city]) {
-          pharmacy = pharmacies[city][district].find(p => p.id === id);
+          pharmacy = pharmacies[city][district].flat().find(p => p.id == id);
           if (pharmacy) break;
         }
         if (pharmacy) break;
