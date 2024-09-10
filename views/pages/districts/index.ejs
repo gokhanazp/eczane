@@ -147,3 +147,27 @@
     window.location.href = `/nobetcieczane/<%= city %>/${value}`;
   }
 </script>
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "name": "TurkiyeNobetcieczane.com - <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> Nöbetçi Eczaneler",
+    "url": "https://www.turkiyenobetcieczane.com/nobetcieczane/<%= city %>",
+    "description": "<%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> şehrindeki nöbetçi eczanelerin güncel listesini görüntüleyebilir, harita üzerinde konumlarını inceleyebilir ve yol tarifi alabilirsiniz.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Türkiye Nöbetçi Eczane",
+      "url": "https://www.turkiyenobetcieczane.com"
+    },
+    "mainEntity": {
+      "@type": "WebPage",
+      "@id": "https://www.turkiyenobetcieczane.com/nobetcieczane/<%= city %>",
+      "potentialAction": {
+        "@type": "Action",
+        "target": "https://www.turkiyenobetcieczane.com/nobetcieczane/<%= city %>",
+        "name": "<%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> Nöbetçi Eczaneler"
+      }
+    }
+  }
+</script>

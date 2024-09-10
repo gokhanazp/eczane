@@ -28,3 +28,28 @@
   <h3 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">Eczane bulunamadı.</h3>
 </div>
 <% } %>
+
+<% pharmacySlug=pharmacy.name.replace(/ /g, '-' ).toLowerCase() %>
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "name": "TurkiyeNobetcieczane.com - <%= pharmacy.name %> (<%= pharmacy.city %>/<%= pharmacy.district %>)",
+    "url": "https://www.turkiyenobetcieczane.com/eczaneler/<%= pharmacySlug %>-<%= pharmacy.id %>",
+    "description": "<%= pharmacy.name %> (<%= pharmacy.city %>/<%= pharmacy.district %>) adresi, telefon numarası ve harita üzerinde konumu. Türkiye'nin en güncel ve en doğru nöbetçi eczane bilgilerine ulaşabileceğiniz platform.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Türkiye Nöbetçi Eczane",
+      "url": "https://www.turkiyenobetcieczane.com"
+    },
+    "mainEntity": {
+      "@type": "WebPage",
+      "@id": "https://www.turkiyenobetcieczane.com/eczaneler/<%= pharmacySlug %>-<%= pharmacy.id %>",
+      "potentialAction": {
+        "@type": "Action",
+        "target": "https://www.turkiyenobetcieczane.com/eczaneler/<%= pharmacySlug %>-<%= pharmacy.id %>",
+        "name": "<%= pharmacy.name %> (<%= pharmacy.city %>/<%= pharmacy.district %>)"
+      }
+    }
+  }
+</script>

@@ -160,3 +160,27 @@
     window.location.href = `/nobetcieczane/<%= city %>/${value}`;
   }
 </script>
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "name": "TurkiyeNobetcieczane.com - <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <%= district ? district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') : '' %> Nöbetçi Eczaneler",
+    "url": "https://www.turkiyenobetcieczane.com/nobetcieczane/<%= city %>/<%= district %>",
+    "description": "<%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <%= district ? district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') : '' %> ilçesindeki nöbetçi eczanelerin listesini güncel olarak sitemizden takip edebilirsiniz. Sağlığınız için 7/24 hizmet veren nöbetçi eczanelere kolayca ulaşın.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Türkiye Nöbetçi Eczane",
+      "url": "https://www.turkiyenobetcieczane.com"
+    },
+    "mainEntity": {
+      "@type": "WebPage",
+      "@id": "https://www.turkiyenobetcieczane.com/nobetcieczane/<%= city %>/<%= district %>"
+      "potentialAction": {
+        "@type": "Action",
+        "target": "https://www.turkiyenobetcieczane.com/nobetcieczane/<%= city %>/<%= district %>",
+        "name": "<%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %> <%= district ? district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') : '' %> Nöbetçi Eczaneler"
+      }
+    }
+  }
+</script>
