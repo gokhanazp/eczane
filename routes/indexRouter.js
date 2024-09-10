@@ -280,16 +280,12 @@ router.get(
       const pharmacies = [...(cachePharmacies ?? [])];
 
       if (pharmacies.length === 0 || !pharmacies.find(p => p.id == id)) {
-        pharmacy = await DutyPharmacyService.getPharmacyById(id);
+        const newPharmacy = await DutyPharmacyService.getPharmacyById(id);
+        pharmacies.push(newPharmacy);
+        await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, 1000 * 60 * 60 * 24 * 7);
       }
 
-      for (const city in pharmacies) {
-        for (const district in pharmacies[city]) {
-          pharmacy = pharmacies[city][district].flat().find(p => p.id == id);
-          if (pharmacy) break;
-        }
-        if (pharmacy) break;
-      }
+      pharmacy = pharmacies.find(p => p.id == id);
     } catch (error) {
       req.flash("error", "Pharmacy not found");
     }

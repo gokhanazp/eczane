@@ -2,7 +2,6 @@ require("dotenv").config();
 const path = require("path");
 const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 const translateEnglish = require("../utils/translateEnglish");
-const { cacheManage, CacheNames } = require("../utils/cacheManage");
 
 const DUTY_API_URL = process.env.DUTY_API_URL;
 const DUTY_API_KEY = process.env.DUTY_API_KEY;
@@ -225,14 +224,6 @@ class DutyPharmacyService {
 
       if (!resJson.data || resJson.data.length === 0) {
         throw new Error(`Failed to fetch pharmacy: Pharmacy not found`);
-      }
-
-      const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
-      let pharmacies = [...(cachedPharmacies ?? [])];
-
-      if (pharmacies.length === 0 || !pharmacies.find(p => p.id === id)) {
-        pharmacies.push(resJson.data[0]);
-        await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, 1000 * 60 * 60 * 24 * 7);
       }
 
       return DutyPharmacyModel.fromJson(resJson.data[0]);
