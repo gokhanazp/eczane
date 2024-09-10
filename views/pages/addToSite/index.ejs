@@ -7,58 +7,22 @@
     document.execCommand('copy');
     document.body.removeChild(el);
   }
-
-  function onChangeCity(event) {
-    const selectedCity = event.target.value;
-
-    window.location.href = `/sitene-ekle?city=${selectedCity}`;
-  }
-
-  function onChangeDistrict(event) {
-    const selectedCity = document.getElementById('districtsCity').value;
-    const selectedDistrict = event.target.value;
-
-    window.location.href = `/sitene-ekle?city=${selectedCity}&district=${selectedDistrict}`;
-  }
 </script>
 
 <h1 class="text-center text-3xl font-bold">Sitene Ekle</h1>
 
 <p class="text-center text-sm text-gray-500" style="margin-top: 0.4rem;">Aşağıdaki kodu sitenin istediğin bir yerine yapıştırarak, Türkiye'nin tüm nöbetçi eczanelerini ziyaretçilerine sunabilirsin.</p>
 
-<div class="container flex items-center justify-center" style="margin-top: 2rem;gap: 0.5rem;">
-  <select id="districtsCity" name="districtsCity" class="w-full relative dark:text-white z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20" onchange="onChangeCity(event)" required>
-    <option value="" disabled selected>İl Seç</option>
-    <% cities.forEach(city => { %>
-    <option value="<%= city %>" <%= (typeof selectedCity !== 'undefined' && selectedCity.toLocaleLowerCase('tr-TR')==city.toLocaleLowerCase('tr-TR')) ? 'selected' : '' %>>
-      <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %>
-    </option>
-    <% }); %>
-  </select>
-  <select id="districtsDistrict" name="districtsDistrict" class="w-full relative dark:text-white z-10 flex gap-x-3 p-3 bg-white border rounded-lg shadow-lg shadow-gray-100 dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-gray-900/20" onchange="onChangeDistrict(event)" required>
-    <option value="" disabled selected>İlçe Seç</option>
-    <% if(typeof selectableDistricts !== 'undefined' && selectableDistricts && selectableDistricts.length > 0) { %>
-    <% selectableDistricts.forEach(district => { %>
-    <option value="<%= district %>" <%= (typeof selectedDistrict !== 'undefined' && selectedDistrict.toLocaleLowerCase('tr-TR')==district.toLocaleLowerCase('tr-TR')) ? 'selected' : '' %>>
-      <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %>
-    </option>
-    <% }); %>
-    <% } %>
-  </select>
-</div>
-
-<% if(selectedCity) { %>
 <div class="flex flex-col items-center justify-center" style="margin-top: 2rem;">
   <code class="bg-gray-100 p-3 rounded-lg" id="addToSiteFrame">
-    &lt;iframe src="https://www.turkiyenobetcieczane.com/sitene-ekle-iframe<%=selectedCity?(selectedDistrict?`?city=${selectedCity}&district=${selectedDistrict}`:`?city=${selectedCity}`):''%>" width="100%" height="300" style="border:none;max-width: 450px;" allow="geolocation" /&gt;
+    &lt;iframe src="https://www.turkiyenobetcieczane.com/sitene-ekle-iframe" width="100%" height="300" style="border:none;max-width: 450px;" allow="geolocation" /&gt;
   </code>
   <button class="bg-blue-500 text-white px-3 py-2 rounded-lg mt-3" onclick="copyToClipboard()">Kopyala</button>
 </div>
 
 <div class="flex flex-row items-center justify-center" style="margin-top: 1rem;">
-  <iframe src="https://www.turkiyenobetcieczane.com/sitene-ekle-iframe<%=selectedCity?(selectedDistrict?`?city=${selectedCity}&district=${selectedDistrict}`:`?city=${selectedCity}`):''%>" class="shadow-lg rounded-md" width="100%" height="300" style="border:none;max-width: 450px;" allow="geolocation" />
+  <iframe src="http://localhost:3000/sitene-ekle-iframe" class="shadow-lg rounded-md" width="100%" height="300" style="border:none;max-width: 450px;" allow="geolocation" />
 </div>
-<% } %>
 
 <script type="application/ld+json">
   {

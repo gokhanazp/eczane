@@ -307,20 +307,30 @@ router.get(
   }
 );
 
+router.get("/sitene-ekle", async (req, res) => {
+  const error = req.flash("error");
+
+  res.status(200).render("pages/addToSite", {
+    title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
+    breadcrumbList: [{ name: "Sitene Ekle", url: "/sitene-ekle" }],
+    error,
+  });
+});
+
 router.get(
-  "/sitene-ekle",
+  "/sitene-ekle-iframe",
   (req, res, next) => {
     const { city } = req.query;
     if (!city) {
-      return res.redirect("/sitene-ekle?city=İstanbul");
+      return res.redirect("/sitene-ekle-iframe?city=İstanbul");
     }
     next();
   },
   async (req, res) => {
     const { city, district } = req.query;
     let cities = [];
+    let pharmacies = [];
     let selectableDistricts = [];
-    let pharmacyByCities = {};
     let selectedCity = city || "İstanbul";
     let selectedDistrict = district || "";
 
@@ -329,10 +339,23 @@ router.get(
       cities = cities.map(c => c.cities);
 
       if (city) {
+        selectedCity = city;
         selectableDistricts = await DutyPharmacyService.getDistricts(city);
         selectableDistricts = selectableDistricts.map(d => d.cities);
-        const pharms = await _getPharmacies();
-        if (pharms && pharms[city]) pharmacyByCities = pharms[city];
+      }
+
+      const pharms = await _getPharmacies();
+
+      if (district) {
+        if (pharms) {
+          pharmacies = pharms[city][district];
+        }
+      } else {
+        if (pharms && pharms[city]) {
+          for (const district in pharms[city]) {
+            pharmacies = [...pharmacies, ...pharms[city][district]];
+          }
+        }
       }
     } catch (error) {
       req.flash("error", "Cities not found");
@@ -340,56 +363,17 @@ router.get(
 
     const error = req.flash("error");
 
-    res.status(200).render("pages/addToSite", {
+    res.status(200).render("pages/addToSiteIframe", {
       title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
-      breadcrumbList: [{ name: "Sitene Ekle", url: "/sitene-ekle" }],
+      removeNavbar: true,
       error,
       cities,
       selectedCity,
       selectedDistrict,
       selectableDistricts,
-      pharmacyByCities,
+      pharmacies,
     });
   }
 );
-
-router.get("/sitene-ekle-iframe", async (req, res) => {
-  const { city, district } = req.query;
-  let pharmacies = [];
-  let selectedCity = "";
-  let selectedDistrict = "";
-
-  try {
-    if (city && district) {
-      selectedCity = city;
-      selectedDistrict = district;
-      const pharms = await _getPharmacies();
-      if (pharms) {
-        pharmacies = pharms[city][district];
-      }
-    } else if (city) {
-      selectedCity = city;
-      const pharms = await _getPharmacies();
-      if (pharms) {
-        for (const district in pharms[city]) {
-          pharmacies = [...pharmacies, ...pharms[city][district]];
-        }
-      }
-    }
-  } catch (error) {
-    req.flash("error", "Cities not found");
-  }
-
-  const error = req.flash("error");
-
-  res.status(200).render("pages/addToSiteIframe", {
-    title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
-    removeNavbar: true,
-    error,
-    selectedCity,
-    selectedDistrict,
-    pharmacies,
-  });
-});
 
 module.exports = router;
