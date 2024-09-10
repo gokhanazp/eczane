@@ -29,6 +29,7 @@
 </div>
 <% } %>
 
+<% if(typeof pharmacy !== 'undefined' && pharmacy) { %>
 <% pharmacySlug=pharmacy.name.replace(/ /g, '-' ).toLowerCase() %>
 <script type="application/ld+json">
   {
@@ -53,3 +54,4 @@
     }
   }
 </script>
+<% } %>

@@ -8,23 +8,28 @@ const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 const router = Router();
 
 const _getPharmacies = async () => {
+  const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
   const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
-  if (cachedPharmacies) return cachedPharmacies;
+  if (cachedDailyPharmacies) return cachedDailyPharmacies;
 
   const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies();
-  let pharmacies = {};
+  let dailyPharmacies = {};
+  let pharmacies = [...(cachedPharmacies ?? [])];
 
   for (let i = 0; i < pharmaciesRes.length; i++) {
+    const id = pharmaciesRes[i].id;
     const city = pharmaciesRes[i].city;
     const district = pharmaciesRes[i].district;
-    if (!pharmacies[city]) pharmacies[city] = {};
-    if (!pharmacies[city][district]) pharmacies[city][district] = [];
-    pharmacies[city][district].push(pharmaciesRes[i]);
+    if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
+    if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
+    dailyPharmacies[city][district].push(pharmaciesRes[i]);
+    if (!pharmacies.find(p => p.id === id)) pharmacies.push(pharmaciesRes[i]);
   }
 
-  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate());
+  await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate());
+  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, 1000 * 60 * 60 * 24 * 7);
 
-  return pharmacies;
+  return dailyPharmacies;
 };
 
 router.get("/", async function (req, res) {
@@ -48,7 +53,6 @@ router.get("/", async function (req, res) {
       pharmacyByCities[city] = count;
     }
   } catch (error) {
-    console.log(error);
     req.flash("error", "Cities not found");
   }
 
@@ -272,7 +276,13 @@ router.get(
     let pharmacy = null;
 
     try {
-      const pharmacies = await _getPharmacies();
+      const cachePharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
+      const pharmacies = [...(cachePharmacies ?? [])];
+
+      if (pharmacies.length === 0 || !pharmacies.find(p => p.id == id)) {
+        pharmacy = await DutyPharmacyService.getPharmacyById(id);
+      }
+
       for (const city in pharmacies) {
         for (const district in pharmacies[city]) {
           pharmacy = pharmacies[city][district].flat().find(p => p.id == id);
