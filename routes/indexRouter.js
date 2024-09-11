@@ -376,4 +376,18 @@ router.get(
   }
 );
 
+router.get("/privacy-policy", async (req, res) => {
+  res.status(200).render("pages/privacyPolicy", {
+    title: "Gizlilik Politikası",
+    breadcrumbList: [{ name: "Gizlilik Politikası", url: "/privacy-policy" }],
+  });
+});
+
+router.get("/terms-and-conditions", async (req, res) => {
+  res.status(200).render("pages/termsAndConditions", {
+    title: "Kullanım Koşulları",
+    breadcrumbList: [{ name: "Kullanım Koşulları", url: "/terms-and-conditions" }],
+  });
+});
+
 module.exports = router;
