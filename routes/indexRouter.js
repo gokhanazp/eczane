@@ -3,7 +3,7 @@ const DutyPharmacyService = require("../services/DutyPharmacyService");
 const translateEnglish = require("../utils/translateEnglish");
 const { getCookie, setCookie, CookieNames } = require("../utils/cookieManage");
 const { cacheManage, CacheNames } = require("../utils/cacheManage");
-const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
+const { dutyTTLGenerate, dutyTTLGenerateWeekly } = require("../utils/dutyTTLGenerate");
 
 const router = Router();
 
@@ -26,8 +26,8 @@ const _getPharmacies = async () => {
     if (!pharmacies.find(p => p.id === id)) pharmacies.push(pharmaciesRes[i]);
   }
 
-  await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate());
-  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, 1000 * 60 * 60 * 24 * 7);
+  await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1));
+  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(7));
 
   return dailyPharmacies;
 };
@@ -282,7 +282,7 @@ router.get(
       if (pharmacies.length === 0 || !pharmacies.find(p => p.id == id)) {
         const newPharmacy = await DutyPharmacyService.getPharmacyById(id);
         pharmacies.push(newPharmacy);
-        await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, 1000 * 60 * 60 * 24 * 7);
+        await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(7));
       }
 
       pharmacy = pharmacies.find(p => p.id == id);
