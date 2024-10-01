@@ -3,7 +3,7 @@ const DutyPharmacyService = require("../services/DutyPharmacyService");
 const translateEnglish = require("../utils/translateEnglish");
 const { getCookie, setCookie, CookieNames } = require("../utils/cookieManage");
 const { cacheManage, CacheNames } = require("../utils/cacheManage");
-const { dutyTTLGenerate, dutyTTLGenerateWeekly } = require("../utils/dutyTTLGenerate");
+const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 
 const router = Router();
 
