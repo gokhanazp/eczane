@@ -14,29 +14,35 @@ class DutyPharmacyModel {
   }
 
   static fromJson(json) {
-    let phoneRep = json.phone;
-    if (phoneRep.startsWith("0")) {
-      phoneRep = `+9${phoneRep}`;
-    } else if (phoneRep.startsWith("90")) {
-      phoneRep = `+${phoneRep}`;
-    } else if (phoneRep.startsWith("+90")) {
-      phoneRep = `${phoneRep}`;
+    let phoneRep = json.phone || "";
+
+    // Null/undefined kontrolü ekle
+    if (phoneRep && typeof phoneRep === 'string') {
+      if (phoneRep.startsWith("0")) {
+        phoneRep = `+9${phoneRep}`;
+      } else if (phoneRep.startsWith("90")) {
+        phoneRep = `+${phoneRep}`;
+      } else if (phoneRep.startsWith("+90")) {
+        phoneRep = `${phoneRep}`;
+      } else {
+        phoneRep = `+90${phoneRep}`;
+      }
     } else {
-      phoneRep = `+90${phoneRep}`;
+      phoneRep = "Telefon bilgisi yok";
     }
 
     return new DutyPharmacyModel(
-      json.pharmacyID,
-      json.pharmacyName,
-      json.address,
-      json.city,
-      json.district,
-      json.directions,
+      json.pharmacyID || "",
+      json.pharmacyName || "Eczane adı belirtilmemiş",
+      json.address || "Adres bilgisi yok",
+      json.city || "Şehir belirtilmemiş",
+      json.district || "İlçe belirtilmemiş",
+      json.directions || "Yol tarifi yok",
       phoneRep,
-      json.pharmacyDutyStart,
-      json.pharmacyDutyEnd,
-      json.latitude,
-      json.longitude
+      json.pharmacyDutyStart || "",
+      json.pharmacyDutyEnd || "",
+      json.latitude || 0,
+      json.longitude || 0
     );
   }
 

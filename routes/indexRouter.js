@@ -40,6 +40,183 @@ router.get("/seo-analysis", async (req, res) => {
   });
 });
 
+// Cache Temizleme endpoint'i
+router.post("/clear-cache", async (req, res) => {
+  try {
+    // Manuel cache temizleme
+    await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, null, 0);
+    await cacheManage.setCache(CacheNames.PHARMACIES, null, 0);
+    console.log("🗑️ Tüm cache temizlendi");
+
+    res.json({
+      message: "✅ Cache başarıyla temizlendi",
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Cache temizleme hatası",
+      message: error.message
+    });
+  }
+});
+
+// _getPharmacies Test endpoint'i
+router.get("/test-getpharmacies", async (req, res) => {
+  try {
+    console.log("🔍 _getPharmacies Test başlatılıyor...");
+
+    // Cache'i kontrol et
+    const cachedDaily = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+    const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
+
+    console.log("📦 Cache durumu:", {
+      dailyExists: !!cachedDaily,
+      pharmaciesExists: !!cachedPharmacies,
+      dailyKeys: cachedDaily ? Object.keys(cachedDaily).length : 0,
+      pharmaciesLength: cachedPharmacies ? cachedPharmacies.length : 0
+    });
+
+    // _getPharmacies fonksiyonunu çağır
+    const result = await _getPharmacies();
+
+    console.log("✅ _getPharmacies sonucu:", {
+      resultType: typeof result,
+      isNull: result === null,
+      cityCount: result ? Object.keys(result).length : 0,
+      sampleCities: result ? Object.keys(result).slice(0, 5) : []
+    });
+
+    res.json({
+      message: "🔍 _getPharmacies Test Sonucu",
+      cache: {
+        dailyExists: !!cachedDaily,
+        pharmaciesExists: !!cachedPharmacies,
+        dailyKeys: cachedDaily ? Object.keys(cachedDaily).length : 0,
+        pharmaciesLength: cachedPharmacies ? cachedPharmacies.length : 0
+      },
+      result: {
+        type: typeof result,
+        isNull: result === null,
+        cityCount: result ? Object.keys(result).length : 0,
+        cities: result ? Object.keys(result).slice(0, 10) : [],
+        sampleData: result && Object.keys(result).length > 0 ? {
+          city: Object.keys(result)[0],
+          districts: Object.keys(result[Object.keys(result)[0]]).slice(0, 3),
+          pharmacyCount: result[Object.keys(result)[0]][Object.keys(result[Object.keys(result)[0]])[0]]?.length || 0
+        } : null
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("❌ _getPharmacies Test hatası:", error.message);
+    res.status(500).json({
+      error: "_getPharmacies test başarısız",
+      message: error.message,
+      stack: error.stack
+    });
+  }
+});
+
+// Debug API endpoint'i
+router.get("/debug-api", async (req, res) => {
+  try {
+    console.log("🔍 Debug API başlatılıyor...");
+
+    // Raw API çağrısı
+    const response = await fetch(`${process.env.DUTY_API_URL}/all`, {
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+        authorization: process.env.DUTY_API_KEY,
+      },
+    });
+
+    const rawData = await response.json();
+    console.log("📊 Raw API Response:", {
+      status: rawData.status,
+      dataLength: rawData.data ? rawData.data.length : 0,
+      firstItem: rawData.data ? rawData.data[0] : null
+    });
+
+    // Null city kontrolü
+    const nullCities = rawData.data ? rawData.data.filter(p => !p.city) : [];
+    console.log("❌ Null city count:", nullCities.length);
+
+    res.json({
+      message: "🔍 Debug API Response",
+      status: rawData.status,
+      totalPharmacies: rawData.data ? rawData.data.length : 0,
+      nullCityCount: nullCities.length,
+      sampleData: rawData.data ? rawData.data.slice(0, 3) : [],
+      nullCitySample: nullCities.slice(0, 3),
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("❌ Debug API hatası:", error.message);
+    res.status(500).json({
+      error: "Debug API başarısız",
+      message: error.message
+    });
+  }
+});
+
+// NosyAPI Test endpoint'i
+router.get("/test-nosyapi", async (req, res) => {
+  try {
+    console.log("🔍 NosyAPI Test başlatılıyor...");
+
+    // 1. Cities test
+    const cities = await DutyPharmacyService.getCities();
+    console.log(`✅ Cities alındı: ${cities.length} şehir`);
+
+    // 2. İstanbul eczaneleri test
+    const istanbulPharmacies = await DutyPharmacyService.getDutyPharmaciesBy("istanbul");
+    console.log(`✅ İstanbul eczaneleri alındı: ${istanbulPharmacies.length} eczane`);
+
+    // 3. Tüm eczaneler test (ilk 5)
+    const allPharmacies = await DutyPharmacyService.getDutyPharmacies();
+    console.log(`✅ Tüm eczaneler alındı: ${allPharmacies.length} eczane`);
+
+    res.json({
+      message: "🚀 NosyAPI Test Başarılı",
+      results: {
+        cities: {
+          count: cities.length,
+          sample: cities.slice(0, 5).map(c => c.cities)
+        },
+        istanbulPharmacies: {
+          count: istanbulPharmacies.length,
+          sample: istanbulPharmacies.slice(0, 3).map(p => ({
+            name: p.name,
+            district: p.district,
+            phone: p.phone
+          }))
+        },
+        allPharmacies: {
+          count: allPharmacies.length,
+          sample: allPharmacies.slice(0, 3).map(p => ({
+            name: p.name,
+            city: p.city,
+            district: p.district
+          }))
+        }
+      },
+      apiConfig: {
+        url: process.env.DUTY_API_URL,
+        keyLength: process.env.DUTY_API_KEY ? process.env.DUTY_API_KEY.length : 0
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("❌ NosyAPI Test hatası:", error.message);
+    res.status(500).json({
+      error: "NosyAPI test başarısız",
+      message: error.message,
+      stack: error.stack
+    });
+  }
+});
+
 // SEO Durumu endpoint'i
 router.get("/seo-status", async (req, res) => {
   try {

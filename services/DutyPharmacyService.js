@@ -27,7 +27,7 @@ class DutyPharmacyService {
       }
 
       // start Kıbrıs remove
-      resJson.data = resJson.data.filter(pharmacy => !pharmacy.city.startsWith("Kıbrıs"));
+      resJson.data = resJson.data.filter(pharmacy => pharmacy.city && !pharmacy.city.startsWith("Kıbrıs"));
 
       const dutyPharmacies = resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
 
@@ -125,7 +125,7 @@ class DutyPharmacyService {
       }
 
       // start Kıbrıs remove
-      resJson.data = resJson.data.filter(city => !city.cities.startsWith("Kıbrıs"));
+      resJson.data = resJson.data.filter(city => city.cities && !city.cities.startsWith("Kıbrıs"));
 
       return resJson.data;
     } catch (error) {
@@ -177,7 +177,7 @@ class DutyPharmacyService {
       }
 
       if (!city) {
-        resJson.data = resJson.data.filter(city => !city.cities.startsWith("Kıbrıs"));
+        resJson.data = resJson.data.filter(city => city.cities && !city.cities.startsWith("Kıbrıs"));
       }
 
       return resJson.data;
