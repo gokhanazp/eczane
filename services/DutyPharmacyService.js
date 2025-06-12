@@ -2,6 +2,7 @@ require("dotenv").config();
 const path = require("path");
 const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 const translateEnglish = require("../utils/translateEnglish");
+const apiOptimizer = require("../utils/apiOptimizer");
 
 const DUTY_API_URL = process.env.DUTY_API_URL;
 const DUTY_API_KEY = process.env.DUTY_API_KEY;
@@ -111,48 +112,54 @@ class DutyPharmacyService {
   }
 
   async getCities() {
-    try {
-      const url = `${DUTY_API_URL}/cities`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: baseHeaders,
-      });
+    // API Optimizer ile cache'li çağrı - 30 gün cache
+    return await apiOptimizer.getWithCache(
+      "cities_list",
+      async () => {
+        const url = `${DUTY_API_URL}/cities`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: baseHeaders,
+        });
 
-      let resJson = await response.json();
+        let resJson = await response.json();
 
-      if (resJson.status !== "success") {
-        throw new Error(`Failed to fetch cities: ${resJson.message}`);
-      }
+        if (resJson.status !== "success") {
+          throw new Error(`Failed to fetch cities: ${resJson.message}`);
+        }
 
-      // start Kıbrıs remove
-      resJson.data = resJson.data.filter(city => city.cities && !city.cities.startsWith("Kıbrıs"));
+        // start Kıbrıs remove
+        resJson.data = resJson.data.filter(city => city.cities && !city.cities.startsWith("Kıbrıs"));
 
-      return resJson.data;
-    } catch (error) {
-      throw new Error("Failed to fetch cities: ", error.message);
-    }
+        return resJson.data;
+      },
+      30 // 30 gün cache - şehirler çok nadir değişir
+    );
   }
 
   async getDistricts(city) {
-    try {
-      const slug = translateEnglish({ text: city }).text.toLowerCase();
-      const url = `${DUTY_API_URL}/cities?city=${slug}`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: baseHeaders,
-      });
+    const slug = translateEnglish({ text: city }).text.toLowerCase();
 
-      const resJson = await response.json();
+    // API Optimizer ile cache'li çağrı - şehir bazında 30 gün cache
+    return await apiOptimizer.getWithCache(
+      `districts_${slug}`,
+      async () => {
+        const url = `${DUTY_API_URL}/cities?city=${slug}`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: baseHeaders,
+        });
 
-      if (resJson.status !== "success") {
-        throw new Error(`Failed to fetch districts: ${resJson.message}`);
-      }
+        const resJson = await response.json();
 
-      return resJson.data;
-    } catch (error) {
-      console.error("Fetch Error: ", error.message);
-      throw new Error(`An error occurred while fetching districts: ${error.message}`);
-    }
+        if (resJson.status !== "success") {
+          throw new Error(`Failed to fetch districts: ${resJson.message}`);
+        }
+
+        return resJson.data;
+      },
+      30 // 30 gün cache - ilçeler çok nadir değişir
+    );
   }
 
   /**

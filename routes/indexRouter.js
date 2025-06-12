@@ -4,6 +4,8 @@ const translateEnglish = require("../utils/translateEnglish");
 const { getCookie, setCookie, CookieNames } = require("../utils/cookieManage");
 const { cacheManage, CacheNames } = require("../utils/cacheManage");
 const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
+const apiOptimizer = require("../utils/apiOptimizer");
+const { testLimiter, cacheLimiter } = require("../middleware/rateLimiter");
 
 const router = Router();
 
@@ -26,8 +28,9 @@ const _getPharmacies = async () => {
     if (!pharmacies.find(p => p.id === id)) pharmacies.push(pharmaciesRes[i]);
   }
 
-  await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1));
-  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(7));
+  // Cache sürelerini uzat - API kontör tasarrufu için
+  await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(3)); // 1 günden 3 güne
+  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(30)); // 7 günden 30 güne
 
   return dailyPharmacies;
 };
@@ -40,8 +43,8 @@ router.get("/seo-analysis", async (req, res) => {
   });
 });
 
-// Cache Temizleme endpoint'i
-router.post("/clear-cache", async (req, res) => {
+// Cache Temizleme endpoint'i (Rate Limited)
+router.post("/clear-cache", cacheLimiter, async (req, res) => {
   try {
     // Manuel cache temizleme
     await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, null, 0);
@@ -60,8 +63,8 @@ router.post("/clear-cache", async (req, res) => {
   }
 });
 
-// _getPharmacies Test endpoint'i
-router.get("/test-getpharmacies", async (req, res) => {
+// _getPharmacies Test endpoint'i (Rate Limited)
+router.get("/test-getpharmacies", testLimiter, async (req, res) => {
   try {
     console.log("🔍 _getPharmacies Test başlatılıyor...");
 
@@ -113,6 +116,36 @@ router.get("/test-getpharmacies", async (req, res) => {
       error: "_getPharmacies test başarısız",
       message: error.message,
       stack: error.stack
+    });
+  }
+});
+
+// API Kontör İstatistikleri endpoint'i
+router.get("/api-stats", async (req, res) => {
+  try {
+    const stats = apiOptimizer.getApiStats();
+
+    res.json({
+      message: "📊 API Kontör İstatistikleri",
+      stats: stats,
+      recommendations: [
+        stats.usagePercentage > 80 ? "⚠️ API kullanımı yüksek, cache sürelerini artırın" : "✅ API kullanımı normal",
+        stats.remainingCalls < 100 ? "🚨 Kalan API çağrısı az, dikkatli kullanın" : "✅ Yeterli API çağrısı mevcut",
+        "💡 Gece saatleri (02:00-06:00) API çağrıları için optimal",
+        "🔄 Cache'li veriler API tasarrufu sağlar"
+      ],
+      cacheStrategy: {
+        cities: "30 gün cache (çok nadir değişir)",
+        districts: "30 gün cache (çok nadir değişir)",
+        pharmacies: "7 gün cache (haftalık güncelleme)",
+        dutyPharmacies: "3 gün cache (optimize edildi)"
+      },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "API istatistikleri alınamadı",
+      message: error.message
     });
   }
 });
