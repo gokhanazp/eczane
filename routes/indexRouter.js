@@ -6,6 +6,7 @@ const { cacheManage, CacheNames } = require("../utils/cacheManage");
 const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 const apiOptimizer = require("../utils/apiOptimizer");
 const { testLimiter, cacheLimiter } = require("../middleware/rateLimiter");
+const { getMessages, redirectWithError, redirectWithSuccess } = require("../utils/messageHelper");
 
 const router = Router();
 
@@ -366,12 +367,11 @@ router.get("/", async function (req, res) {
       "osmaniye", "hatay", "kahramanmaras", "adiyaman", "gaziantep", "kilis"
     ];
 
-    // Fallback mesajı
-    req.flash("error", "API servisi geçici olarak kullanılamıyor. Şehir listesi gösteriliyor.");
+    // Fallback durumunda query parameter ile hata mesajı göster
+    console.log("⚠️ API servisi kullanılamıyor, fallback şehir listesi kullanılıyor");
   }
 
-  const error = req.flash("error");
-  const success = req.flash("success");
+  const { error, success } = getMessages(req);
   res.status(200).render("index", {
     title: "Türkiye Nöbetçi Eczane | Şehrinizdeki Güncel Nöbetçi Eczaneler - TurkiyeNobetciEczane.com",
     breadcrumbList: undefined,
@@ -409,7 +409,7 @@ router.get("/onSelectCity/:selectedCity", async (req, res) => {
     districts = districts.map(d => d.cities);
     setCookie(res, CookieNames.SELECTABLE_DISTRICTS, districts);
   } catch (error) {
-    req.flash("error", "Districts not found");
+    console.log("❌ Districts not found:", error.message);
   }
 
   res.redirect("/");
@@ -455,10 +455,10 @@ router.get(
         allDutyPharmaciesCount += dutyPharmacies[district].length;
       }
     } catch (error) {
-      req.flash("error", "Duty Pharmacies not found");
+      console.log("❌ Duty Pharmacies not found:", error.message);
     }
 
-    const error = req.flash("error");
+    const { error } = getMessages(req);
     res.status(200).render("pages/districts/index", {
       title: `${currentCity} Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler`,
       breadcrumbList: [
@@ -524,10 +524,10 @@ router.get(
       titleCity = currentCity[0].toLocaleUpperCase("tr-TR") + currentCity.slice(1);
       titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
     } catch (error) {
-      req.flash("error", "Duty Pharmacies not found");
+      console.log("❌ Duty Pharmacies not found:", error.message);
     }
 
-    const error = req.flash("error");
+    const { error } = getMessages(req);
 
     res.status(200).render("pages/dutyPharmacies/index", {
       title:
@@ -561,10 +561,10 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
       pharmacies = await DutyPharmacyService.getNearestPharmacies(latitude, longitude);
     }
   } catch (error) {
-    req.flash("error", "Duty Pharmacies not found");
+    console.log("❌ Duty Pharmacies not found:", error.message);
   }
 
-  const error = req.flash("error");
+  const { error } = getMessages(req);
   res.status(200).render("pages/nearestDutyPharmacies", {
     title: "En Yakın Nöbetçi Eczaneler - Bugün Açık Olan Eczaneler",
     breadcrumbList: [{ name: "En Yakın Nöbetçi Eczaneler", url: "/enyakinnobetcieczane" }],
@@ -603,10 +603,10 @@ router.get(
 
       pharmacy = pharmacies.find(p => p.id == id);
     } catch (error) {
-      req.flash("error", "Pharmacy not found");
+      console.log("❌ Pharmacy not found:", error.message);
     }
 
-    const error = req.flash("error");
+    const { error } = getMessages(req);
     res.status(200).render("pages/pharmacy", {
       title: pharmacy
         ? `${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district} Nöbetçi Eczane`
@@ -624,7 +624,7 @@ router.get(
 );
 
 router.get("/sitene-ekle", async (req, res) => {
-  const error = req.flash("error");
+  const { error } = getMessages(req);
 
   res.status(200).render("pages/addToSite", {
     title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
@@ -675,10 +675,10 @@ router.get(
         }
       }
     } catch (error) {
-      req.flash("error", "Cities not found");
+      console.log("❌ Cities not found:", error.message);
     }
 
-    const error = req.flash("error");
+    const { error } = getMessages(req);
 
     res.status(200).render("pages/addToSiteIframe", {
       title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
