@@ -11,29 +11,56 @@ const { getMessages, redirectWithError, redirectWithSuccess } = require("../util
 const router = Router();
 
 const _getPharmacies = async () => {
-  const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
-  const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
-  if (cachedDailyPharmacies) return cachedDailyPharmacies;
+  try {
+    const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+    const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
 
-  const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies();
-  let dailyPharmacies = {};
-  let pharmacies = [...(cachedPharmacies ?? [])];
+    console.log("🔍 _getPharmacies çağrıldı:", {
+      cachedDaily: !!cachedDailyPharmacies,
+      cachedPharmacies: !!cachedPharmacies,
+      dailyKeys: cachedDailyPharmacies ? Object.keys(cachedDailyPharmacies).length : 0
+    });
 
-  for (let i = 0; i < pharmaciesRes.length; i++) {
-    const id = pharmaciesRes[i].id;
-    const city = pharmaciesRes[i].city;
-    const district = pharmaciesRes[i].district;
-    if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
-    if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
-    dailyPharmacies[city][district].push(pharmaciesRes[i]);
-    if (!pharmacies.find(p => p.id === id)) pharmacies.push(pharmaciesRes[i]);
+    if (cachedDailyPharmacies) {
+      console.log("✅ Cache'ten daily pharmacies alındı");
+      return cachedDailyPharmacies;
+    }
+
+    console.log("🌐 API'den fresh data alınıyor...");
+    const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies();
+
+    if (!pharmaciesRes || pharmaciesRes.length === 0) {
+      console.log("❌ API'den veri alınamadı, fallback kullanılıyor");
+      return {}; // Boş obje döner, UI'da fallback mesajı gösterilir
+    }
+
+    let dailyPharmacies = {};
+    let pharmacies = [...(cachedPharmacies ?? [])];
+
+    for (let i = 0; i < pharmaciesRes.length; i++) {
+      const id = pharmaciesRes[i].id;
+      const city = pharmaciesRes[i].city;
+      const district = pharmaciesRes[i].district;
+      if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
+      if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
+      dailyPharmacies[city][district].push(pharmaciesRes[i]);
+      if (!pharmacies.find(p => p.id === id)) pharmacies.push(pharmaciesRes[i]);
+    }
+
+    console.log("✅ Daily pharmacies oluşturuldu:", {
+      cityCount: Object.keys(dailyPharmacies).length,
+      totalPharmacies: pharmaciesRes.length
+    });
+
+    // Cache sürelerini uzat - API kontör tasarrufu için
+    await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(3)); // 1 günden 3 güne
+    await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(30)); // 7 günden 30 güne
+
+    return dailyPharmacies;
+  } catch (error) {
+    console.error("❌ _getPharmacies hatası:", error.message);
+    return {}; // Hata durumunda boş obje döner
   }
-
-  // Cache sürelerini uzat - API kontör tasarrufu için
-  await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(3)); // 1 günden 3 güne
-  await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(30)); // 7 günden 30 güne
-
-  return dailyPharmacies;
 };
 
 // SEO Analiz Sayfası
