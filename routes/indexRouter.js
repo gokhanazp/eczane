@@ -348,7 +348,26 @@ router.get("/", async function (req, res) {
       pharmacyByCities[city] = count;
     }
   } catch (error) {
-    req.flash("error", "Cities not found");
+    console.log("❌ API Hatası:", error.message);
+
+    // API hatası durumunda fallback şehir listesi
+    cities = [
+      "istanbul", "ankara", "izmir", "bursa", "antalya", "adana", "konya", "gaziantep",
+      "mersin", "diyarbakir", "kayseri", "eskisehir", "urfa", "malatya", "erzurum",
+      "van", "batman", "elazig", "erzincan", "tunceli", "bingol", "mus", "bitlis",
+      "hakkari", "sirnak", "mardin", "siirt", "agri", "igdir", "kars", "ardahan",
+      "artvin", "rize", "trabzon", "giresun", "ordu", "samsun", "amasya", "tokat",
+      "sivas", "yozgat", "nevsehir", "kirsehir", "aksaray", "nigde", "kaman",
+      "ankara", "cankiri", "kastamonu", "sinop", "bartin", "karabuk", "zonguldak",
+      "bolu", "duzce", "sakarya", "kocaeli", "yalova", "istanbul", "tekirdag",
+      "kirklareli", "edirne", "canakkale", "balikesir", "bursa", "bilecik",
+      "kutahya", "afyon", "usak", "denizli", "mugla", "aydin", "izmir", "manisa",
+      "isparta", "burdur", "antalya", "mersin", "karaman", "konya", "adana",
+      "osmaniye", "hatay", "kahramanmaras", "adiyaman", "gaziantep", "kilis"
+    ];
+
+    // Fallback mesajı
+    req.flash("error", "API servisi geçici olarak kullanılamıyor. Şehir listesi gösteriliyor.");
   }
 
   const error = req.flash("error");
