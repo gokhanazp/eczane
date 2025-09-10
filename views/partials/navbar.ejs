@@ -16,24 +16,54 @@
             <a href="/" class="logo-container"><img src="/logo.png" alt="Nöbetçi Eczane" width="50px" height="49px">Türkiye <br> Nöbetçi Eczane</a>
           </li>
           <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
-            <a href='javascript:void(0)' class='hover:text-[#06b6d4] text-[#06b6d4] font-semibold block text-[15px]'>Anasayfa</a>
+            <a href='/' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentPage !== "undefined" && currentPage === "home") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>Anasayfa</a>
           </li>
-          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'><a href='/nobetcieczane/istanbul' class='hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold block text-[15px]'>İstanbul</a>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
+            <a href='/nobetcieczane/istanbul' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentCity !== "undefined" && currentCity === "istanbul") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>İstanbul</a>
           </li>
-          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'><a href='/nobetcieczane/ankara' class='hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold block text-[15px]'>Ankara</a>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
+            <a href='/nobetcieczane/ankara' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentCity !== "undefined" && currentCity === "ankara") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>Ankara</a>
           </li>
-          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'><a href='/nobetcieczane/izmir' class='hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold block text-[15px]'>İzmir</a>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
+            <a href='/nobetcieczane/izmir' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentCity !== "undefined" && currentCity === "izmir") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>İzmir</a>
           </li>
-          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'><a href='/nobetcieczane/bursa' class='hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold block text-[15px]'>Bursa</a>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
+            <a href='/nobetcieczane/bursa' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentCity !== "undefined" && currentCity === "bursa") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>Bursa</a>
           </li>
-          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'><a href='/nobetcieczane/antalya' class='hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold block text-[15px]'>Antalya</a>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
+            <a href='/nobetcieczane/antalya' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentCity !== "undefined" && currentCity === "antalya") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>Antalya</a>
           </li>
-          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'><a href='/sitene-ekle' class='hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold block text-[15px]'>Sitene Ekle</a>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3'>
+            <a href='/sitene-ekle' class='hover:text-[#06b6d4] font-semibold block text-[15px] <%= (typeof currentPage !== "undefined" && currentPage === "sitene-ekle") ? "text-[#06b6d4]" : "text-[#333] dark:text-white" %>'>Sitene Ekle</a>
+          </li>
+          <li class='max-lg:border-b border-neutral-800 max-lg:py-3 lg:hidden'>
+            <button id="mobileThemeToggle" class="flex items-center gap-x-2 hover:text-[#06b6d4] text-[#333] dark:text-white font-semibold text-[15px] w-full text-left">
+              <svg id="mobileSunIcon" class="w-4 h-4 text-yellow-500 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+              </svg>
+              <svg id="mobileMoonIcon" class="w-4 h-4 text-gray-700 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+              </svg>
+              <span id="mobileThemeText" class="dark:hidden">Koyu Tema</span>
+              <span id="mobileThemeTextDark" class="hidden dark:block">Açık Tema</span>
+            </button>
           </li>
         </ul>
       </div>
 
-      <div class='flex items-center max-lg:ml-auto space-x-6'>
+      <div class='flex items-center max-lg:ml-auto space-x-4'>
+        <!-- Dark/Light Theme Toggle -->
+        <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200" title="Tema Değiştir" onclick="toggleThemeSimple()">
+          <!-- Sun Icon (Light Mode) -->
+          <svg id="sunIcon" class="w-5 h-5 text-yellow-500 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
+          </svg>
+          <!-- Moon Icon (Dark Mode) -->
+          <svg id="moonIcon" class="w-5 h-5 text-gray-700 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+        </button>
+
         <a href="mailto:info@turkiyenobetcieczane.com" class="px-4 py-2 text-[15px] rounded font-semibold text-[#06b6d4] border-2 border-[#06b6d4] hover:bg-[#06b6d4] transition-all ease-in-out duration-300 bg-transparent hover:text-white">
           İletişim
         </a>
@@ -50,7 +80,7 @@
   <nav class="flex flex-wrap px-5 py-3 text-gray-700 border border-gray-200 rounded-b-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700" aria-label="Breadcrumb">
     <ol class="inline-flex flex-wrap items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
       <li class="inline-flex flex-wrap items-center">
-        <a href="/" class="inline-flex flex-wrap items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+        <a href="/" class="inline-flex flex-wrap items-center text-sm font-medium text-gray-700 hover:text-red-600 dark:text-gray-400 dark:hover:text-white">
           <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
             <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
           </svg>
@@ -62,7 +92,7 @@
         <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
         </svg>
-        <a <% if(breadcrumbList[i].url != undefined){ %> href="<%= breadcrumbList[i].url %>" <% } %> class="ms-1 text-sm font-medium md:ms-2 <%=breadcrumbList[i].url != undefined ?'text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white':'text-gray-500'%>">
+        <a <% if(breadcrumbList[i].url != undefined){ %> href="<%= breadcrumbList[i].url %>" <% } %> class="ms-1 text-sm font-medium md:ms-2 <%=breadcrumbList[i].url != undefined ?'text-gray-700 hover:text-red-600 dark:text-gray-400 dark:hover:text-white':'text-gray-500'%>">
           <%= breadcrumbList[i].name %>
         </a>
       </li>
@@ -73,6 +103,7 @@
 </div>
 
 <script>
+  // Mobile Menu Toggle
   var toggleOpen = document.getElementById('toggleOpen');
   var toggleClose = document.getElementById('toggleClose');
   var collapseMenu = document.getElementById('collapseMenu');
@@ -87,4 +118,48 @@
 
   toggleOpen.addEventListener('click', handleClick);
   toggleClose.addEventListener('click', handleClick);
+
+  // Dark/Light Theme Toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const themeToggle = document.getElementById('themeToggle');
+    const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+
+    // Theme toggle function with smooth transition
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+
+      // Add transition class for smooth change
+      document.documentElement.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+
+      if (isDark) {
+        // Switch to light mode
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        // Switch to dark mode
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+
+      // Remove transition after change
+      setTimeout(() => {
+        document.documentElement.style.transition = '';
+      }, 300);
+    }
+
+    // Add click event listeners
+    if (themeToggle) {
+      themeToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleTheme();
+      });
+    }
+
+    if (mobileThemeToggle) {
+      mobileThemeToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleTheme();
+      });
+    }
+  });
 </script>

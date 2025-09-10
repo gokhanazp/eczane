@@ -13,6 +13,35 @@
   <link rel="dns-prefetch" href="//www.googletagmanager.com">
   <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
 
+  <!-- Anti-Flash Script (Dark Mode) -->
+  <script>
+    // Dark mode flash'ını önlemek için hemen uygula
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+
+      // Sayfa yükleme sırasında smooth transition
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.style.opacity = '1';
+      });
+
+      // Sayfa geçişleri için loading indicator
+      let isNavigating = false;
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && !link.href.startsWith('mailto:') && !link.href.startsWith('tel:') && !link.target) {
+          if (!isNavigating) {
+            isNavigating = true;
+            document.body.style.transition = 'opacity 0.2s ease';
+            document.body.style.opacity = '0.8';
+          }
+        }
+      });
+    })();
+  </script>
+
   <!-- CSS -->
   <link href="/style.css" type="text/css" rel="stylesheet" media="screen" />
   <link href="/tailwindout.css" type="text/css" rel="stylesheet" media="screen" />

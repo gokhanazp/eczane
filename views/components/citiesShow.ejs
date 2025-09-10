@@ -1,41 +1,70 @@
 <% if (cities === undefined | cities.length === 0) { %>
-<h3 class="text-center text-2xl font-bold self-center">No cities found</h3>
+<div class="text-center py-12">
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-white">Şehir bulunamadı</h3>
+</div>
 <% } else { %>
 
-<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-5 ">
-  <!-- Grid -->
-  <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-6">
-    <!-- Card -->
-    <% cities.forEach(city => { %>
-    <a title="<%=city%> Nöbetçi Eczaneleri" href="/nobetcieczane/<%=city%>" class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
-        <div class="flex justify-between items-center gap-x-3">
-          <div class="grow">
-            <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
+<!-- Cities Section -->
+<div class="py-12 cities-section" style="background: none !important; background-color: transparent !important;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" style="background: none !important; background-color: transparent !important;">
+    <!-- Section Header -->
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        Türkiye'deki Tüm İller
+      </h2>
+      <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        81 ilde bulunan nöbetçi eczanelere hızlıca ulaşın. İlinizi seçerek güncel nöbetçi eczane listesini görüntüleyin.
+      </p>
+    </div>
+
+    <!-- Cities Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <% cities.forEach(city => { %>
+      <a title="<%=city%> Nöbetçi Eczaneleri"
+         href="/nobetcieczane/<%=city%>"
+         class="group border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:shadow-md hover:border-red-300 dark:hover:border-red-600 transition-all duration-200 transform hover:scale-105">
+
+        <!-- City Info -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors mb-1">
               <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %>
             </h3>
+
             <% if (pharmacyByCities && pharmacyByCities[city]) { %>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              <%= pharmacyByCities[city] %> tane nöbetçi eczane
-            </p>
+            <div class="flex items-center gap-x-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                <%= pharmacyByCities[city] %> nöbetçi eczane
+              </p>
+            </div>
             <% } else { %>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              Nöbetçi eczane bulunamadı.
-            </p>
+            <div class="flex items-center gap-x-2">
+              <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+              <p class="text-sm text-gray-500 dark:text-gray-500">
+                Veri yükleniyor...
+              </p>
+            </div>
             <% } %>
           </div>
+
+          <!-- Arrow Icon -->
           <div>
-            <svg class="shrink-0 size-5 text-gray-800 dark:text-neutral-200" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m9 18 6-6-6-6" />
+            <svg class="w-4 h-4 text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
           </div>
         </div>
-      </div>
-    </a>
-    <% }); %>
-    <!-- End Card -->
+      </a>
+      <% }); %>
+    </div>
+
+    <!-- Bottom Info -->
+    <div class="text-center mt-8">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        Güncel nöbetçi eczane bilgileri T.C. Sağlık Bakanlığı'ndan alınmaktadır.
+      </p>
+    </div>
   </div>
-  <!-- End Grid -->
 </div>
-<!-- End Card Section -->
 <% } %>

@@ -8,9 +8,13 @@ const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
 const indexRouter = require("./routes/indexRouter");
 
-const PORT = 8888;
+const PORT = process.env.PORT || 8888;
 const corsOptions = {
-  origin: ["http://localhost:8888", "https://turkiyenobetcieczane.com"],
+  origin: [
+    "http://localhost:8888",
+    "https://turkiyenobetcieczane.com",
+    /\.vercel\.app$/
+  ],
   methods: "GET",
   preflightContinue: false,
 };

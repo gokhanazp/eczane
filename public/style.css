@@ -2,6 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Anti-Flash ve Smooth Transitions */
+html {
+  /* Dark mode için başlangıç rengi */
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark {
+  background-color: #111827;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Sayfa yüklenirken flash'ı önle */
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sayfa geçişleri için smooth transition */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Link hover'ları için smooth transition */
+a {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Button'lar için smooth transition */
+button {
+  transition: all 0.2s ease;
+}
+
+
+
+
+
+/* Şehir listesi bölümü arkaplan tamamen kaldır */
+.cities-section {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.cities-section,
+.cities-section div,
+.cities-section section {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Body ve html arkaplan kontrolü */
+body {
+  background: white;
+}
+
+.dark body {
+  background: #111827;
+}
+
 .pharmacy-container {
   display: flex;
   flex-wrap: wrap;

@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "npm install && node app.js",
+    "start": "node app.js",
     "dev": "npm install && concurrently \"npm run build:tailwind:watch\" \"nodemon app.js\"",
+    "build": "npm run build:tailwind",
     "build:tailwind": "tailwindcss -i public/style.css -o public/tailwindout.css",
-    "build:tailwind:watch": "tailwindcss -i public/style.css -o public/tailwindout.css --watch"
+    "build:tailwind:watch": "tailwindcss -i public/style.css -o public/tailwindout.css --watch",
+    "vercel-build": "npm run build:tailwind"
   },
   "type": "commonjs",
   "author": "",

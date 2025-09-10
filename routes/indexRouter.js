@@ -356,6 +356,7 @@ router.get("/", async function (req, res) {
   res.status(200).render("index", {
     title: "Türkiye Nöbetçi Eczane | Şehrinizdeki Güncel Nöbetçi Eczaneler - TurkiyeNobetciEczane.com",
     breadcrumbList: undefined,
+    currentPage: "home",
     error: error,
     success: success,
     cities: cities,
@@ -519,6 +520,7 @@ router.get(
         { name: currentCity, url: `/nobetcieczane/${currentCity}` },
         { name: currentDistrict, url: `/nobetcieczane/${currentCity}/${currentDistrict}` },
       ],
+      currentCity: currentCity?.toLowerCase(),
       error,
       dutyPharmacies,
       cities,
@@ -608,6 +610,7 @@ router.get("/sitene-ekle", async (req, res) => {
   res.status(200).render("pages/addToSite", {
     title: "TurkiyeNobetciEczane.com'u Sitene Ekle",
     breadcrumbList: [{ name: "Sitene Ekle", url: "/sitene-ekle" }],
+    currentPage: "sitene-ekle",
     error,
   });
 });
