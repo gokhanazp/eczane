@@ -36,6 +36,18 @@ npm run dev
 
 Bu proje Vercel'de deploy edilmek üzere yapılandırılmıştır.
 
+### Vercel Environment Variables
+
+Vercel dashboard'da aşağıdaki environment variables'ları ekleyin:
+
+```
+EXPRESS_SESSION_SECRET=43b27778bd48db90558924888693b98f11ddced77ed3fd01dfce23e1071d1df4
+COOKIE_SECRET=cookie-secret-key-2024-nöbetçi-eczane-app
+DUTY_API_URL=https://www.nosyapi.com/apiv2/service/pharmacies-on-duty
+DUTY_API_KEY=Bearer YOUR_API_KEY_HERE
+NODE_ENV=production
+```
+
 ## Lisans
 
 MIT

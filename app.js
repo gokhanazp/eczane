@@ -30,12 +30,12 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET || "fallback-cookie-secret-key-2024"));
 app.use(
   expressSession({
     resave: false,
     saveUninitialized: false,
-    secret: process.env.EXPRESS_SESSION_SECRET,
+    secret: process.env.EXPRESS_SESSION_SECRET || "fallback-session-secret-key-2024-vercel-deployment",
   })
 );
 

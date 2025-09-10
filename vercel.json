@@ -21,7 +21,11 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "EXPRESS_SESSION_SECRET": "@express_session_secret",
+    "COOKIE_SECRET": "@cookie_secret",
+    "DUTY_API_URL": "@duty_api_url",
+    "DUTY_API_KEY": "@duty_api_key"
   },
   "functions": {
     "app.js": {

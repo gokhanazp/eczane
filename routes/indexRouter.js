@@ -380,7 +380,7 @@ router.get("/", async function (req, res) {
     success: success,
     cities: cities,
     selectedCity,
-    selectableDistricts,
+    selectableDistricts: Array.isArray(selectableDistricts) ? selectableDistricts : [],
     pharmacyByCities,
     allDutyPharmaciesCount,
   });
