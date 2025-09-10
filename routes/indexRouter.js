@@ -520,12 +520,47 @@ router.get(
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
       cities = await DutyPharmacyService.getCities();
-      currentCity = cities.find(c => {
-        const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
+
+      // Şehir ismi eşleştirme - Türkçe karakter desteği
+      const targetCity = city.toLowerCase();
+      const cityMapping = {
+        'istanbul': 'İstanbul',
+        'ankara': 'Ankara',
+        'izmir': 'İzmir',
+        'bursa': 'Bursa',
+        'antalya': 'Antalya'
+      };
+
+      const cityMatch = cities.find(c => {
+        const cityName = c.cities;
+        const p1 = translateEnglish({ text: cityName }).text.toLowerCase();
         const p2 = translateEnglish({ text: city }).text.toLowerCase();
 
-        return p1 === p2;
-      }).cities;
+        // Direkt eşleştirme
+        if (p1 === p2) return true;
+
+        // Mapping ile eşleştirme
+        if (cityMapping[targetCity] && cityName === cityMapping[targetCity]) return true;
+
+        // Türkçe karakter normalize
+        const normalize = (str) => str.toLowerCase()
+          .replace('ı', 'i')
+          .replace('ğ', 'g')
+          .replace('ü', 'u')
+          .replace('ş', 's')
+          .replace('ö', 'o')
+          .replace('ç', 'c');
+
+        return normalize(cityName) === normalize(city);
+      });
+
+      if (cityMatch) {
+        currentCity = cityMatch.cities;
+        console.log("✅ Şehir eşleşti:", { input: city, found: currentCity });
+      } else {
+        console.log("❌ Şehir eşleşmedi:", { input: city, availableCities: cities.slice(0, 5).map(c => c.cities) });
+        currentCity = city; // Fallback
+      }
 
       districts = await DutyPharmacyService.getDistricts(currentCity);
       districts = districts.map(d => d.cities);
