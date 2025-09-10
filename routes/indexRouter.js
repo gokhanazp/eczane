@@ -91,6 +91,61 @@ router.post("/clear-cache", cacheLimiter, async (req, res) => {
   }
 });
 
+// Vercel Debug endpoint'i (Acil test için)
+router.get("/vercel-debug", async (req, res) => {
+  try {
+    console.log("🚨 VERCEL DEBUG BAŞLATILIYOR...");
+
+    // Environment variables kontrol
+    const envCheck = {
+      DUTY_API_URL: !!process.env.DUTY_API_URL,
+      DUTY_API_KEY: !!process.env.DUTY_API_KEY,
+      NODE_ENV: process.env.NODE_ENV
+    };
+    console.log("🔑 ENV Check:", envCheck);
+
+    // Cache kontrol
+    const cachedDaily = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+    const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
+
+    const cacheStatus = {
+      dailyExists: !!cachedDaily,
+      pharmaciesExists: !!cachedPharmacies,
+      dailyKeys: cachedDaily ? Object.keys(cachedDaily).length : 0,
+      pharmaciesLength: cachedPharmacies ? cachedPharmacies.length : 0
+    };
+    console.log("💾 Cache Status:", cacheStatus);
+
+    // _getPharmacies test
+    const pharmacies = await _getPharmacies();
+    const pharmaciesStatus = {
+      type: typeof pharmacies,
+      isNull: pharmacies === null,
+      keys: pharmacies ? Object.keys(pharmacies).length : 0,
+      hasIstanbul: pharmacies && pharmacies['İstanbul'] ? true : false,
+      istanbulDistricts: pharmacies && pharmacies['İstanbul'] ? Object.keys(pharmacies['İstanbul']).length : 0
+    };
+    console.log("🏥 Pharmacies Status:", pharmaciesStatus);
+
+    res.json({
+      message: "🚨 VERCEL DEBUG RAPORU",
+      timestamp: new Date().toISOString(),
+      environment: envCheck,
+      cache: cacheStatus,
+      pharmacies: pharmaciesStatus,
+      success: true
+    });
+
+  } catch (error) {
+    console.error("❌ VERCEL DEBUG HATASI:", error);
+    res.status(500).json({
+      error: "Debug failed",
+      message: error.message,
+      stack: error.stack
+    });
+  }
+});
+
 // _getPharmacies Test endpoint'i (Rate Limited)
 router.get("/test-getpharmacies", testLimiter, async (req, res) => {
   try {
@@ -477,9 +532,31 @@ router.get(
 
       const pharmacies = await _getPharmacies();
 
+      console.log("🏥 Şehir eczane verisi:", {
+        currentCity,
+        pharmaciesType: typeof pharmacies,
+        pharmaciesNull: pharmacies === null,
+        pharmaciesKeys: pharmacies ? Object.keys(pharmacies).length : 0,
+        hasCityData: pharmacies && pharmacies[currentCity] ? true : false,
+        cityDataType: pharmacies && pharmacies[currentCity] ? typeof pharmacies[currentCity] : 'undefined'
+      });
+
       dutyPharmacies = pharmacies[currentCity];
-      for (const district in dutyPharmacies) {
-        allDutyPharmaciesCount += dutyPharmacies[district].length;
+
+      if (dutyPharmacies) {
+        for (const district in dutyPharmacies) {
+          allDutyPharmaciesCount += dutyPharmacies[district].length;
+        }
+        console.log("✅ Şehir eczaneleri bulundu:", {
+          city: currentCity,
+          districtCount: Object.keys(dutyPharmacies).length,
+          totalPharmacies: allDutyPharmaciesCount
+        });
+      } else {
+        console.log("❌ Şehir eczaneleri bulunamadı:", {
+          city: currentCity,
+          availableCities: pharmacies ? Object.keys(pharmacies).slice(0, 5) : []
+        });
       }
     } catch (error) {
       console.log("❌ Duty Pharmacies not found:", error.message);
