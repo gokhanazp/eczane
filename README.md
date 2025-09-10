@@ -2,6 +2,8 @@
 
 Türkiye'deki nöbetçi eczaneleri bulmanızı sağlayan web uygulaması.
 
+**Son Güncelleme**: 2025-09-10 - Vercel deployment sorunları çözüldü, şehir ismi eşleştirme düzeltildi
+
 ## Özellikler
 
 - 🏥 Güncel nöbetçi eczane bilgileri
