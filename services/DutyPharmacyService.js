@@ -7,6 +7,17 @@ const apiOptimizer = require("../utils/apiOptimizer");
 const DUTY_API_URL = process.env.DUTY_API_URL;
 const DUTY_API_KEY = process.env.DUTY_API_KEY;
 
+// Debug environment variables
+console.log("🔑 API Environment Check:");
+console.log("- DUTY_API_URL:", DUTY_API_URL ? "✅ Set" : "❌ Missing");
+console.log("- DUTY_API_KEY:", DUTY_API_KEY ? "✅ Set" : "❌ Missing");
+
+if (!DUTY_API_URL || !DUTY_API_KEY) {
+  console.error("❌ CRITICAL: API environment variables missing!");
+  console.error("- DUTY_API_URL:", DUTY_API_URL);
+  console.error("- DUTY_API_KEY:", DUTY_API_KEY ? "Bearer ***" : "undefined");
+}
+
 const baseHeaders = {
   "content-type": "application/json",
   authorization: DUTY_API_KEY,
