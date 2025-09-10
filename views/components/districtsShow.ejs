@@ -1,5 +1,9 @@
-<% if (districts === undefined | districts.length === 0) { %>
-<h3 class="text-center text-2xl font-bold self-center">No districts found</h3>
+<% if (districts === undefined || districts.length === 0) { %>
+<div class="text-center py-8">
+  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+  <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-300">İlçeler yükleniyor...</h3>
+  <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Lütfen birkaç saniye bekleyin</p>
+</div>
 <% } else { %>
 
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-5 ">
