@@ -18,8 +18,32 @@ const corsOptions = {
 };
 
 const app = express();
-app.set("views", path.join(__dirname, "views"));
+
+// Views directory için multiple path denemeleri (Vercel uyumlu)
+const viewsPaths = [
+  path.join(__dirname, "views"),
+  path.join(process.cwd(), "views"),
+  "./views",
+  "views"
+];
+
+let viewsPath = viewsPaths[0];
+for (const testPath of viewsPaths) {
+  try {
+    const fs = require('fs');
+    if (fs.existsSync(testPath)) {
+      viewsPath = testPath;
+      console.log(`✅ Views directory bulundu: ${viewsPath}`);
+      break;
+    }
+  } catch (e) {
+    console.log(`❌ Views path test edildi: ${testPath}`);
+  }
+}
+
+app.set("views", viewsPath);
 app.set("view engine", "ejs");
+console.log(`🎯 Views path set edildi: ${viewsPath}`);
 app.use(ejsLayouts);
 app.set("layout", "layouts/main");
 

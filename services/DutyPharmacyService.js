@@ -4,8 +4,8 @@ const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 const translateEnglish = require("../utils/translateEnglish");
 const apiOptimizer = require("../utils/apiOptimizer");
 
-const DUTY_API_URL = process.env.DUTY_API_URL;
-const DUTY_API_KEY = process.env.DUTY_API_KEY;
+const DUTY_API_URL = process.env.DUTY_API_URL || "https://www.nosyapi.com/apiv2/service/pharmacies-on-duty";
+const DUTY_API_KEY = process.env.DUTY_API_KEY || "Bearer e2rrwkbgS9GJ16zL7yOCRlkoKcIfFT12sLunWqUlPM8kCITjueH1keEj3UT7";
 
 // Debug environment variables
 console.log("🔑 API Environment Check:");
