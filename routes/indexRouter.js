@@ -557,6 +557,10 @@ router.get(
           city: currentCity,
           availableCities: pharmacies ? Object.keys(pharmacies).slice(0, 5) : []
         });
+
+        // Fallback: Boş eczane listesi ile devam et
+        dutyPharmacies = {};
+        allDutyPharmaciesCount = 0;
       }
     } catch (error) {
       console.log("❌ Duty Pharmacies not found:", error.message);

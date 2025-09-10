@@ -14,13 +14,13 @@
             <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
               <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %>
             </h3>
-            <% if (dutyPharmacies[district]) { %>
+            <% if (dutyPharmacies && dutyPharmacies[district] && dutyPharmacies[district].length > 0) { %>
             <p class="text-sm text-gray-500 dark:text-neutral-500">
               <%= dutyPharmacies[district].length %> nöbetçi eczane
             </p>
             <% } else { %>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              Nöbetçi eczane bulunamadı.
+            <p class="text-sm text-red-500 dark:text-red-400">
+              Veri yükleniyor... Lütfen sayfayı yenileyin.
             </p>
             <% } %>
           </div>
