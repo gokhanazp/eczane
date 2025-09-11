@@ -10,56 +10,97 @@ const { getMessages, redirectWithError, redirectWithSuccess } = require("../util
 
 const router = Router();
 
-const _getPharmacies = async () => {
+// Global cache değişkenleri - Memory'de tutarak hızlandırma
+let memoryCache = {
+  dailyPharmacies: null,
+  lastUpdate: null,
+  isLoading: false
+};
+
+const _getPharmacies = async (forceRefresh = false) => {
   try {
+    // Memory cache kontrolü - Çok hızlı
+    if (!forceRefresh && memoryCache.dailyPharmacies && memoryCache.lastUpdate) {
+      const cacheAge = Date.now() - memoryCache.lastUpdate;
+      if (cacheAge < 30 * 60 * 1000) { // 30 dakika memory cache
+        console.log("⚡ Memory cache'ten alındı (çok hızlı)");
+        return memoryCache.dailyPharmacies;
+      }
+    }
+
+    // Eğer başka bir request loading'de ise bekle
+    if (memoryCache.isLoading) {
+      console.log("⏳ Başka request loading, bekleniyor...");
+      let attempts = 0;
+      while (memoryCache.isLoading && attempts < 50) { // 5 saniye max
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+      if (memoryCache.dailyPharmacies) {
+        return memoryCache.dailyPharmacies;
+      }
+    }
+
+    memoryCache.isLoading = true;
+
+    // File cache kontrolü
     const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
-    const cachedPharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
 
-    console.log("🔍 _getPharmacies çağrıldı:", {
-      cachedDaily: !!cachedDailyPharmacies,
-      cachedPharmacies: !!cachedPharmacies,
-      dailyKeys: cachedDailyPharmacies ? Object.keys(cachedDailyPharmacies).length : 0
-    });
-
-    if (cachedDailyPharmacies) {
-      console.log("✅ Cache'ten daily pharmacies alındı");
+    if (!forceRefresh && cachedDailyPharmacies) {
+      console.log("✅ File cache'ten alındı");
+      memoryCache.dailyPharmacies = cachedDailyPharmacies;
+      memoryCache.lastUpdate = Date.now();
+      memoryCache.isLoading = false;
       return cachedDailyPharmacies;
     }
 
     console.log("🌐 API'den fresh data alınıyor...");
+    const startTime = Date.now();
     const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies();
+    const apiTime = Date.now() - startTime;
+    console.log(`⏱️ API çağrısı süresi: ${apiTime}ms`);
 
     if (!pharmaciesRes || pharmaciesRes.length === 0) {
-      console.log("❌ API'den veri alınamadı, fallback kullanılıyor");
-      return {}; // Boş obje döner, UI'da fallback mesajı gösterilir
+      console.log("❌ API'den veri alınamadı");
+      memoryCache.isLoading = false;
+      return memoryCache.dailyPharmacies || {}; // Eski cache varsa onu döner
     }
 
-    let dailyPharmacies = {};
-    let pharmacies = [...(cachedPharmacies ?? [])];
+    // Veri işleme - Optimize edilmiş
+    const dailyPharmacies = {};
+    const processStart = Date.now();
 
-    for (let i = 0; i < pharmaciesRes.length; i++) {
-      const id = pharmaciesRes[i].id;
-      const city = pharmaciesRes[i].city;
-      const district = pharmaciesRes[i].district;
+    pharmaciesRes.forEach(pharmacy => {
+      const { city, district } = pharmacy;
       if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
       if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
-      dailyPharmacies[city][district].push(pharmaciesRes[i]);
-      if (!pharmacies.find(p => p.id === id)) pharmacies.push(pharmaciesRes[i]);
-    }
+      dailyPharmacies[city][district].push(pharmacy);
+    });
+
+    const processTime = Date.now() - processStart;
+    console.log(`⚡ Veri işleme süresi: ${processTime}ms`);
 
     console.log("✅ Daily pharmacies oluşturuldu:", {
       cityCount: Object.keys(dailyPharmacies).length,
       totalPharmacies: pharmaciesRes.length
     });
 
-    // Cache sürelerini uzat - API kontör tasarrufu için
-    await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(3)); // 1 günden 3 güne
-    await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(30)); // 7 günden 30 güne
+    // Cache'leri güncelle
+    await Promise.all([
+      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1)), // 1 gün
+      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(7)) // 7 gün
+    ]);
+
+    // Memory cache güncelle
+    memoryCache.dailyPharmacies = dailyPharmacies;
+    memoryCache.lastUpdate = Date.now();
+    memoryCache.isLoading = false;
 
     return dailyPharmacies;
   } catch (error) {
     console.error("❌ _getPharmacies hatası:", error.message);
-    return {}; // Hata durumunda boş obje döner
+    memoryCache.isLoading = false;
+    return memoryCache.dailyPharmacies || {}; // Eski cache varsa onu döner
   }
 };
 
@@ -74,10 +115,16 @@ router.get("/seo-analysis", async (req, res) => {
 // Cache Temizleme endpoint'i (Rate Limited)
 router.post("/clear-cache", cacheLimiter, async (req, res) => {
   try {
-    // Manuel cache temizleme
+    // Manuel cache temizleme - Hem file hem memory
     await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, null, 0);
     await cacheManage.setCache(CacheNames.PHARMACIES, null, 0);
-    console.log("🗑️ Tüm cache temizlendi");
+
+    // Memory cache'i de temizle
+    memoryCache.dailyPharmacies = null;
+    memoryCache.lastUpdate = null;
+    memoryCache.isLoading = false;
+
+    console.log("🗑️ Tüm cache temizlendi (file + memory)");
 
     res.json({
       message: "✅ Cache başarıyla temizlendi",

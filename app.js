@@ -64,13 +64,69 @@ app.use("*", (req, res) => {
   });
 });
 
-const start = () => {
+// Startup cache preloading
+const preloadCache = async () => {
   try {
-    app.listen(PORT, () => {
-      console.log("server running...");
-    });
+    console.log("🚀 Startup cache preloading başlatılıyor...");
+    const startTime = Date.now();
+
+    // DutyPharmacyService'i import et
+    const DutyPharmacyService = require("./services/DutyPharmacyService");
+    const { cacheManage, CacheNames } = require("./utils/cacheManage");
+    const { dutyTTLGenerate } = require("./utils/dutyTTLGenerate");
+
+    // Cache kontrolü
+    const cachedData = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+
+    if (cachedData) {
+      console.log("✅ Cache zaten mevcut, preload gerekmiyor");
+      return;
+    }
+
+    console.log("📡 API'den veri preload ediliyor...");
+    const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies();
+
+    if (pharmaciesRes && pharmaciesRes.length > 0) {
+      // Veri işleme
+      const dailyPharmacies = {};
+      pharmaciesRes.forEach(pharmacy => {
+        const { city, district } = pharmacy;
+        if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
+        if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
+        dailyPharmacies[city][district].push(pharmacy);
+      });
+
+      // Cache'e kaydet
+      await Promise.all([
+        cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1)),
+        cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(7))
+      ]);
+
+      const loadTime = Date.now() - startTime;
+      console.log(`✅ Startup cache preload tamamlandı! (${loadTime}ms)`);
+      console.log(`📊 ${Object.keys(dailyPharmacies).length} şehir, ${pharmaciesRes.length} eczane yüklendi`);
+    } else {
+      console.log("❌ Startup preload başarısız - API'den veri alınamadı");
+    }
   } catch (error) {
-    console.log(error);
+    console.error("❌ Startup cache preload hatası:", error.message);
+  }
+};
+
+const start = async () => {
+  try {
+    // Server'ı başlat
+    app.listen(PORT, () => {
+      console.log(`🚀 Server ${PORT} portunda çalışıyor...`);
+    });
+
+    // Background'da cache preload et (server başlatmayı bloklamaz)
+    setTimeout(() => {
+      preloadCache();
+    }, 1000); // 1 saniye sonra başlat
+
+  } catch (error) {
+    console.log("❌ Server başlatma hatası:", error);
   }
 };
 
