@@ -147,18 +147,9 @@
     window.location.href = `/nobetcieczane/<%= city %>/${value}`;
   }
 
-  // Auto-refresh eğer veri yok ise
+  // Auto-refresh kaldırıldı - Artık gerek yok çünkü cache çok hızlı
   document.addEventListener('DOMContentLoaded', function() {
-    const hasDistricts = <% if (districts && districts.length > 0) { %>true<% } else { %>false<% } %>;
-    const totalPharmacies = <%= allDutyPharmaciesCount || 0 %>;
-
-    // Eğer ilçe yok veya eczane sayısı 0 ise, 3 saniye sonra yenile
-    if (!hasDistricts || totalPharmacies === 0) {
-      console.log('🔄 Veri yükleniyor, 3 saniye sonra sayfa yenilenecek...');
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
-    }
+    console.log('✅ Sayfa yüklendi - Auto-refresh devre dışı');
   });
 </script>
 

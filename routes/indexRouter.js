@@ -17,26 +17,30 @@ let memoryCache = {
   isLoading: false
 };
 
+// Startup'ta cache'i hemen yükle
+let startupCachePromise = null;
+
 const _getPharmacies = async (forceRefresh = false) => {
   try {
-    // Memory cache kontrolü - Çok hızlı
+    // Memory cache kontrolü - Çok hızlı (2 saat cache)
     if (!forceRefresh && memoryCache.dailyPharmacies && memoryCache.lastUpdate) {
       const cacheAge = Date.now() - memoryCache.lastUpdate;
-      if (cacheAge < 30 * 60 * 1000) { // 30 dakika memory cache
+      if (cacheAge < 2 * 60 * 60 * 1000) { // 2 saat memory cache (daha uzun)
         console.log("⚡ Memory cache'ten alındı (çok hızlı)");
         return memoryCache.dailyPharmacies;
       }
     }
 
-    // Eğer başka bir request loading'de ise bekle
+    // Eğer başka bir request loading'de ise bekle (daha kısa timeout)
     if (memoryCache.isLoading) {
       console.log("⏳ Başka request loading, bekleniyor...");
       let attempts = 0;
-      while (memoryCache.isLoading && attempts < 50) { // 5 saniye max
+      while (memoryCache.isLoading && attempts < 20) { // 2 saniye max (daha kısa)
         await new Promise(resolve => setTimeout(resolve, 100));
         attempts++;
       }
       if (memoryCache.dailyPharmacies) {
+        console.log("✅ Loading tamamlandı, memory cache'ten alındı");
         return memoryCache.dailyPharmacies;
       }
     }

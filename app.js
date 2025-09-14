@@ -120,10 +120,8 @@ const start = async () => {
       console.log(`🚀 Server ${PORT} portunda çalışıyor...`);
     });
 
-    // Background'da cache preload et (server başlatmayı bloklamaz)
-    setTimeout(() => {
-      preloadCache();
-    }, 1000); // 1 saniye sonra başlat
+    // Hemen cache preload et (daha hızlı)
+    preloadCache(); // Hemen başlat, setTimeout yok
 
   } catch (error) {
     console.log("❌ Server başlatma hatası:", error);

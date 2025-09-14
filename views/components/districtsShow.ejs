@@ -1,8 +1,16 @@
 <% if (districts === undefined || districts.length === 0) { %>
-<div class="text-center py-8">
-  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-  <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-300">İlçeler yükleniyor...</h3>
-  <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Lütfen birkaç saniye bekleyin</p>
+<div class="text-center py-12">
+  <div class="mb-6">
+    <svg class="animate-pulse w-16 h-16 mx-auto text-red-600" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+    </svg>
+  </div>
+  <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2">Eczane Verileri Hazırlanıyor</h3>
+  <p class="text-gray-600 dark:text-gray-400 mb-4">Güncel nöbetçi eczane bilgileri getiriliyor...</p>
+  <div class="inline-flex items-center px-4 py-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
+    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
+    <span class="text-sm text-red-600 dark:text-red-400 font-medium">Yükleniyor</span>
+  </div>
 </div>
 <% } else { %>
 
