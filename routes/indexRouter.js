@@ -717,8 +717,8 @@ router.get("/onSelectCity/:selectedCity", async (req, res) => {
       districts = Object.keys(pharmacies[selectedCity]).map(d => ({ cities: d }));
       console.log("✅ İlçeler cache'den alındı:", { city: selectedCity, districtCount: districts.length });
     } else {
-      console.log("❌ Cache'de şehir bulunamadı, fallback API çağrısı");
-      districts = await DutyPharmacyService.getDistricts(selectedCity);
+      console.log("❌ Cache'de şehir bulunamadı, boş liste döndürülüyor - TOKEN TASARRUFU");
+      districts = []; // Fallback API çağrısı devre dışı - TOKEN TASARRUFU
     }
 
     districts = districts.map(d => d.cities);
@@ -1031,8 +1031,9 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
 
   try {
     if (latitude && longitude) {
+      console.log("🚫 En yakın eczane özelliği TOKEN TASARRUFU için devre dışı");
       isLoading = false;
-      pharmacies = await DutyPharmacyService.getNearestPharmacies(latitude, longitude);
+      pharmacies = []; // TOKEN TASARRUFU - getNearestPharmacies devre dışı
     }
   } catch (error) {
     console.log("❌ Duty Pharmacies not found:", error.message);
@@ -1070,9 +1071,11 @@ router.get(
       const pharmacies = [...(cachePharmacies ?? [])];
 
       if (pharmacies.length === 0 || !pharmacies.find(p => p.id == id)) {
-        const newPharmacy = await DutyPharmacyService.getPharmacyById(id);
-        pharmacies.push(newPharmacy);
-        await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(7));
+        console.log("🚫 Eczane detay API çağrısı TOKEN TASARRUFU için devre dışı");
+        // TOKEN TASARRUFU - getPharmacyById devre dışı
+        // const newPharmacy = await DutyPharmacyService.getPharmacyById(id);
+        // pharmacies.push(newPharmacy);
+        // await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(7));
       }
 
       pharmacy = pharmacies.find(p => p.id == id);
@@ -1140,9 +1143,8 @@ router.get(
           selectableDistricts = Object.keys(pharms[city]);
           console.log("✅ İlçeler cache'den alındı:", { city, districtCount: selectableDistricts.length });
         } else {
-          console.log("❌ Cache'de şehir bulunamadı, fallback API çağrısı");
-          selectableDistricts = await DutyPharmacyService.getDistricts(city);
-          selectableDistricts = selectableDistricts.map(d => d.cities);
+          console.log("❌ Cache'de şehir bulunamadı, boş liste döndürülüyor - TOKEN TASARRUFU");
+          selectableDistricts = []; // Fallback API çağrısı devre dışı - TOKEN TASARRUFU
         }
       }
 
