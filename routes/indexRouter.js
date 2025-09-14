@@ -712,11 +712,17 @@ router.get("/onSelectCity/:selectedCity", async (req, res) => {
   setCookie(res, CookieNames.SELECTABLE_DISTRICTS);
 
   try {
-    const cachedDistricts = {};
+    // TOKEN TASARRUFU - Cache'den ilçeleri al
+    console.log("🚨 UYARI: getDistricts yerine cache'li veri kullanılıyor - TOKEN TASARRUFU");
+    const allData = await _getAllData();
+    const pharmacies = allData.dailyPharmacies;
+
     let districts = [];
-    if (cachedDistricts && cachedDistricts[selectedCity]) {
-      districts = cachedDistricts[selectedCity];
+    if (pharmacies && pharmacies[selectedCity]) {
+      districts = Object.keys(pharmacies[selectedCity]).map(d => ({ cities: d }));
+      console.log("✅ İlçeler cache'den alındı:", { city: selectedCity, districtCount: districts.length });
     } else {
+      console.log("❌ Cache'de şehir bulunamadı, fallback API çağrısı");
       districts = await DutyPharmacyService.getDistricts(selectedCity);
     }
 
@@ -1125,18 +1131,25 @@ router.get(
     let selectedDistrict = district || "";
 
     try {
-      cities = await DutyPharmacyService.getCities();
-      cities = cities.map(c => c.cities);
+      // TOKEN TASARRUFU - _getAllData kullan (tek API çağrısı)
+      console.log("🚨 UYARI: getCities ve getDistricts yerine cache'li veri kullanılıyor - TOKEN TASARRUFU");
+      const allData = await _getAllData();
+
+      cities = allData.cities.map(c => c.cities);
+      const pharms = allData.dailyPharmacies;
 
       if (city) {
         selectedCity = city;
-        selectableDistricts = await DutyPharmacyService.getDistricts(city);
-        selectableDistricts = selectableDistricts.map(d => d.cities);
+        // İlçeleri cache'den al - API çağrısı yok
+        if (pharms && pharms[city]) {
+          selectableDistricts = Object.keys(pharms[city]);
+          console.log("✅ İlçeler cache'den alındı:", { city, districtCount: selectableDistricts.length });
+        } else {
+          console.log("❌ Cache'de şehir bulunamadı, fallback API çağrısı");
+          selectableDistricts = await DutyPharmacyService.getDistricts(city);
+          selectableDistricts = selectableDistricts.map(d => d.cities);
+        }
       }
-
-      // TOKEN TASARRUFU - _getAllData kullan
-      const allData = await _getAllData();
-      const pharms = allData.dailyPharmacies;
 
       if (district) {
         if (pharms) {
