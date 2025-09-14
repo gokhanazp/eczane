@@ -1131,7 +1131,9 @@ router.get(
         selectableDistricts = selectableDistricts.map(d => d.cities);
       }
 
-      const pharms = await _getPharmacies();
+      // TOKEN TASARRUFU - _getAllData kullan
+      const allData = await _getAllData();
+      const pharms = allData.dailyPharmacies;
 
       if (district) {
         if (pharms) {

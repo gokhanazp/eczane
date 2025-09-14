@@ -15,25 +15,33 @@
 <% } else { %>
 
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-5 ">
-  <!-- Grid -->
-  <div class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-6">
+  <!-- Grid - 3 Eczane Yan Yana -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
     <!-- Card -->
     <% districts.forEach(district => { %>
-    <a title="<%=district%> Nöbetçi Eczaneleri" href="/nobetcieczane/<%=city%>/<%=district%>" class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-md focus:outline-none focus:shadow-md transition dark:bg-neutral-900 dark:border-neutral-800" href="#">
-      <div class="p-4 md:p-5">
+    <a title="<%=district%> Nöbetçi Eczaneleri" href="/nobetcieczane/<%=city%>/<%=district%>" class="group flex flex-col bg-white border shadow-sm rounded-xl hover:shadow-lg hover:scale-105 focus:outline-none focus:shadow-lg transition-all duration-200 dark:bg-neutral-900 dark:border-neutral-800" href="#">
+      <div class="p-6 md:p-7">
         <div class="flex justify-between items-center gap-x-3">
           <div class="grow">
             <h3 class="group-hover:text-blue-600 font-semibold text-gray-800 dark:group-hover:text-neutral-400 dark:text-neutral-200">
               <%= district[0].toLocaleUpperCase('tr-TR') + district.slice(1).toLocaleLowerCase('tr-TR') %>
             </h3>
             <% if (dutyPharmacies && dutyPharmacies[district] && dutyPharmacies[district].length > 0) { %>
-            <p class="text-sm text-gray-500 dark:text-neutral-500">
-              <%= dutyPharmacies[district].length %> nöbetçi eczane
-            </p>
+            <div class="flex items-center gap-2 mt-2">
+              <span class="inline-flex items-center justify-center w-8 h-8 bg-red-100 text-red-600 rounded-full text-sm font-bold dark:bg-red-900/20 dark:text-red-400">
+                <%= dutyPharmacies[district].length %>
+              </span>
+              <p class="text-sm font-medium text-gray-600 dark:text-neutral-400">
+                Nöbetçi Eczane
+              </p>
+            </div>
             <% } else { %>
-            <p class="text-sm text-red-500 dark:text-red-400">
-              Veri yükleniyor... Lütfen sayfayı yenileyin.
-            </p>
+            <div class="flex items-center gap-2 mt-2">
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+              <p class="text-sm text-red-500 dark:text-red-400">
+                Yükleniyor...
+              </p>
+            </div>
             <% } %>
           </div>
           <div>
