@@ -1,17 +1,20 @@
-<div class="w-full max-w-sm overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-900 md:max-w-sm pharmacy-card">
+<div class="w-full overflow-hidden bg-white rounded-xl shadow-lg dark:bg-gray-900 pharmacy-card">
 
   <% const nameContent = pharmacy.name.split(" "); %>
   <% const name = nameContent.join("-"); %>
-  <a href="/eczaneler/<%=name%>-<%=pharmacy.id%>" class="flex items-center px-3 py-3 bg-gray-100 dark:bg-gray-800 eczanetitle">
-    <svg version="1.1" viewBox="0 0 2000 1986" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-      <path transform="translate(1306,281)" d="m0 0h265v310h-752v225h691v292h-689v287h766v321l-1 1h-1205l-1-1v-1432l182-1z" fill="#E61417" />
-      <path transform="translate(27)" d="m0 0h1946l10 3 8 6 6 8 3 8v1936l-5 12-8 8-9 4-4 1h-1948l-11-4-9-8-4-8-2-8v-1930l3-10 6-9 8-6zm5 31-1 1v1922l1 1h1937v-1924z" fill="#E61518" />
-    </svg>
+  <a href="/eczaneler/<%=name%>-<%=pharmacy.id%>" class="flex items-center px-4 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition-all duration-200 eczanetitle group">
+    <div class="flex-shrink-0 w-8 h-8 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+      <svg version="1.1" viewBox="0 0 2000 1986" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+        <path transform="translate(1306,281)" d="m0 0h265v310h-752v225h691v292h-689v287h766v321l-1 1h-1205l-1-1v-1432l182-1z" fill="#E61417" />
+        <path transform="translate(27)" d="m0 0h1946l10 3 8 6 6 8 3 8v1936l-5 12-8 8-9 4-4 1h-1948l-11-4-9-8-4-8-2-8v-1930l3-10 6-9 8-6zm5 31-1 1v1922l1 1h1937v-1924z" fill="#E61518" />
+      </svg>
+    </div>
 
-    <h4 class="mx-3 text-base dark:text-white font-semibold text-black"><%= pharmacy.name %> (<%= pharmacy.district %>)</h4>
+    <h4 class="mx-3 text-base font-semibold text-white group-hover:text-gray-100 transition-colors duration-200"><%= pharmacy.name %></h4>
+    <span class="ml-auto text-sm text-red-100 bg-red-400/30 px-2 py-1 rounded-full"><%= pharmacy.district %></span>
   </a>
 
-  <div class="px-3 py-2 flex flex-col gap-4">
+  <div class="px-4 py-4 flex flex-col gap-3">
 
     <%- include('./pharmacyDirections', {pharmacy: pharmacy}) %>
     <%- include('./pharmacyDistance', {pharmacy: pharmacy}) %>

@@ -73,16 +73,24 @@ body {
 }
 
 .pharmacy-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px; /* Cardlar arasındaki boşluk */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
 }
 
 .pharmacy-card {
-  flex: 1 1 calc(33% - 5px); /* 3 sütun yapısını korumak için */
-  max-width: calc(32% - 5px); /* 3 sütun yapısını korumak için */
-  margin: 5px; /* Cardlar arasındaki boşluk */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pharmacy-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
 @media (min-width: 1536px) {
@@ -98,10 +106,26 @@ h1.mx-3.text-lg.font-semibold.text-white {
   width: 66%;
 }
 
-@media (max-width: 640px) {
-  .pharmacy-card {
-    flex: 1 1 100%;
-    max-width: 100%;
+/* Responsive Grid Düzeni */
+@media (max-width: 768px) {
+  .pharmacy-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 15px 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pharmacy-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .pharmacy-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 }
 .logo-container {
