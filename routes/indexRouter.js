@@ -845,26 +845,113 @@ router.get(
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
-      districts = await DutyPharmacyService.getDistricts(city);
-      districts = districts.map(d => d.cities);
-      cities = await DutyPharmacyService.getCities();
-      currentCity = cities.find(c => {
-        const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
+
+      // TEK API ÇAĞRISI - TOKEN TASARRUFU
+      console.log(`🏘️ ${city}/${district} sayfası yükleniyor - Cache'den`);
+      const allData = await _getAllData();
+
+      cities = allData.cities;
+      const pharmacies = allData.dailyPharmacies;
+
+      // Şehir ismi eşleştirme - Türkçe karakter desteği
+      const targetCity = city.toLowerCase();
+      const cityMapping = {
+        'istanbul': 'İstanbul',
+        'ankara': 'Ankara',
+        'izmir': 'İzmir',
+        'bursa': 'Bursa',
+        'antalya': 'Antalya'
+      };
+
+      const cityMatch = cities.find(c => {
+        const cityName = c.cities;
+        const p1 = translateEnglish({ text: cityName }).text.toLowerCase();
         const p2 = translateEnglish({ text: city }).text.toLowerCase();
 
-        return p1 === p2;
-      }).cities;
-      currentDistrict = districts.find(d => {
-        const p1 = translateEnglish({ text: d }).text.toLowerCase();
-        const p2 = translateEnglish({ text: district }).text.toLowerCase();
+        // Direkt eşleştirme
+        if (p1 === p2) return true;
 
-        return p1 === p2;
+        // Mapping ile eşleştirme
+        if (cityMapping[targetCity] && cityName === cityMapping[targetCity]) return true;
+
+        // Türkçe karakter normalize
+        const normalize = (str) => str.toLowerCase()
+          .replace('ı', 'i')
+          .replace('ğ', 'g')
+          .replace('ü', 'u')
+          .replace('ş', 's')
+          .replace('ö', 'o')
+          .replace('ç', 'c');
+
+        return normalize(cityName) === normalize(city);
       });
 
-      dutyPharmacies = await _getPharmacies();
-      dutyPharmacies = dutyPharmacies[currentCity][currentDistrict] ?? [];
-      titleCity = currentCity[0].toLocaleUpperCase("tr-TR") + currentCity.slice(1);
-      titleDist = currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1);
+      if (cityMatch) {
+        currentCity = cityMatch.cities;
+        console.log("✅ Şehir eşleşti:", { input: city, found: currentCity });
+      } else {
+        console.log("❌ Şehir eşleşmedi:", { input: city });
+        currentCity = city; // Fallback
+      }
+
+      // İlçeleri cache'den al - API çağrısı yok
+      if (pharmacies[currentCity]) {
+        districts = Object.keys(pharmacies[currentCity]);
+
+        // İlçe ismi eşleştirme
+        const targetDistrict = district.toLowerCase();
+        const districtMapping = {
+          'kadikoy': 'Kadıköy',
+          'besiktas': 'Beşiktaş',
+          'sisli': 'Şişli',
+          'uskudar': 'Üsküdar'
+        };
+
+        currentDistrict = districts.find(d => {
+          const p1 = translateEnglish({ text: d }).text.toLowerCase();
+          const p2 = translateEnglish({ text: district }).text.toLowerCase();
+
+          // Direkt eşleştirme
+          if (p1 === p2) return true;
+
+          // Mapping ile eşleştirme
+          if (districtMapping[targetDistrict] && d === districtMapping[targetDistrict]) return true;
+
+          // Türkçe karakter normalize
+          const normalize = (str) => str.toLowerCase()
+            .replace('ı', 'i')
+            .replace('ğ', 'g')
+            .replace('ü', 'u')
+            .replace('ş', 's')
+            .replace('ö', 'o')
+            .replace('ç', 'c');
+
+          return normalize(d) === normalize(district);
+        });
+
+        if (currentDistrict) {
+          console.log("✅ İlçe eşleşti:", { input: district, found: currentDistrict });
+        } else {
+          console.log("❌ İlçe eşleşmedi:", { input: district, availableDistricts: districts.slice(0, 5) });
+          currentDistrict = district; // Fallback
+        }
+
+        // Eczaneleri cache'den al - API çağrısı yok
+        dutyPharmacies = pharmacies[currentCity][currentDistrict] ?? [];
+
+        console.log("✅ İlçe eczaneleri cache'den alındı:", {
+          city: currentCity,
+          district: currentDistrict,
+          pharmacyCount: dutyPharmacies.length
+        });
+      } else {
+        console.log("❌ Şehir verisi bulunamadı:", currentCity);
+        districts = [];
+        dutyPharmacies = [];
+      }
+
+      titleCity = currentCity ? currentCity[0].toLocaleUpperCase("tr-TR") + currentCity.slice(1) : city;
+      titleDist = currentDistrict ? currentDistrict[0].toLocaleUpperCase("tr-TR") + currentDistrict.slice(1) : district;
     } catch (error) {
       console.log("❌ Duty Pharmacies not found:", error.message);
     }
