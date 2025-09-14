@@ -83,8 +83,13 @@ const preloadCache = async () => {
       return;
     }
 
-    console.log("📡 API'den veri preload ediliyor...");
-    const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies();
+    console.log("📡 API'den veri preload ediliyor... (TEK SEFERLIK TOKEN KULLANIMI)");
+
+    // TEK API ÇAĞRISI - PARALEL
+    const [pharmaciesRes, citiesRes] = await Promise.all([
+      DutyPharmacyService.getDutyPharmacies(),
+      DutyPharmacyService.getCities()
+    ]);
 
     if (pharmaciesRes && pharmaciesRes.length > 0) {
       // Veri işleme
@@ -96,10 +101,11 @@ const preloadCache = async () => {
         dailyPharmacies[city][district].push(pharmacy);
       });
 
-      // Cache'e kaydet
+      // Cache'e kaydet - SÜPER UZUN CACHE
       await Promise.all([
-        cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1)),
-        cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(7))
+        cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(7)), // 7 gün
+        cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(30)), // 30 gün
+        cacheManage.setCache("cities_cache", citiesRes, dutyTTLGenerate(90)) // 90 gün
       ]);
 
       const loadTime = Date.now() - startTime;

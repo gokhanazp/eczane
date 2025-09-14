@@ -25,11 +25,11 @@ let startupCachePromise = null;
 // Tek API çağrısı ile tüm veriyi çek - TOKEN TASARRUFU
 const _getAllData = async (forceRefresh = false) => {
   try {
-    // Memory cache kontrolü - Çok hızlı (2 saat cache)
+    // Memory cache kontrolü - SÜPER UZUN (12 saat cache)
     if (!forceRefresh && memoryCache.dailyPharmacies && memoryCache.cities && memoryCache.lastUpdate) {
       const cacheAge = Date.now() - memoryCache.lastUpdate;
-      if (cacheAge < 2 * 60 * 60 * 1000) { // 2 saat memory cache
-        console.log("⚡ Tüm veri memory cache'ten alındı (TOKEN TASARRUFU)");
+      if (cacheAge < 12 * 60 * 60 * 1000) { // 2 saat → 12 saat memory cache
+        console.log("⚡ Tüm veri memory cache'ten alındı (12 SAAT CACHE - TOKEN TASARRUFU)");
         return {
           dailyPharmacies: memoryCache.dailyPharmacies,
           cities: memoryCache.cities,
@@ -75,6 +75,16 @@ const _getAllData = async (forceRefresh = false) => {
       };
     }
 
+    // API LIMIT KONTROLÜ - TOKEN TASARRUFU
+    if (!apiOptimizer.canMakeApiCall("getAllData")) {
+      console.log("🚫 API limit aşıldı, eski cache kullanılıyor");
+      return {
+        dailyPharmacies: memoryCache.dailyPharmacies || {},
+        cities: memoryCache.cities || [],
+        districts: memoryCache.districts || {}
+      };
+    }
+
     console.log("🌐 API'den fresh data alınıyor... (TOKEN KULLANIMI)");
     const startTime = Date.now();
 
@@ -83,6 +93,10 @@ const _getAllData = async (forceRefresh = false) => {
       DutyPharmacyService.getDutyPharmacies(),
       DutyPharmacyService.getCities()
     ]);
+
+    // API çağrısını kaydet
+    apiOptimizer.recordApiCall("getDutyPharmacies");
+    apiOptimizer.recordApiCall("getCities");
 
     const apiTime = Date.now() - startTime;
     console.log(`⏱️ API çağrısı süresi: ${apiTime}ms (2 endpoint paralel)`);
@@ -117,11 +131,11 @@ const _getAllData = async (forceRefresh = false) => {
       citiesCount: citiesRes.length
     });
 
-    // Cache'leri güncelle - TOKEN TASARRUFU İÇİN UZUN CACHE
+    // Cache'leri güncelle - SÜPER UZUN CACHE TOKEN TASARRUFU
     await Promise.all([
-      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1)), // 1 gün
-      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(7)), // 7 gün
-      cacheManage.setCache("cities_cache", citiesRes, dutyTTLGenerate(30)) // 30 gün - şehirler değişmez
+      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(7)), // 1 gün → 7 gün
+      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(30)), // 7 gün → 30 gün
+      cacheManage.setCache("cities_cache", citiesRes, dutyTTLGenerate(90)) // 30 gün → 90 gün
     ]);
 
     // Memory cache güncelle
@@ -381,10 +395,15 @@ router.get("/test-getpharmacies", testLimiter, async (req, res) => {
   }
 });
 
-// API Kontör İstatistikleri endpoint'i
+// API Kontör İstatistikleri endpoint'i - TOKEN TAKIP
 router.get("/api-stats", async (req, res) => {
   try {
     const stats = apiOptimizer.getApiStats();
+    const memoryStatus = {
+      hasData: !!memoryCache.dailyPharmacies,
+      lastUpdate: memoryCache.lastUpdate ? new Date(memoryCache.lastUpdate).toLocaleString('tr-TR') : null,
+      cacheAge: memoryCache.lastUpdate ? Math.round((Date.now() - memoryCache.lastUpdate) / (1000 * 60)) : null
+    };
 
     res.json({
       message: "📊 API Kontör İstatistikleri",
