@@ -10,14 +10,9 @@ const { getMessages, redirectWithError, redirectWithSuccess } = require("../util
 
 const router = Router();
 
-// Global cache değişkenleri - Memory'de tutarak hızlandırma
-let memoryCache = {
-  dailyPharmacies: null,
-  cities: null,
-  districts: null,
-  lastUpdate: null,
-  isLoading: false
-};
+// VERCEL SERVERLESS İÇİN MEMORY CACHE KALDIRILDI - TOKEN TASARRUFU
+// Memory cache Vercel'de function restart'larda sıfırlanıyor, token kaçağına sebep oluyor
+// Artık sadece Keyv cache kullanılacak
 
 // Startup'ta cache'i hemen yükle
 let startupCachePromise = null;
@@ -91,22 +86,23 @@ const _getAllData = async (forceRefresh = false) => {
 
     // API LIMIT KONTROLÜ - TOKEN TASARRUFU
     if (!apiOptimizer.canMakeApiCall("getAllData")) {
-      console.log("🚫 API limit aşıldı, eski cache kullanılıyor");
+      console.log("🚫 API limit aşıldı, boş veri döndürülüyor");
       return {
-        dailyPharmacies: memoryCache.dailyPharmacies || {},
-        cities: memoryCache.cities || [],
-        districts: memoryCache.districts || {}
+        dailyPharmacies: {},
+        cities: [],
+        districts: {}
       };
     }
 
     console.log("🌐 API'den fresh data alınıyor... (TOKEN KULLANIMI)");
     const startTime = Date.now();
 
-    // TEK API ÇAĞRISI - TOKEN TASARRUFU
-    const [pharmaciesRes, citiesRes] = await Promise.all([
-      DutyPharmacyService.getDutyPharmacies(),
-      DutyPharmacyService.getCities()
-    ]);
+    // TEK CACHE ÇAĞRISI - SÜPER TOKEN TASARRUFU
+    // Her iki veri de zaten cache'li, ayrı ayrı çağırmaya gerek yok
+    const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies(); // Cache'li
+    const citiesRes = await DutyPharmacyService.getCities(); // Cache'li
+
+    console.log("✅ Her iki API de cache'li çağrıldı - TOKEN TASARRUFU");
 
     // API çağrısını kaydet
     apiOptimizer.recordApiCall("getDutyPharmacies");
@@ -117,11 +113,10 @@ const _getAllData = async (forceRefresh = false) => {
 
     if (!pharmaciesRes || pharmaciesRes.length === 0) {
       console.log("❌ API'den veri alınamadı");
-      memoryCache.isLoading = false;
       return {
-        dailyPharmacies: memoryCache.dailyPharmacies || {},
-        cities: memoryCache.cities || [],
-        districts: memoryCache.districts || {}
+        dailyPharmacies: {},
+        cities: [],
+        districts: {}
       };
     }
 
