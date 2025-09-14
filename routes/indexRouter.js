@@ -13,6 +13,8 @@ const router = Router();
 // Global cache değişkenleri - Memory'de tutarak hızlandırma
 let memoryCache = {
   dailyPharmacies: null,
+  cities: null,
+  districts: null,
   lastUpdate: null,
   isLoading: false
 };
@@ -20,6 +22,131 @@ let memoryCache = {
 // Startup'ta cache'i hemen yükle
 let startupCachePromise = null;
 
+// Tek API çağrısı ile tüm veriyi çek - TOKEN TASARRUFU
+const _getAllData = async (forceRefresh = false) => {
+  try {
+    // Memory cache kontrolü - Çok hızlı (2 saat cache)
+    if (!forceRefresh && memoryCache.dailyPharmacies && memoryCache.cities && memoryCache.lastUpdate) {
+      const cacheAge = Date.now() - memoryCache.lastUpdate;
+      if (cacheAge < 2 * 60 * 60 * 1000) { // 2 saat memory cache
+        console.log("⚡ Tüm veri memory cache'ten alındı (TOKEN TASARRUFU)");
+        return {
+          dailyPharmacies: memoryCache.dailyPharmacies,
+          cities: memoryCache.cities,
+          districts: memoryCache.districts
+        };
+      }
+    }
+
+    // Eğer başka bir request loading'de ise bekle
+    if (memoryCache.isLoading) {
+      console.log("⏳ Başka request loading, bekleniyor...");
+      let attempts = 0;
+      while (memoryCache.isLoading && attempts < 20) { // 2 saniye max
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+      }
+      if (memoryCache.dailyPharmacies && memoryCache.cities) {
+        console.log("✅ Loading tamamlandı, memory cache'ten alındı");
+        return {
+          dailyPharmacies: memoryCache.dailyPharmacies,
+          cities: memoryCache.cities,
+          districts: memoryCache.districts
+        };
+      }
+    }
+
+    memoryCache.isLoading = true;
+
+    // File cache kontrolü
+    const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+    const cachedCities = await cacheManage.getCache("cities_cache");
+
+    if (!forceRefresh && cachedDailyPharmacies && cachedCities) {
+      console.log("✅ File cache'ten alındı (TOKEN TASARRUFU)");
+      memoryCache.dailyPharmacies = cachedDailyPharmacies;
+      memoryCache.cities = cachedCities;
+      memoryCache.lastUpdate = Date.now();
+      memoryCache.isLoading = false;
+      return {
+        dailyPharmacies: cachedDailyPharmacies,
+        cities: cachedCities,
+        districts: memoryCache.districts
+      };
+    }
+
+    console.log("🌐 API'den fresh data alınıyor... (TOKEN KULLANIMI)");
+    const startTime = Date.now();
+
+    // TEK API ÇAĞRISI - TOKEN TASARRUFU
+    const [pharmaciesRes, citiesRes] = await Promise.all([
+      DutyPharmacyService.getDutyPharmacies(),
+      DutyPharmacyService.getCities()
+    ]);
+
+    const apiTime = Date.now() - startTime;
+    console.log(`⏱️ API çağrısı süresi: ${apiTime}ms (2 endpoint paralel)`);
+
+    if (!pharmaciesRes || pharmaciesRes.length === 0) {
+      console.log("❌ API'den veri alınamadı");
+      memoryCache.isLoading = false;
+      return {
+        dailyPharmacies: memoryCache.dailyPharmacies || {},
+        cities: memoryCache.cities || [],
+        districts: memoryCache.districts || {}
+      };
+    }
+
+    // Veri işleme - Optimize edilmiş
+    const dailyPharmacies = {};
+    const processStart = Date.now();
+
+    pharmaciesRes.forEach(pharmacy => {
+      const { city, district } = pharmacy;
+      if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
+      if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
+      dailyPharmacies[city][district].push(pharmacy);
+    });
+
+    const processTime = Date.now() - processStart;
+    console.log(`⚡ Veri işleme süresi: ${processTime}ms`);
+
+    console.log("✅ Tüm veri hazırlandı:", {
+      cityCount: Object.keys(dailyPharmacies).length,
+      totalPharmacies: pharmaciesRes.length,
+      citiesCount: citiesRes.length
+    });
+
+    // Cache'leri güncelle - TOKEN TASARRUFU İÇİN UZUN CACHE
+    await Promise.all([
+      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(1)), // 1 gün
+      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(7)), // 7 gün
+      cacheManage.setCache("cities_cache", citiesRes, dutyTTLGenerate(30)) // 30 gün - şehirler değişmez
+    ]);
+
+    // Memory cache güncelle
+    memoryCache.dailyPharmacies = dailyPharmacies;
+    memoryCache.cities = citiesRes;
+    memoryCache.lastUpdate = Date.now();
+    memoryCache.isLoading = false;
+
+    return {
+      dailyPharmacies,
+      cities: citiesRes,
+      districts: memoryCache.districts
+    };
+  } catch (error) {
+    console.error("❌ _getAllData hatası:", error.message);
+    memoryCache.isLoading = false;
+    return {
+      dailyPharmacies: memoryCache.dailyPharmacies || {},
+      cities: memoryCache.cities || [],
+      districts: memoryCache.districts || {}
+    };
+  }
+};
+
+// Eski fonksiyon - geriye uyumluluk için
 const _getPharmacies = async (forceRefresh = false) => {
   try {
     // Memory cache kontrolü - Çok hızlı (2 saat cache)
@@ -469,10 +596,14 @@ router.get("/", async function (req, res) {
   let allDutyPharmaciesCount = 0;
 
   try {
-    cities = await DutyPharmacyService.getCities();
-    cities = cities.map(c => c.cities);
+    // TEK API ÇAĞRISI - TOKEN TASARRUFU
+    console.log("🏠 Ana sayfa yükleniyor - Tek API çağrısı ile");
+    const allData = await _getAllData();
 
-    const pharms = await _getPharmacies();
+    cities = allData.cities.map(c => c.cities);
+    const pharms = allData.dailyPharmacies;
+
+    // Şehir bazında eczane sayılarını hesapla
     for (const city in pharms) {
       let count = 0;
       for (const district in pharms[city]) {
@@ -481,6 +612,12 @@ router.get("/", async function (req, res) {
       }
       pharmacyByCities[city] = count;
     }
+
+    console.log("✅ Ana sayfa verisi hazır:", {
+      cityCount: cities.length,
+      totalPharmacies: allDutyPharmaciesCount,
+      cacheHit: "memory/file cache kullanıldı"
+    });
   } catch (error) {
     console.log("❌ API Hatası:", error.message);
 
@@ -570,7 +707,11 @@ router.get(
 
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
-      cities = await DutyPharmacyService.getCities();
+
+      // TEK API ÇAĞRISI - TOKEN TASARRUFU
+      console.log(`🏙️ ${city} sayfası yükleniyor - Tek API çağrısı ile`);
+      const allData = await _getAllData();
+      cities = allData.cities;
 
       // Şehir ismi eşleştirme - Türkçe karakter desteği
       const targetCity = city.toLowerCase();
@@ -613,10 +754,17 @@ router.get(
         currentCity = city; // Fallback
       }
 
-      districts = await DutyPharmacyService.getDistricts(currentCity);
-      districts = districts.map(d => d.cities);
+      // İlçeleri cache'den al - EXTRA API ÇAĞRISI YOK
+      const pharmacies = allData.dailyPharmacies;
 
-      const pharmacies = await _getPharmacies();
+      // İlçeleri eczane verisinden çıkar - API çağrısı yerine
+      if (pharmacies[currentCity]) {
+        districts = Object.keys(pharmacies[currentCity]);
+        console.log(`✅ ${currentCity} ilçeleri cache'den alındı:`, districts.length);
+      } else {
+        districts = [];
+        console.log(`❌ ${currentCity} için ilçe verisi bulunamadı`);
+      }
 
       console.log("🏥 Şehir eczane verisi:", {
         currentCity,
