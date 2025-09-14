@@ -72,8 +72,9 @@ class ApiOptimizer {
         throw new Error("Günlük API limiti aşıldı");
       }
 
-      // API çağrısı yap
-      console.log(`🌐 API çağrısı yapılıyor: ${cacheKey}`);
+      // API çağrısı yap - TOKEN HARCAMA UYARISI
+      console.log(`🚨 TOKEN HARCAMA: API çağrısı yapılıyor: ${cacheKey}`);
+      console.log(`💰 Güncel token kullanımı: ${this.apiCallCount + 1}/${this.dailyApiLimit}`);
       const data = await apiFunction();
       this.recordApiCall(cacheKey);
 

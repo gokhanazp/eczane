@@ -134,8 +134,9 @@ const start = async () => {
       console.log(`🚀 Server ${PORT} portunda çalışıyor...`);
     });
 
-    // Hemen cache preload et (daha hızlı)
-    preloadCache(); // Hemen başlat, setTimeout yok
+    // VERCEL SERVERLESS İÇİN PRELOAD DEVRE DIŞI - TOKEN TASARRUFU
+    console.log("🚫 Preload cache devre dışı (Vercel serverless için TOKEN TASARRUFU)");
+    // preloadCache(); // DEVRE DIŞI - Her function restart'ta token harcıyordu
 
   } catch (error) {
     console.log("❌ Server başlatma hatası:", error);
