@@ -1807,9 +1807,15 @@ body {
   }
 }
 
-h1.mx-3.text-lg.font-semibold.text-white {
-  font-size: 14px;
+/* Eczane başlığı - hem light hem dark mode için */
+
+.eczanetitle h1,
+.eczanetitle h4 {
+  color: white !important;
+  font-size: 16px;
 }
+
+/* Eski CSS kaldırıldı - artık gradient background kullanıyoruz */
 
 .ilcesec #district {
   width: 66%;
@@ -2181,6 +2187,16 @@ h1.mx-3.text-lg.font-semibold.text-white {
 
 .dark\:bg-red-900\/20:is(.dark *) {
   background-color: rgb(127 29 29 / 0.2);
+}
+
+.dark\:from-red-600:is(.dark *) {
+  --tw-gradient-from: #dc2626 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(220 38 38 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.dark\:to-red-700:is(.dark *) {
+  --tw-gradient-to: #b91c1c var(--tw-gradient-to-position);
 }
 
 .dark\:text-blue-400:is(.dark *) {

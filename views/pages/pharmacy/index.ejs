@@ -1,7 +1,7 @@
 <% if(typeof pharmacy !== 'undefined' && pharmacy) { %>
 <div class="w-full overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-900 flex flex-col">
 
-  <div class="flex justify-between items-center gap-4 px-4 py-3 bg-gray-100 dark:bg-gray-800 eczanetitle">
+  <div class="flex justify-between items-center gap-4 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-700 eczanetitle">
     <h1 class="text-xl text-white font-semibold"><%= pharmacy.name %> (<%= pharmacy.district %>)</h1>
     <%- include('../../components/pharmacyDistance', {pharmacy: pharmacy}) %>
   </div>

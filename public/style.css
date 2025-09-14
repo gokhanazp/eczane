@@ -98,9 +98,14 @@ body {
     max-width: 1280px !important;
   }
 }
-h1.mx-3.text-lg.font-semibold.text-white {
-  font-size: 14px;
+/* Eczane başlığı - hem light hem dark mode için */
+.eczanetitle h1,
+.eczanetitle h4 {
+  color: white !important;
+  font-size: 16px;
 }
+
+/* Eski CSS kaldırıldı - artık gradient background kullanıyoruz */
 
 .ilcesec #district {
   width: 66%;
