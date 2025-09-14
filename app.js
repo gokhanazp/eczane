@@ -73,7 +73,7 @@ const preloadCache = async () => {
     // DutyPharmacyService'i import et
     const DutyPharmacyService = require("./services/DutyPharmacyService");
     const { cacheManage, CacheNames } = require("./utils/cacheManage");
-    const { dutyTTLGenerate } = require("./utils/dutyTTLGenerate");
+    const { dutyTTLGenerate, dutyPharmacyTTL } = require("./utils/dutyTTLGenerate");
 
     // Cache kontrolü
     const cachedData = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
@@ -101,12 +101,20 @@ const preloadCache = async () => {
         dailyPharmacies[city][district].push(pharmacy);
       });
 
-      // Cache'e kaydet - SÜPER UZUN CACHE
+      // Cache'e kaydet - AKILLI GÜN BAZLI CACHE
+      const pharmacyTTL = dutyPharmacyTTL(); // Sabah 8'e kadar
+      const citiesTTL = dutyTTLGenerate(90); // 90 gün
+
       await Promise.all([
-        cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(7)), // 7 gün
-        cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(30)), // 30 gün
-        cacheManage.setCache("cities_cache", citiesRes, dutyTTLGenerate(90)) // 90 gün
+        cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, pharmacyTTL),
+        cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, pharmacyTTL),
+        cacheManage.setCache("cities_cache", citiesRes, citiesTTL)
       ]);
+
+      console.log("✅ Startup cache akıllı TTL ile ayarlandı:", {
+        pharmacyTTL: Math.round(pharmacyTTL / (1000 * 60 * 60)) + " saat",
+        citiesTTL: Math.round(citiesTTL / (1000 * 60 * 60 * 24)) + " gün"
+      });
 
       const loadTime = Date.now() - startTime;
       console.log(`✅ Startup cache preload tamamlandı! (${loadTime}ms)`);

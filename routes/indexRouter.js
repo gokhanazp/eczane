@@ -3,7 +3,7 @@ const DutyPharmacyService = require("../services/DutyPharmacyService");
 const translateEnglish = require("../utils/translateEnglish");
 const { getCookie, setCookie, CookieNames } = require("../utils/cookieManage");
 const { cacheManage, CacheNames } = require("../utils/cacheManage");
-const { dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
+const { dutyTTLGenerate, dutyPharmacyTTL } = require("../utils/dutyTTLGenerate");
 const apiOptimizer = require("../utils/apiOptimizer");
 const { testLimiter, cacheLimiter } = require("../middleware/rateLimiter");
 const { getMessages, redirectWithError, redirectWithSuccess } = require("../utils/messageHelper");
@@ -25,16 +25,30 @@ let startupCachePromise = null;
 // Tek API çağrısı ile tüm veriyi çek - TOKEN TASARRUFU
 const _getAllData = async (forceRefresh = false) => {
   try {
-    // Memory cache kontrolü - SÜPER UZUN (12 saat cache)
+    // Memory cache kontrolü - AKILLI GÜN BAZLI CACHE
     if (!forceRefresh && memoryCache.dailyPharmacies && memoryCache.cities && memoryCache.lastUpdate) {
-      const cacheAge = Date.now() - memoryCache.lastUpdate;
-      if (cacheAge < 12 * 60 * 60 * 1000) { // 2 saat → 12 saat memory cache
-        console.log("⚡ Tüm veri memory cache'ten alındı (12 SAAT CACHE - TOKEN TASARRUFU)");
+      const now = new Date();
+      const cacheDate = new Date(memoryCache.lastUpdate);
+
+      // Eğer aynı gün ve saat 8'den sonra ise cache geçerli
+      const isSameDay = now.toDateString() === cacheDate.toDateString();
+      const isAfter8AM = now.getHours() >= 8;
+      const cacheAfter8AM = cacheDate.getHours() >= 8;
+
+      if (isSameDay && isAfter8AM && cacheAfter8AM) {
+        console.log("⚡ Memory cache geçerli (aynı gün, sabah 8 sonrası) - TOKEN TASARRUFU");
         return {
           dailyPharmacies: memoryCache.dailyPharmacies,
           cities: memoryCache.cities,
           districts: memoryCache.districts
         };
+      }
+
+      // Eğer cache sabah 8'den önce oluşturulmuş ve şimdi 8'den sonra ise yenile
+      if (isSameDay && isAfter8AM && !cacheAfter8AM) {
+        console.log("🔄 Sabah 8 geçti, cache yenileniyor...");
+      } else if (!isSameDay) {
+        console.log("🔄 Yeni gün, cache yenileniyor...");
       }
     }
 
@@ -131,12 +145,20 @@ const _getAllData = async (forceRefresh = false) => {
       citiesCount: citiesRes.length
     });
 
-    // Cache'leri güncelle - SÜPER UZUN CACHE TOKEN TASARRUFU
+    // Cache'leri güncelle - AKILLI GÜN BAZLI CACHE
+    const pharmacyTTL = dutyPharmacyTTL(); // Sabah 8'e kadar
+    const citiesTTL = dutyTTLGenerate(90); // 90 gün (şehirler değişmez)
+
     await Promise.all([
-      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, dutyTTLGenerate(7)), // 1 gün → 7 gün
-      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, dutyTTLGenerate(30)), // 7 gün → 30 gün
-      cacheManage.setCache("cities_cache", citiesRes, dutyTTLGenerate(90)) // 30 gün → 90 gün
+      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, pharmacyTTL), // Sabah 8'e kadar
+      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, pharmacyTTL), // Sabah 8'e kadar
+      cacheManage.setCache("cities_cache", citiesRes, citiesTTL) // 90 gün
     ]);
+
+    console.log("✅ Akıllı cache ayarlandı:", {
+      pharmacyTTL: Math.round(pharmacyTTL / (1000 * 60 * 60)) + " saat",
+      citiesTTL: Math.round(citiesTTL / (1000 * 60 * 60 * 24)) + " gün"
+    });
 
     // Memory cache güncelle
     memoryCache.dailyPharmacies = dailyPharmacies;
