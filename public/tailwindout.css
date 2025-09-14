@@ -1770,14 +1770,29 @@ button {
   background-image: none !important;
 }
 
-/* Body ve html arkaplan kontrolü */
+/* Body ve html arkaplan kontrolü - GECE MODU DÜZELTMESİ */
 
 body {
-  background: white;
+  background: white !important;
+  background-color: white !important;
 }
 
 .dark body {
-  background: #111827;
+  background: #111827 !important;
+  background-color: #111827 !important;
+}
+
+/* Ana container'lar için dark mode desteği */
+
+.dark .container {
+  background-color: transparent;
+}
+
+/* Content area'lar için dark mode background */
+
+.dark .py-8,
+.dark .py-12 {
+  background-color: transparent;
 }
 
 .pharmacy-container {
