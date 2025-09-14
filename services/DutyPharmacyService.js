@@ -25,97 +25,99 @@ const baseHeaders = {
 
 class DutyPharmacyService {
   async getDutyPharmacies() {
-    try {
-      const url = `${DUTY_API_URL}/all`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: baseHeaders,
-      });
+    // SÜPER UZUN CACHE - TOKEN TASARRUFU
+    return await apiOptimizer.getWithCache(
+      "all_duty_pharmacies",
+      async () => {
+        console.log("🌐 getDutyPharmacies API çağrısı yapılıyor - TOKEN KULLANIMI");
+        try {
+          const url = `${DUTY_API_URL}/all`;
+          const response = await fetch(url, {
+            method: "GET",
+            headers: baseHeaders,
+          });
 
-      let resJson = await response.json();
+          let resJson = await response.json();
 
-      if (resJson.status !== "success") {
-        throw new Error(`Failed to fetch duty pharmacies: ${resJson.message}`);
-      }
+          if (resJson.status !== "success") {
+            throw new Error(`Failed to fetch duty pharmacies: ${resJson.message}`);
+          }
 
-      // start Kıbrıs remove
-      resJson.data = resJson.data.filter(pharmacy => pharmacy.city && !pharmacy.city.startsWith("Kıbrıs"));
+          // start Kıbrıs remove
+          resJson.data = resJson.data.filter(pharmacy => pharmacy.city && !pharmacy.city.startsWith("Kıbrıs"));
 
-      const dutyPharmacies = resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
+          const dutyPharmacies = resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
 
-      return dutyPharmacies;
-    } catch (error) {
-      console.error("Fetch Error: ", error.message);
-      throw new Error(`An error occurred while fetching duty pharmacies: ${error.message}`);
-    }
+          return dutyPharmacies;
+        } catch (error) {
+          console.error("Fetch Error: ", error.message);
+          throw new Error(`An error occurred while fetching duty pharmacies: ${error.message}`);
+        }
+      },
+      7 // 7 gün cache - çok uzun
+    );
   }
 
   async getDutyPharmaciesBy(city, district) {
+    console.log("🚨 UYARI: getDutyPharmaciesBy kullanılıyor - TOKEN KAÇAĞI RİSKİ!");
+    console.log("Bu fonksiyon yerine cache'li _getAllData kullanın!");
+
+    // ACİL TOKEN TASARRUFU - Cache'den al
     try {
-      const citiesRes = await fetch(`${DUTY_API_URL}/cities`, {
-        method: "GET",
-        headers: baseHeaders,
-      });
-
-      const citiesResJson = await citiesRes.json();
-
-      if (citiesResJson.status !== "success") {
-        throw new Error(`Failed to fetch duty pharmacy: ${citiesResJson.message}`);
-      }
-
-      citiesResJson.data = citiesResJson.data.find(c => {
+      // Cache'li API çağrıları kullan
+      const cities = await this.getCities();
+      const cityData = cities.find(c => {
         const p1 = translateEnglish({ text: c.cities }).text.toLowerCase();
         const p2 = translateEnglish({ text: city }).text.toLowerCase();
         return p1 === p2;
       });
 
-      if (!citiesResJson.data) {
+      if (!cityData) {
         throw new Error(`Failed to fetch duty pharmacy: City not found`);
       }
 
-      const citySlug = citiesResJson.data.slug;
+      const citySlug = cityData.slug;
 
       let districtSlug;
       if (district) {
-        const districtsRes = await fetch(`${DUTY_API_URL}/cities?city=${citySlug}`, {
-          method: "GET",
-          headers: baseHeaders,
-        });
-
-        const districtsResJson = await districtsRes.json();
-
-        if (districtsResJson.status !== "success") {
-          throw new Error(`Failed to fetch duty pharmacy: ${districtsResJson.message}`);
-        }
-
-        const districtSlugData = districtsResJson.data.find(d => {
+        // Cache'li districts al
+        const districts = await this.getDistricts(city);
+        const districtData = districts.find(d => {
           const p1 = translateEnglish({ text: d.cities }).text.toLowerCase();
           const p2 = translateEnglish({ text: district }).text.toLowerCase();
           return p1 === p2;
         });
 
-        if (!districtSlugData) {
+        if (!districtData) {
           throw new Error(`Failed to fetch duty pharmacy: District not found`);
         }
 
-        districtSlug = districtSlugData.slug;
+        districtSlug = districtData.slug;
       }
 
-      const url = `${DUTY_API_URL}?city=${citySlug}${districtSlug ? `&district=${districtSlug}` : ""}`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: baseHeaders,
-      });
+      // SON API ÇAĞRISI - Cache'li yap
+      const cacheKey = `duty_pharmacies_${citySlug}_${districtSlug || 'all'}`;
+      return await apiOptimizer.getWithCache(
+        cacheKey,
+        async () => {
+          console.log("🌐 getDutyPharmaciesBy API çağrısı yapılıyor:", { city, district });
+          const url = `${DUTY_API_URL}?city=${citySlug}${districtSlug ? `&district=${districtSlug}` : ""}`;
+          const response = await fetch(url, {
+            method: "GET",
+            headers: baseHeaders,
+          });
 
-      const resJson = await response.json();
+          const resJson = await response.json();
 
-      if (resJson.status !== "success") {
-        throw new Error(`Failed to fetch duty pharmacy: ${resJson.message}`);
-      }
+          if (resJson.status !== "success") {
+            throw new Error(`Failed to fetch duty pharmacy: ${resJson.message}`);
+          }
 
-      const dutyPharmacies = resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
-
-      return dutyPharmacies;
+          const dutyPharmacies = resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
+          return dutyPharmacies;
+        },
+        1 // 1 gün cache
+      );
     } catch (error) {
       console.error("Fetch Error: ", error.message);
       throw new Error(`An error occurred while fetching duty pharmacies: ${error.message}`);
