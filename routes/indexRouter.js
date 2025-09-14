@@ -330,8 +330,9 @@ router.get("/vercel-debug", async (req, res) => {
     };
     console.log("💾 Cache Status:", cacheStatus);
 
-    // _getPharmacies test
-    const pharmacies = await _getPharmacies();
+    // _getAllData test - TOKEN TASARRUFU
+    const allData = await _getAllData();
+    const pharmacies = allData.dailyPharmacies;
     const pharmaciesStatus = {
       type: typeof pharmacies,
       isNull: pharmacies === null,
@@ -376,8 +377,9 @@ router.get("/test-getpharmacies", testLimiter, async (req, res) => {
       pharmaciesLength: cachedPharmacies ? cachedPharmacies.length : 0
     });
 
-    // _getPharmacies fonksiyonunu çağır
-    const result = await _getPharmacies();
+    // _getAllData fonksiyonunu çağır - TOKEN TASARRUFU
+    const allData = await _getAllData();
+    const result = allData.dailyPharmacies;
 
     console.log("✅ _getPharmacies sonucu:", {
       resultType: typeof result,
@@ -495,22 +497,23 @@ router.get("/debug-api", async (req, res) => {
   }
 });
 
-// NosyAPI Test endpoint'i
+// NosyAPI Test endpoint'i - TOKEN TASARRUFU İÇİN DEVRE DIŞI
 router.get("/test-nosyapi", async (req, res) => {
   try {
-    console.log("🔍 NosyAPI Test başlatılıyor...");
+    console.log("🚫 Test endpoint devre dışı - TOKEN TASARRUFU");
 
-    // 1. Cities test
-    const cities = await DutyPharmacyService.getCities();
-    console.log(`✅ Cities alındı: ${cities.length} şehir`);
+    res.json({
+      status: "disabled",
+      message: "Test endpoint token tasarrufu için devre dışı bırakıldı",
+      suggestion: "Cache'li veriler için /api-stats endpoint'ini kullanın"
+    });
+    return;
 
-    // 2. İstanbul eczaneleri test
-    const istanbulPharmacies = await DutyPharmacyService.getDutyPharmaciesBy("istanbul");
-    console.log(`✅ İstanbul eczaneleri alındı: ${istanbulPharmacies.length} eczane`);
-
-    // 3. Tüm eczaneler test (ilk 5)
-    const allPharmacies = await DutyPharmacyService.getDutyPharmacies();
-    console.log(`✅ Tüm eczaneler alındı: ${allPharmacies.length} eczane`);
+    // ESKI KOD - TOKEN KAÇAĞI RİSKİ!
+    // console.log("🔍 NosyAPI Test başlatılıyor...");
+    // const cities = await DutyPharmacyService.getCities();
+    // const istanbulPharmacies = await DutyPharmacyService.getDutyPharmaciesBy("istanbul");
+    // const allPharmacies = await DutyPharmacyService.getDutyPharmacies();
 
     res.json({
       message: "🚀 NosyAPI Test Başarılı",
