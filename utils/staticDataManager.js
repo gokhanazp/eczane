@@ -54,16 +54,50 @@ async function fetchAllPharmacies() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 saniye timeout (Vercel limit)
 
-      const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
-        method: "GET",
-        headers: newApiHeaders,
-        signal: controller.signal
-      });
+      // Farklı endpoint'leri dene
+      const endpoints = [
+        `/pharmacies/sentry-pharmacies/${currentPage}`,
+        `/pharmacies/duty-pharmacies/${currentPage}`,
+        `/pharmacies/on-duty/${currentPage}`,
+        `/sentry-pharmacies/${currentPage}`,
+        `/duty-pharmacies/${currentPage}`
+      ];
+
+      let response = null;
+      let usedEndpoint = null;
+
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`🔍 Endpoint deneniyor: ${NEW_API_URL}${endpoint}`);
+          response = await fetch(`${NEW_API_URL}${endpoint}`, {
+            method: "GET",
+            headers: newApiHeaders,
+            signal: controller.signal
+          });
+
+          if (response.ok) {
+            usedEndpoint = endpoint;
+            console.log(`✅ Çalışan endpoint bulundu: ${endpoint}`);
+            break;
+          } else {
+            console.log(`❌ Endpoint başarısız (${response.status}): ${endpoint}`);
+          }
+        } catch (endpointError) {
+          console.log(`❌ Endpoint hatası: ${endpoint} - ${endpointError.message}`);
+        }
+      }
+
+      if (!response || !response.ok) {
+        throw new Error(`Tüm endpoint'ler başarısız - Son status: ${response?.status}`);
+      }
 
       clearTimeout(timeoutId);
 
       const resJson = await response.json();
-      console.log(`🚨 API ÇAĞRISI: Sayfa ${currentPage} - ${resJson.data?.length || 0} eczane`);
+      console.log(`🚨 API ÇAĞRISI: Sayfa ${currentPage} - Response:`, JSON.stringify(resJson, null, 2));
+      console.log(`📊 API Response Keys:`, Object.keys(resJson));
+      console.log(`📊 Data field:`, resJson.data ? `Array(${resJson.data.length})` : 'null/undefined');
+      console.log(`📊 İlk eczane örneği:`, resJson.data?.[0] ? JSON.stringify(resJson.data[0], null, 2) : 'yok');
 
       if (resJson.data && resJson.data.length > 0) {
         allPharmacies = allPharmacies.concat(resJson.data);

@@ -1221,6 +1221,78 @@ router.get("/terms-and-conditions", async (req, res) => {
   });
 });
 
+// API ENDPOINT TEST - DOĞRUDAN API ÇAĞRISI
+router.get("/test-api", async (req, res) => {
+  try {
+    console.log("🔍 API endpoint test başlatılıyor...");
+
+    const NEW_API_URL = "https://api.eczaneler.org/api/v2";
+    const NEW_API_KEY = "JZFmSQp9hR6s4lUraieIj1tGA8cwvo0dzVBqEMxuCfY7XHKNDb";
+
+    const endpoints = [
+      "/pharmacies/sentry-pharmacies/1",
+      "/pharmacies/duty-pharmacies/1",
+      "/pharmacies/on-duty/1",
+      "/sentry-pharmacies/1",
+      "/duty-pharmacies/1"
+    ];
+
+    const results = [];
+
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`🔍 Test ediliyor: ${NEW_API_URL}${endpoint}`);
+
+        const response = await fetch(`${NEW_API_URL}${endpoint}`, {
+          method: "GET",
+          headers: {
+            "X-Api-Key": NEW_API_KEY,
+            "Content-Type": "application/json",
+          },
+          signal: AbortSignal.timeout(5000) // 5 saniye timeout
+        });
+
+        const data = await response.json();
+
+        results.push({
+          endpoint,
+          status: response.status,
+          ok: response.ok,
+          dataKeys: Object.keys(data),
+          dataType: data.data ? `Array(${data.data.length})` : typeof data.data,
+          sampleData: data.data?.[0] || null,
+          fullResponse: data
+        });
+
+        console.log(`✅ ${endpoint}: ${response.status} - ${data.data?.length || 0} eczane`);
+
+      } catch (error) {
+        results.push({
+          endpoint,
+          error: error.message,
+          status: 'error'
+        });
+        console.log(`❌ ${endpoint}: ${error.message}`);
+      }
+    }
+
+    res.json({
+      success: true,
+      message: "API endpoint test tamamlandı",
+      results,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error("❌ API test hatası:", error);
+    res.json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // ACİL TIMEOUT TEST - MİNİMAL İŞLEM
 router.get("/test-timeout", async (req, res) => {
   try {
