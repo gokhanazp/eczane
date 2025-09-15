@@ -1458,6 +1458,34 @@ router.get("/test-yazici-direct", async (req, res) => {
   }
 });
 
+// CACHE TEMİZLEME - YENİ VERİ ÇEKİMİ
+router.get("/clear-cache-new-data", async (req, res) => {
+  try {
+    console.log("🔄 Cache temizleniyor - yeni veri çekiliyor...");
+
+    // Statik veriyi force refresh ile çek
+    const { getStaticData } = require("../utils/staticDataManager");
+    const newData = await getStaticData(true); // Force refresh
+
+    res.json({
+      success: true,
+      message: "Cache temizlendi - yeni veri çekildi",
+      totalPharmacies: newData.pharmacies ? newData.pharmacies.length : 0,
+      totalCities: newData.cities ? Object.keys(newData.cities).length : 0,
+      timestamp: new Date().toISOString(),
+      note: "Anasayfayı yenileyin - daha fazla eczane göreceksiniz"
+    });
+
+  } catch (error) {
+    console.error("❌ Cache temizleme hatası:", error);
+    res.json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // ACİL TIMEOUT TEST - MİNİMAL İŞLEM
 router.get("/test-timeout", async (req, res) => {
   try {
