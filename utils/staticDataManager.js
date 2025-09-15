@@ -4,7 +4,16 @@
  * SÜPER TOKEN TASARRUFU: Günlük 2-3 token, gün boyunca 0 token
  */
 
-const DutyPharmacyService = require("../services/DutyPharmacyService");
+// DİREKT API ÇAĞRISI - SERVICE BYPASS
+const DutyPharmacyModel = require("../models/dutyPharmacyModel");
+
+const DUTY_API_URL = process.env.DUTY_API_URL || "https://www.nosyapi.com/apiv2/service/pharmacies-on-duty";
+const DUTY_API_KEY = process.env.DUTY_API_KEY || "Bearer e2rrwkbgS9GJ16zL7yOCRlkoKcIfFT12sLunWqUlPM8kCITjueH1keEj3UT7";
+
+const baseHeaders = {
+  "Authorization": DUTY_API_KEY,
+  "Content-Type": "application/json",
+};
 
 // GLOBAL STATİK VERİ DEPOSU
 let DAILY_STATIC_DATA = null;
@@ -29,11 +38,40 @@ class StaticDataManager {
       IS_FETCHING = true;
 
       console.log("📡 API'den günlük veri çekiliyor... (GÜNDE SADECE 1 KEZ)");
+      console.log("🚨 TOKEN HARCAMA: Günlük veri çekimi başlatılıyor - 2-3 TOKEN");
+      console.log("💰 Bu günlük tek API çağrısı - sonraki tüm istekler 0 TOKEN");
 
-      // TEK API ÇAĞRISI - PARALEL
+      // DİREKT API ÇAĞRISI - SERVICE BYPASS (TOKEN TASARRUFU)
+      console.log("🚨 DİREKT API ÇAĞRISI - SERVICE BYPASS YAPILIYOR");
+
       const [pharmaciesRes, citiesRes] = await Promise.all([
-        DutyPharmacyService.getDutyPharmacies(),
-        DutyPharmacyService.getCities()
+        // Direkt eczane API çağrısı
+        fetch(`${DUTY_API_URL}/all`, {
+          method: "GET",
+          headers: baseHeaders,
+        }).then(async (response) => {
+          const resJson = await response.json();
+          if (resJson.status !== "success") {
+            throw new Error(`Failed to fetch duty pharmacies: ${resJson.message}`);
+          }
+          // Kıbrıs filtrele
+          resJson.data = resJson.data.filter(pharmacy => pharmacy.city && !pharmacy.city.startsWith("Kıbrıs"));
+          return resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
+        }),
+
+        // Direkt şehir API çağrısı
+        fetch(`${DUTY_API_URL}/cities`, {
+          method: "GET",
+          headers: baseHeaders,
+        }).then(async (response) => {
+          const resJson = await response.json();
+          if (resJson.status !== "success") {
+            throw new Error(`Failed to fetch cities: ${resJson.message}`);
+          }
+          // Kıbrıs filtrele
+          resJson.data = resJson.data.filter(city => city.cities && !city.cities.startsWith("Kıbrıs"));
+          return resJson.data;
+        })
       ]);
 
       if (pharmaciesRes && pharmaciesRes.length > 0) {
