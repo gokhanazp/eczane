@@ -1312,11 +1312,12 @@ router.get("/test-pharmacy-detail", async (req, res) => {
 
     // İlk 3 eczaneyi al
     const samplePharmacies = staticData.pharmacies.slice(0, 3).map(pharmacy => ({
-      id: pharmacy.id,
+      id: pharmacy.id || 'ID-YOK',
       name: pharmacy.name,
       city: pharmacy.city,
       district: pharmacy.district,
-      url: `/eczaneler/${pharmacy.id}`
+      url: `/eczaneler/${pharmacy.id || 'undefined'}`,
+      rawPharmacy: pharmacy // Debug için ham veri
     }));
 
     res.json({

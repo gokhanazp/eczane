@@ -202,15 +202,23 @@ class StaticDataManager {
           pharmacy_count: city.pharmacy_count
         }));
 
+        // Transform edilmiş eczane listesi oluştur (ID ile)
+        const transformedPharmacies = [];
+        Object.values(dailyPharmacies).forEach(cityData => {
+          Object.values(cityData).forEach(districtPharmacies => {
+            transformedPharmacies.push(...districtPharmacies);
+          });
+        });
+
         // STATİK VERİYE KAYDET - API'YE GİTMEYECEK
         DAILY_STATIC_DATA = {
           dailyPharmacies,
           cities: transformedCities,
-          pharmacies: pharmaciesRes,
+          pharmacies: transformedPharmacies, // Transform edilmiş veri (ID ile)
           districts,
           fetchTime: new Date(),
           fetchDate: new Date().toDateString(),
-          totalPharmacies: pharmaciesRes.length,
+          totalPharmacies: transformedPharmacies.length,
           totalCities: Object.keys(dailyPharmacies).length
         };
         
