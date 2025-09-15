@@ -64,85 +64,7 @@ app.use("*", (req, res) => {
   });
 });
 
-// GÜNLÜK TEK API ÇAĞRISI SİSTEMİ - SÜPER TOKEN TASARRUFU
-let DAILY_STATIC_DATA = null; // Günlük statik veri
-let LAST_FETCH_DATE = null; // Son çekme tarihi
-
-const fetchDailyData = async () => {
-  try {
-    console.log("🌅 GÜNLÜK VERİ ÇEKİMİ BAŞLATIYOR - TEK API ÇAĞRISI");
-    const startTime = Date.now();
-
-    // DutyPharmacyService'i import et
-    const DutyPharmacyService = require("./services/DutyPharmacyService");
-
-    console.log("📡 API'den günlük veri çekiliyor... (GÜNDE SADECE 1 KEZ)");
-
-    // TEK API ÇAĞRISI - PARALEL
-    const [pharmaciesRes, citiesRes] = await Promise.all([
-      DutyPharmacyService.getDutyPharmacies(),
-      DutyPharmacyService.getCities()
-    ]);
-
-    if (pharmaciesRes && pharmaciesRes.length > 0) {
-      // Veri işleme
-      const dailyPharmacies = {};
-      pharmaciesRes.forEach(pharmacy => {
-        const { city, district } = pharmacy;
-        if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
-        if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
-        dailyPharmacies[city][district].push(pharmacy);
-      });
-
-      // STATİK VERİYE KAYDET - API'YE GİTMEYECEK
-      DAILY_STATIC_DATA = {
-        dailyPharmacies,
-        cities: citiesRes,
-        pharmacies: pharmaciesRes,
-        fetchTime: new Date(),
-        fetchDate: new Date().toDateString()
-      };
-
-      LAST_FETCH_DATE = new Date().toDateString();
-
-      const loadTime = Date.now() - startTime;
-      console.log(`✅ GÜNLÜK VERİ ÇEKİMİ TAMAMLANDI! (${loadTime}ms)`);
-      console.log(`📊 ${Object.keys(dailyPharmacies).length} şehir, ${pharmaciesRes.length} eczane statik veriye kaydedildi`);
-      console.log(`🗓️ Sonraki çekim: Yarın sabah 8:00`);
-
-      return DAILY_STATIC_DATA;
-    } else {
-      console.log("❌ Günlük veri çekimi başarısız - API'den veri alınamadı");
-      return null;
-    }
-  } catch (error) {
-    console.error("❌ Günlük veri çekimi hatası:", error.message);
-    return null;
-  }
-};
-
-// STATİK VERİ ALMA FONKSİYONU - API'YE GİTMEZ
-const getStaticData = async () => {
-  const today = new Date().toDateString();
-
-  // Eğer bugün veri çekilmemişse veya veri yoksa çek
-  if (!DAILY_STATIC_DATA || LAST_FETCH_DATE !== today) {
-    console.log("🔄 Günlük veri güncelleme gerekiyor...");
-    await fetchDailyData();
-  }
-
-  if (DAILY_STATIC_DATA) {
-    console.log("✅ STATİK VERİDEN SUNULUYOR - 0 TOKEN HARCAMA");
-    return DAILY_STATIC_DATA;
-  } else {
-    console.log("❌ Statik veri mevcut değil");
-    return {
-      dailyPharmacies: {},
-      cities: [],
-      pharmacies: []
-    };
-  }
-};
+// STATİK VERİ YÖNETİMİ utils/staticDataManager.js'te yapılıyor
 
 const start = async () => {
   try {
@@ -161,7 +83,6 @@ const start = async () => {
   }
 };
 
-// STATİK VERİ FONKSİYONUNU EXPORT ET
-module.exports = { app, getStaticData };
+// Export sadece app - getStaticData utils/staticDataManager.js'te
 
 start();
