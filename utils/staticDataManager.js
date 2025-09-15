@@ -44,7 +44,7 @@ async function fetchAllPharmacies() {
   let allPharmacies = [];
   let currentPage = 1;
   let hasMore = true;
-  const MAX_PAGES = 1; // ACİL TIMEOUT ÇÖZÜMÜ: Sadece 1 sayfa (Vercel 10s limit)
+  const MAX_PAGES = 10; // API ÇALIŞIYOR: 10 sayfa (250 eczane) - Vercel 10s limit
 
   while (hasMore && currentPage <= MAX_PAGES) {
     try {
@@ -54,50 +54,17 @@ async function fetchAllPharmacies() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 saniye timeout (Vercel limit)
 
-      // Farklı endpoint'leri dene
-      const endpoints = [
-        `/pharmacies/sentry-pharmacies/${currentPage}`,
-        `/pharmacies/duty-pharmacies/${currentPage}`,
-        `/pharmacies/on-duty/${currentPage}`,
-        `/sentry-pharmacies/${currentPage}`,
-        `/duty-pharmacies/${currentPage}`
-      ];
-
-      let response = null;
-      let usedEndpoint = null;
-
-      for (const endpoint of endpoints) {
-        try {
-          console.log(`🔍 Endpoint deneniyor: ${NEW_API_URL}${endpoint}`);
-          response = await fetch(`${NEW_API_URL}${endpoint}`, {
-            method: "GET",
-            headers: newApiHeaders,
-            signal: controller.signal
-          });
-
-          if (response.ok) {
-            usedEndpoint = endpoint;
-            console.log(`✅ Çalışan endpoint bulundu: ${endpoint}`);
-            break;
-          } else {
-            console.log(`❌ Endpoint başarısız (${response.status}): ${endpoint}`);
-          }
-        } catch (endpointError) {
-          console.log(`❌ Endpoint hatası: ${endpoint} - ${endpointError.message}`);
-        }
-      }
-
-      if (!response || !response.ok) {
-        throw new Error(`Tüm endpoint'ler başarısız - Son status: ${response?.status}`);
-      }
+      // Çalışan endpoint: /pharmacies/sentry-pharmacies/{page}
+      const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
+        method: "GET",
+        headers: newApiHeaders,
+        signal: controller.signal
+      });
 
       clearTimeout(timeoutId);
 
       const resJson = await response.json();
-      console.log(`🚨 API ÇAĞRISI: Sayfa ${currentPage} - Response:`, JSON.stringify(resJson, null, 2));
-      console.log(`📊 API Response Keys:`, Object.keys(resJson));
-      console.log(`📊 Data field:`, resJson.data ? `Array(${resJson.data.length})` : 'null/undefined');
-      console.log(`📊 İlk eczane örneği:`, resJson.data?.[0] ? JSON.stringify(resJson.data[0], null, 2) : 'yok');
+      console.log(`✅ API ÇAĞRISI: Sayfa ${currentPage} - ${resJson.data?.length || 0} eczane`);
 
       if (resJson.data && resJson.data.length > 0) {
         allPharmacies = allPharmacies.concat(resJson.data);
@@ -210,9 +177,8 @@ class StaticDataManager {
             sentry_date: pharmacy.sentry_date,
             updated_at: pharmacy.updated_at,
             note: pharmacy.note || "",
-            // Eczane detay sayfası için ID alanı (Türkçe karakter normalizasyonu ile)
-            id: pharmacy.slug ? normalizeToSlug(pharmacy.slug) :
-                `${normalizeToSlug(pharmacy.city)}-${normalizeToSlug(pharmacy.district)}-${normalizeToSlug(pharmacy.name)}`
+            // Eczane detay sayfası için ID alanı (API'de slug yok, eczane adından oluştur)
+            id: `${normalizeToSlug(pharmacy.city)}-${normalizeToSlug(pharmacy.district)}-${normalizeToSlug(pharmacy.name)}`
           };
 
           dailyPharmacies[city][district].push(transformedPharmacy);
