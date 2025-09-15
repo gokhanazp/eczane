@@ -268,9 +268,9 @@ router.get("/vercel-debug", async (req, res) => {
     };
     console.log("💾 Cache Status:", cacheStatus);
 
-    // _getAllData test - TOKEN TASARRUFU
-    const allData = await _getAllData();
-    const pharmacies = allData.dailyPharmacies;
+    // _getAllData test - TOKEN TASARRUFU (DEVRE DIŞI)
+    console.log("🚫 Test endpoint _getAllData çağrısı TOKEN TASARRUFU için devre dışı");
+    const pharmacies = {}; // Boş veri döndür
     const pharmaciesStatus = {
       type: typeof pharmacies,
       isNull: pharmacies === null,
@@ -315,9 +315,9 @@ router.get("/test-getpharmacies", testLimiter, async (req, res) => {
       pharmaciesLength: cachedPharmacies ? cachedPharmacies.length : 0
     });
 
-    // _getAllData fonksiyonunu çağır - TOKEN TASARRUFU
-    const allData = await _getAllData();
-    const result = allData.dailyPharmacies;
+    // _getAllData fonksiyonunu çağır - TOKEN TASARRUFU (DEVRE DIŞI)
+    console.log("🚫 Test endpoint _getAllData çağrısı TOKEN TASARRUFU için devre dışı");
+    const result = {}; // Boş veri döndür
 
     console.log("✅ _getPharmacies sonucu:", {
       resultType: typeof result,
@@ -678,10 +678,21 @@ router.get("/onSelectCity/:selectedCity", async (req, res) => {
   setCookie(res, CookieNames.SELECTABLE_DISTRICTS);
 
   try {
-    // TOKEN TASARRUFU - Cache'den ilçeleri al
-    console.log("🚨 UYARI: getDistricts yerine cache'li veri kullanılıyor - TOKEN TASARRUFU");
-    const allData = await _getAllData();
-    const pharmacies = allData.dailyPharmacies;
+    // ŞEHIR SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
+    console.log("🏙️ Şehir sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU");
+
+    // Önce cache'i kontrol et - API çağrısı yapmadan
+    const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+
+    let pharmacies;
+    if (cachedDailyPharmacies) {
+      console.log("✅ Şehir sayfası cache'den yüklendi - 0 TOKEN HARCAMA");
+      pharmacies = cachedDailyPharmacies;
+    } else {
+      console.log("❌ Cache boş, _getAllData çağrılıyor...");
+      const allData = await _getAllData();
+      pharmacies = allData.dailyPharmacies;
+    }
 
     let districts = [];
     if (pharmacies && pharmacies[selectedCity]) {
@@ -724,10 +735,20 @@ router.get(
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
 
-      // TEK API ÇAĞRISI - TOKEN TASARRUFU
-      console.log(`🏙️ ${city} sayfası yükleniyor - Tek API çağrısı ile`);
-      const allData = await _getAllData();
-      cities = allData.cities;
+      // ŞEHIR SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
+      console.log(`🏙️ ${city} sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU`);
+
+      // Önce cache'i kontrol et - API çağrısı yapmadan
+      const cachedCities = await cacheManage.getCache("cities_cache");
+
+      if (cachedCities) {
+        console.log(`✅ ${city} sayfası cache'den yüklendi - 0 TOKEN HARCAMA`);
+        cities = cachedCities;
+      } else {
+        console.log("❌ Cache boş, _getAllData çağrılıyor...");
+        const allData = await _getAllData();
+        cities = allData.cities;
+      }
 
       // Şehir ismi eşleştirme - Türkçe karakter desteği
       const targetCity = city.toLowerCase();
@@ -862,12 +883,25 @@ router.get(
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
 
-      // TEK API ÇAĞRISI - TOKEN TASARRUFU
-      console.log(`🏘️ ${city}/${district} sayfası yükleniyor - Cache'den`);
-      const allData = await _getAllData();
+      // İLÇE SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
+      console.log(`🏘️ ${city}/${district} sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU`);
 
-      cities = allData.cities;
-      const pharmacies = allData.dailyPharmacies;
+      // Önce cache'i kontrol et - API çağrısı yapmadan
+      const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+      const cachedCities = await cacheManage.getCache("cities_cache");
+
+      let pharmacies, citiesData;
+      if (cachedDailyPharmacies && cachedCities) {
+        console.log(`✅ ${city}/${district} sayfası cache'den yüklendi - 0 TOKEN HARCAMA`);
+        pharmacies = cachedDailyPharmacies;
+        citiesData = cachedCities;
+        cities = citiesData;
+      } else {
+        console.log("❌ Cache boş, _getAllData çağrılıyor...");
+        const allData = await _getAllData();
+        cities = allData.cities;
+        pharmacies = allData.dailyPharmacies;
+      }
 
       // Şehir ismi eşleştirme - Türkçe karakter desteği
       const targetCity = city.toLowerCase();
@@ -1100,12 +1134,25 @@ router.get(
     let selectedDistrict = district || "";
 
     try {
-      // TOKEN TASARRUFU - _getAllData kullan (tek API çağrısı)
-      console.log("🚨 UYARI: getCities ve getDistricts yerine cache'li veri kullanılıyor - TOKEN TASARRUFU");
-      const allData = await _getAllData();
+      // ŞEHIR DETAY SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
+      console.log("🏙️ Şehir detay sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU");
 
-      cities = allData.cities.map(c => c.cities);
-      const pharms = allData.dailyPharmacies;
+      // Önce cache'i kontrol et - API çağrısı yapmadan
+      const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+      const cachedCities = await cacheManage.getCache("cities_cache");
+
+      let pharms, citiesData;
+      if (cachedDailyPharmacies && cachedCities) {
+        console.log("✅ Şehir detay sayfası cache'den yüklendi - 0 TOKEN HARCAMA");
+        pharms = cachedDailyPharmacies;
+        citiesData = cachedCities;
+        cities = citiesData.map(c => c.cities);
+      } else {
+        console.log("❌ Cache boş, _getAllData çağrılıyor...");
+        const allData = await _getAllData();
+        cities = allData.cities.map(c => c.cities);
+        pharms = allData.dailyPharmacies;
+      }
 
       if (city) {
         selectedCity = city;
