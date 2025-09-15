@@ -3,7 +3,7 @@ const path = require("path");
 const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 const translateEnglish = require("../utils/translateEnglish");
 const apiOptimizer = require("../utils/apiOptimizer");
-const { dutyPharmacyTTL } = require("../utils/dutyTTLGenerate");
+const { dutyPharmacyTTL, dutyTTLGenerate } = require("../utils/dutyTTLGenerate");
 
 const DUTY_API_URL = process.env.DUTY_API_URL || "https://www.nosyapi.com/apiv2/service/pharmacies-on-duty";
 const DUTY_API_KEY = process.env.DUTY_API_KEY || "Bearer e2rrwkbgS9GJ16zL7yOCRlkoKcIfFT12sLunWqUlPM8kCITjueH1keEj3UT7";
@@ -55,7 +55,7 @@ class DutyPharmacyService {
           throw new Error(`An error occurred while fetching duty pharmacies: ${error.message}`);
         }
       },
-      Math.round(dutyPharmacyTTL() / 1000) // Sabah 8'e kadar cache (saniye cinsinden)
+      Math.round(dutyTTLGenerate(1) / 1000) // 24 saat cache - TOKEN TASARRUFU
     );
   }
 
@@ -147,7 +147,7 @@ class DutyPharmacyService {
 
         return resJson.data;
       },
-      30 // 30 gün cache - şehirler çok nadir değişir
+      90 // 90 gün cache - TOKEN TASARRUFU (şehirler çok nadir değişir)
     );
   }
 
@@ -214,7 +214,7 @@ class DutyPharmacyService {
           throw new Error(`An error occurred while fetching duty pharmacies count: ${error.message}`);
         }
       },
-      Math.round(dutyPharmacyTTL() / 1000) // Sabah 8'e kadar cache
+      Math.round(dutyTTLGenerate(1) / 1000) // 24 saat cache - TOKEN TASARRUFU
     );
   }
 
