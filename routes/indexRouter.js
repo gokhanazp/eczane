@@ -1400,6 +1400,63 @@ router.get("/test-pharmacy-detail", async (req, res) => {
   }
 });
 
+// YAZICI EZCANESİ DOĞRUDAN TEST
+router.get("/test-yazici-direct", async (req, res) => {
+  try {
+    console.log("🔍 Yazıcı Eczanesi doğrudan test...");
+
+    // Statik veriyi al
+    const staticData = await getStaticData();
+
+    if (!staticData || !staticData.pharmacies) {
+      return res.json({
+        success: false,
+        error: "Statik veri yok",
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Yazıcı Eczanesi'ni bul
+    const yaziciEczanesi = staticData.pharmacies.find(p =>
+      p.id === 'ankara-etimesgut-yazici-eczanesi'
+    );
+
+    if (!yaziciEczanesi) {
+      return res.json({
+        success: false,
+        error: "Yazıcı Eczanesi bulunamadı",
+        totalPharmacies: staticData.pharmacies.length,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Başarılı - eczane bulundu
+    res.json({
+      success: true,
+      message: "Yazıcı Eczanesi bulundu",
+      pharmacy: {
+        id: yaziciEczanesi.id,
+        name: yaziciEczanesi.name,
+        city: yaziciEczanesi.city,
+        district: yaziciEczanesi.district,
+        address: yaziciEczanesi.address,
+        phone: yaziciEczanesi.phone,
+        coordinates: yaziciEczanesi.coordinates
+      },
+      directUrl: `/eczaneler/${yaziciEczanesi.id}`,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error("❌ Yazıcı Eczanesi test hatası:", error);
+    res.json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // ACİL TIMEOUT TEST - MİNİMAL İŞLEM
 router.get("/test-timeout", async (req, res) => {
   try {
