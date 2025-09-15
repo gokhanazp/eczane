@@ -4,16 +4,54 @@
  * SÜPER TOKEN TASARRUFU: Günlük 2-3 token, gün boyunca 0 token
  */
 
-// DİREKT API ÇAĞRISI - SERVICE BYPASS
+// YENİ API SİSTEMİ - ECZANELER.ORG
 const DutyPharmacyModel = require("../models/dutyPharmacyModel");
 
-const DUTY_API_URL = process.env.DUTY_API_URL || "https://www.nosyapi.com/apiv2/service/pharmacies-on-duty";
-const DUTY_API_KEY = process.env.DUTY_API_KEY || "Bearer e2rrwkbgS9GJ16zL7yOCRlkoKcIfFT12sLunWqUlPM8kCITjueH1keEj3UT7";
+const NEW_API_URL = "https://api.eczaneler.org/api/v2";
+const NEW_API_KEY = "JZFmSQp9hR6s4lUraieIj1tGA8cwvo0dzVBqEMxuCfY7XHKNDb";
 
-const baseHeaders = {
-  "Authorization": DUTY_API_KEY,
+const newApiHeaders = {
+  "X-Api-Key": NEW_API_KEY,
   "Content-Type": "application/json",
 };
+
+// YENİ API - TÜM NÖBETÇI ECZANELER SAYFALAMA İLE
+async function fetchAllPharmacies() {
+  console.log("📄 Tüm nöbetçi eczaneler sayfalama ile çekiliyor...");
+  let allPharmacies = [];
+  let currentPage = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    try {
+      const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
+        method: "GET",
+        headers: newApiHeaders,
+      });
+
+      const resJson = await response.json();
+      console.log(`🚨 API ÇAĞRISI: Sayfa ${currentPage} - ${resJson.data?.length || 0} eczane`);
+
+      if (resJson.data && resJson.data.length > 0) {
+        allPharmacies = allPharmacies.concat(resJson.data);
+
+        // Sayfalama kontrolü
+        hasMore = resJson.pagination?.has_more || false;
+        currentPage++;
+
+        console.log(`📊 Toplam eczane: ${allPharmacies.length}, Devam: ${hasMore ? 'Evet' : 'Hayır'}`);
+      } else {
+        hasMore = false;
+      }
+    } catch (error) {
+      console.error(`❌ Sayfa ${currentPage} çekilemedi:`, error.message);
+      hasMore = false;
+    }
+  }
+
+  console.log(`✅ Toplam ${allPharmacies.length} nöbetçi eczane çekildi`);
+  return allPharmacies;
+}
 
 // GLOBAL STATİK VERİ DEPOSU
 let DAILY_STATIC_DATA = null;
@@ -41,47 +79,59 @@ class StaticDataManager {
       console.log("🚨 TOKEN HARCAMA: Günlük veri çekimi başlatılıyor - 2-3 TOKEN");
       console.log("💰 Bu günlük tek API çağrısı - sonraki tüm istekler 0 TOKEN");
 
-      // DİREKT API ÇAĞRISI - SERVICE BYPASS (TOKEN TASARRUFU)
-      console.log("🚨 DİREKT API ÇAĞRISI - SERVICE BYPASS YAPILIYOR");
+      // YENİ API SİSTEMİ - ECZANELER.ORG
+      console.log("🚨 YENİ API SİSTEMİ - ECZANELER.ORG ÇAĞRILIYOR");
 
       const [pharmaciesRes, citiesRes] = await Promise.all([
-        // Direkt eczane API çağrısı
-        fetch(`${DUTY_API_URL}/all`, {
-          method: "GET",
-          headers: baseHeaders,
-        }).then(async (response) => {
-          const resJson = await response.json();
-          if (resJson.status !== "success") {
-            throw new Error(`Failed to fetch duty pharmacies: ${resJson.message}`);
-          }
-          // Kıbrıs filtrele
-          resJson.data = resJson.data.filter(pharmacy => pharmacy.city && !pharmacy.city.startsWith("Kıbrıs"));
-          return resJson.data.map(pharmacy => DutyPharmacyModel.fromJson(pharmacy));
-        }),
+        // Tüm nöbetçi eczaneleri çek (sayfalama ile)
+        fetchAllPharmacies(),
 
-        // Direkt şehir API çağrısı
-        fetch(`${DUTY_API_URL}/cities`, {
+        // Şehirler listesini çek
+        fetch(`${NEW_API_URL}/pharmacies/cities`, {
           method: "GET",
-          headers: baseHeaders,
+          headers: newApiHeaders,
         }).then(async (response) => {
           const resJson = await response.json();
-          if (resJson.status !== "success") {
-            throw new Error(`Failed to fetch cities: ${resJson.message}`);
+          console.log("🚨 API ÇAĞRISI: Şehirler listesi çekiliyor");
+          console.log("💰 Yeni API kullanımı: cities endpoint");
+
+          if (!resJson.cities) {
+            throw new Error(`API Error: Cities data not found`);
           }
-          // Kıbrıs filtrele
-          resJson.data = resJson.data.filter(city => city.cities && !city.cities.startsWith("Kıbrıs"));
-          return resJson.data;
+
+          return resJson.cities;
         })
       ]);
 
       if (pharmaciesRes && pharmaciesRes.length > 0) {
-        // Veri işleme
+        // YENİ API VERİ İŞLEME
         const dailyPharmacies = {};
         pharmaciesRes.forEach(pharmacy => {
-          const { city, district } = pharmacy;
+          // Yeni API formatı: { city: "İstanbul", district: "Kadıköy", name: "...", ... }
+          const city = pharmacy.city;
+          const district = pharmacy.district;
+
+          if (!city || !district) return; // Eksik veri atla
+
           if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
           if (!dailyPharmacies[city][district]) dailyPharmacies[city][district] = [];
-          dailyPharmacies[city][district].push(pharmacy);
+
+          // Yeni API formatını eski formata dönüştür
+          const transformedPharmacy = {
+            name: pharmacy.name,
+            address: pharmacy.address,
+            phone: pharmacy.phone || pharmacy.phone_formatted,
+            city: pharmacy.city,
+            district: pharmacy.district,
+            coordinates: pharmacy.coordinates,
+            workingHours: pharmacy.workingHours,
+            is_sentry: pharmacy.is_sentry,
+            sentry_date: pharmacy.sentry_date,
+            updated_at: pharmacy.updated_at,
+            note: pharmacy.note || ""
+          };
+
+          dailyPharmacies[city][district].push(transformedPharmacy);
         });
 
         // İlçe listesi oluştur
@@ -90,10 +140,17 @@ class StaticDataManager {
           districts[city] = Object.keys(dailyPharmacies[city]);
         });
 
+        // YENİ API - ŞEHİRLER LİSTESİNİ ESKİ FORMATA DÖNÜŞTÜR
+        const transformedCities = citiesRes.map(city => ({
+          cities: city.name,
+          slug: city.slug,
+          pharmacy_count: city.pharmacy_count
+        }));
+
         // STATİK VERİYE KAYDET - API'YE GİTMEYECEK
         DAILY_STATIC_DATA = {
           dailyPharmacies,
-          cities: citiesRes,
+          cities: transformedCities,
           pharmacies: pharmaciesRes,
           districts,
           fetchTime: new Date(),
