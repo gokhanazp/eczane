@@ -17,72 +17,33 @@ const router = Router();
 // Startup'ta cache'i hemen yükle
 let startupCachePromise = null;
 
-// Tek API çağrısı ile tüm veriyi çek - TOKEN TASARRUFU
+// SADECE CACHE'Lİ VERİ - TOKEN TASARRUFU
 const _getAllData = async (forceRefresh = false) => {
   try {
-    // Memory cache kontrolü - AKILLI GÜN BAZLI CACHE
-    if (!forceRefresh && memoryCache.dailyPharmacies && memoryCache.cities && memoryCache.lastUpdate) {
-      const now = new Date();
-      const cacheDate = new Date(memoryCache.lastUpdate);
+    console.log("🚨 KONTROLLÜ API ÇAĞRISI: İlk cache doldurma başlatılıyor...");
 
-      // Eğer aynı gün ve saat 8'den sonra ise cache geçerli
-      const isSameDay = now.toDateString() === cacheDate.toDateString();
-      const isAfter8AM = now.getHours() >= 8;
-      const cacheAfter8AM = cacheDate.getHours() >= 8;
-
-      if (isSameDay && isAfter8AM && cacheAfter8AM) {
-        console.log("⚡ Memory cache geçerli (aynı gün, sabah 8 sonrası) - TOKEN TASARRUFU");
-        return {
-          dailyPharmacies: memoryCache.dailyPharmacies,
-          cities: memoryCache.cities,
-          districts: memoryCache.districts
-        };
-      }
-
-      // Eğer cache sabah 8'den önce oluşturulmuş ve şimdi 8'den sonra ise yenile
-      if (isSameDay && isAfter8AM && !cacheAfter8AM) {
-        console.log("🔄 Sabah 8 geçti, cache yenileniyor...");
-      } else if (!isSameDay) {
-        console.log("🔄 Yeni gün, cache yenileniyor...");
-      }
-    }
-
-    // Eğer başka bir request loading'de ise bekle
-    if (memoryCache.isLoading) {
-      console.log("⏳ Başka request loading, bekleniyor...");
-      let attempts = 0;
-      while (memoryCache.isLoading && attempts < 20) { // 2 saniye max
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
-      }
-      if (memoryCache.dailyPharmacies && memoryCache.cities) {
-        console.log("✅ Loading tamamlandı, memory cache'ten alındı");
-        return {
-          dailyPharmacies: memoryCache.dailyPharmacies,
-          cities: memoryCache.cities,
-          districts: memoryCache.districts
-        };
-      }
-    }
-
-    memoryCache.isLoading = true;
-
-    // File cache kontrolü
+    // Keyv cache kontrolü
     const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
     const cachedCities = await cacheManage.getCache("cities_cache");
 
     if (!forceRefresh && cachedDailyPharmacies && cachedCities) {
-      console.log("✅ File cache'ten alındı (TOKEN TASARRUFU)");
-      memoryCache.dailyPharmacies = cachedDailyPharmacies;
-      memoryCache.cities = cachedCities;
-      memoryCache.lastUpdate = Date.now();
-      memoryCache.isLoading = false;
+      console.log("✅ Keyv cache'ten alındı (TOKEN TASARRUFU)");
+
+      // İlçeleri çıkar
+      const districts = {};
+      Object.keys(cachedDailyPharmacies).forEach(city => {
+        districts[city] = Object.keys(cachedDailyPharmacies[city]);
+      });
+
       return {
         dailyPharmacies: cachedDailyPharmacies,
         cities: cachedCities,
-        districts: memoryCache.districts
+        districts
       };
     }
+
+    // Cache boş, ilk kez doldurulacak - KONTROLLÜ API ÇAĞRISI
+    console.log("📡 Cache boş, ilk kez API'den veri çekiliyor... (KONTROLLÜ TOKEN KULLANIMI)");
 
     // API LIMIT KONTROLÜ - TOKEN TASARRUFU
     if (!apiOptimizer.canMakeApiCall("getAllData")) {
@@ -94,22 +55,14 @@ const _getAllData = async (forceRefresh = false) => {
       };
     }
 
-    console.log("🌐 API'den fresh data alınıyor... (TOKEN KULLANIMI)");
     const startTime = Date.now();
 
-    // TEK CACHE ÇAĞRISI - SÜPER TOKEN TASARRUFU
-    // Her iki veri de zaten cache'li, ayrı ayrı çağırmaya gerek yok
-    const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies(); // Cache'li
-    const citiesRes = await DutyPharmacyService.getCities(); // Cache'li
-
-    console.log("✅ Her iki API de cache'li çağrıldı - TOKEN TASARRUFU");
-
-    // API çağrısını kaydet
-    apiOptimizer.recordApiCall("getDutyPharmacies");
-    apiOptimizer.recordApiCall("getCities");
+    // KONTROLLÜ API ÇAĞRISI - İlk cache doldurma
+    const pharmaciesRes = await DutyPharmacyService.getDutyPharmacies(); // İlk kez API çağrısı
+    const citiesRes = await DutyPharmacyService.getCities(); // İlk kez API çağrısı
 
     const apiTime = Date.now() - startTime;
-    console.log(`⏱️ API çağrısı süresi: ${apiTime}ms (2 endpoint paralel)`);
+    console.log(`⏱️ İlk cache doldurma süresi: ${apiTime}ms`);
 
     if (!pharmaciesRes || pharmaciesRes.length === 0) {
       console.log("❌ API'den veri alınamadı");
@@ -120,10 +73,8 @@ const _getAllData = async (forceRefresh = false) => {
       };
     }
 
-    // Veri işleme - Optimize edilmiş
+    // Veri işleme
     const dailyPharmacies = {};
-    const processStart = Date.now();
-
     pharmaciesRes.forEach(pharmacy => {
       const { city, district } = pharmacy;
       if (!dailyPharmacies[city]) dailyPharmacies[city] = {};
@@ -131,48 +82,44 @@ const _getAllData = async (forceRefresh = false) => {
       dailyPharmacies[city][district].push(pharmacy);
     });
 
-    const processTime = Date.now() - processStart;
-    console.log(`⚡ Veri işleme süresi: ${processTime}ms`);
+    // İlçeleri çıkar
+    const districts = {};
+    Object.keys(dailyPharmacies).forEach(city => {
+      districts[city] = Object.keys(dailyPharmacies[city]);
+    });
 
-    console.log("✅ Tüm veri hazırlandı:", {
+    console.log("✅ İlk cache verisi hazırlandı:", {
       cityCount: Object.keys(dailyPharmacies).length,
       totalPharmacies: pharmaciesRes.length,
       citiesCount: citiesRes.length
     });
 
-    // Cache'leri güncelle - AKILLI GÜN BAZLI CACHE
+    // Cache'leri kaydet - AKILLI GÜN BAZLI CACHE
     const pharmacyTTL = dutyPharmacyTTL(); // Sabah 8'e kadar
-    const citiesTTL = dutyTTLGenerate(90); // 90 gün (şehirler değişmez)
+    const citiesTTL = dutyTTLGenerate(90); // 90 gün
 
     await Promise.all([
-      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, pharmacyTTL), // Sabah 8'e kadar
-      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, pharmacyTTL), // Sabah 8'e kadar
-      cacheManage.setCache("cities_cache", citiesRes, citiesTTL) // 90 gün
+      cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, pharmacyTTL),
+      cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, pharmacyTTL),
+      cacheManage.setCache("cities_cache", citiesRes, citiesTTL)
     ]);
 
-    console.log("✅ Akıllı cache ayarlandı:", {
+    console.log("✅ İlk cache başarıyla kaydedildi:", {
       pharmacyTTL: Math.round(pharmacyTTL / (1000 * 60 * 60)) + " saat",
       citiesTTL: Math.round(citiesTTL / (1000 * 60 * 60 * 24)) + " gün"
     });
 
-    // Memory cache güncelle
-    memoryCache.dailyPharmacies = dailyPharmacies;
-    memoryCache.cities = citiesRes;
-    memoryCache.lastUpdate = Date.now();
-    memoryCache.isLoading = false;
-
     return {
       dailyPharmacies,
       cities: citiesRes,
-      districts: memoryCache.districts
+      districts
     };
   } catch (error) {
     console.error("❌ _getAllData hatası:", error.message);
-    memoryCache.isLoading = false;
     return {
-      dailyPharmacies: memoryCache.dailyPharmacies || {},
-      cities: memoryCache.cities || [],
-      districts: memoryCache.districts || {}
+      dailyPharmacies: {},
+      cities: [],
+      districts: {}
     };
   }
 };
@@ -277,16 +224,12 @@ router.get("/seo-analysis", async (req, res) => {
 // Cache Temizleme endpoint'i (Rate Limited)
 router.post("/clear-cache", cacheLimiter, async (req, res) => {
   try {
-    // Manuel cache temizleme - Hem file hem memory
+    // Manuel cache temizleme - Keyv cache
     await cacheManage.setCache(CacheNames.DAILY_PHARMACIES, null, 0);
     await cacheManage.setCache(CacheNames.PHARMACIES, null, 0);
+    await cacheManage.setCache("cities_cache", null, 0);
 
-    // Memory cache'i de temizle
-    memoryCache.dailyPharmacies = null;
-    memoryCache.lastUpdate = null;
-    memoryCache.isLoading = false;
-
-    console.log("🗑️ Tüm cache temizlendi (file + memory)");
+    console.log("🗑️ Tüm Keyv cache temizlendi");
 
     res.json({
       message: "✅ Cache başarıyla temizlendi",
