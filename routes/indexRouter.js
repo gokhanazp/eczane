@@ -944,20 +944,19 @@ router.get("/enyakinnobetcieczane", async (req, res) => {
 });
 
 router.get(
-  "/eczaneler/:nameAndId",
+  "/eczaneler/:slug",
   (req, res, next) => {
     const params = translateEnglish(req.params);
-    const newUrl = `/eczaneler/${params.nameAndId.toLocaleLowerCase("en-US")}`;
+    const newUrl = `/eczaneler/${params.slug.toLocaleLowerCase("en-US")}`;
     req.url = newUrl;
-    if (params.nameAndId !== params.nameAndId.toLocaleLowerCase("en-US")) {
+    if (params.slug !== params.slug.toLocaleLowerCase("en-US")) {
       return res.redirect(newUrl);
     }
     next();
   },
   async (req, res) => {
-    const { nameAndId } = req.params;
-    const paramValues = nameAndId.split("-");
-    const id = paramValues[paramValues.length - 1];
+    const { slug } = req.params;
+    console.log(`🔍 URL'den gelen slug: ${slug}`);
     let pharmacy = null;
 
     try {
@@ -972,55 +971,68 @@ router.get(
       console.log(`📊 Statik veride toplam eczane sayısı: ${allPharmacies.length}`);
 
       // ECZANE ARAMA SİSTEMİ - SLUG BAZLI
-      // URL formatı: /eczaneler/adana-cukurova-aygul-eczanesi veya /eczaneler/eczane-adi-123
+      // URL formatı: /eczaneler/adana-cukurova-aygul-eczanesi
 
-      // Önce tam slug ile ara (yeni API formatı)
-      pharmacy = allPharmacies.find(p => p.id === nameAndId);
+      console.log(`🔍 Arama yapılacak slug: ${slug}`);
+
+      // 1. Önce tam slug ile ara (yeni API formatı)
+      pharmacy = allPharmacies.find(p => p.id === slug);
+      console.log(`🔍 Tam slug arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
 
       if (!pharmacy) {
-        // Eski format için: son kısım ID, geri kalanı isim
-        const nameFromUrl = paramValues.slice(0, -1).join("-");
+        // 2. Case insensitive arama
+        pharmacy = allPharmacies.find(p => p.id && p.id.toLowerCase() === slug.toLowerCase());
+        console.log(`🔍 Case insensitive arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
+      }
 
-        // ID ile ara
-        pharmacy = allPharmacies.find(p => p.id == id);
+      if (!pharmacy) {
+        // 3. Partial slug matching - en az 3 kelime eşleşmesi
+        const urlParts = slug.toLowerCase().split('-').filter(part => part.length > 2);
+        console.log(`🔍 URL parçaları: ${urlParts.join(', ')}`);
 
-        if (!pharmacy) {
-          // Name-based arama
-          pharmacy = allPharmacies.find(p => {
-            const normalizedPharmacyName = p.name.toLowerCase()
-              .replace(/\s+/g, "-")
-              .replace(/[^a-z0-9-]/g, "");
-            return normalizedPharmacyName === nameFromUrl;
-          });
-        }
+        pharmacy = allPharmacies.find(p => {
+          if (!p.id) return false;
+          const pharmacySlugParts = p.id.toLowerCase().split('-');
 
-        if (!pharmacy) {
-          // Slug'ın bir kısmı ile ara (partial match)
-          pharmacy = allPharmacies.find(p => {
-            if (!p.id) return false;
-            const pharmacySlugParts = p.id.toLowerCase().split('-');
-            const urlParts = nameAndId.toLowerCase().split('-');
+          const matchCount = urlParts.filter(urlPart =>
+            pharmacySlugParts.some(slugPart =>
+              slugPart.includes(urlPart) || urlPart.includes(slugPart)
+            )
+          ).length;
 
-            // En az 2 kelime eşleşmesi
-            const matchCount = urlParts.filter(part =>
-              pharmacySlugParts.some(slugPart => slugPart.includes(part) || part.includes(slugPart))
-            ).length;
+          console.log(`🔍 ${p.name} için eşleşme sayısı: ${matchCount}/${urlParts.length}`);
+          return matchCount >= Math.min(3, urlParts.length);
+        });
 
-            return matchCount >= 2;
-          });
-        }
+        console.log(`🔍 Partial matching sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
+      }
+
+      if (!pharmacy) {
+        // 4. Name-based arama (fallback)
+        const slugParts = slug.split('-');
+        pharmacy = allPharmacies.find(p => {
+          const normalizedName = p.name.toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^a-z0-9-]/g, "");
+
+          return slugParts.some(part => normalizedName.includes(part) && part.length > 2);
+        });
+
+        console.log(`🔍 Name-based arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
       }
 
       if (pharmacy) {
         console.log(`✅ Eczane STATİK VERİDEN bulundu: ${pharmacy.name} (${pharmacy.city}/${pharmacy.district})`);
+        console.log(`✅ Bulunan eczane ID: ${pharmacy.id}`);
 
-        // Eczane ID'si yoksa URL'den çıkarılan ID'yi ata
+        // Eczane ID'si yoksa slug'ı ID olarak ata
         if (!pharmacy.id) {
-          pharmacy.id = id;
+          pharmacy.id = slug;
         }
       } else {
-        console.log(`❌ Eczane STATİK VERİDE bulunamadı - ID: ${id}, Name: ${paramValues.slice(0, -1).join("-")}`);
+        console.log(`❌ Eczane STATİK VERİDE bulunamadı - Slug: ${slug}`);
         console.log(`📋 İlk 5 eczane örneği:`, allPharmacies.slice(0, 5).map(p => ({ name: p.name, id: p.id })));
+        console.log(`📋 Toplam eczane sayısı: ${allPharmacies.length}`);
       }
     } catch (error) {
       console.log("❌ Eczane detay hatası:", error.message);
