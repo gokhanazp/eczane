@@ -981,6 +981,7 @@ router.get(
     const { slug } = req.params;
     console.log(`🔍 URL'den gelen slug: ${slug}`);
     let pharmacy = null;
+    let normalizedSlug = ''; // Scope sorunu çözümü
 
     // TIMEOUT ÖNLEME - 6 SANİYE LİMİT
     const timeoutPromise = new Promise((_, reject) => {
@@ -1005,7 +1006,7 @@ router.get(
       console.log(`🔍 Arama yapılacak slug: ${slug}`);
 
       // Türkçe karakter normalizasyonu
-      const normalizedSlug = normalizeToSlug(slug);
+      normalizedSlug = normalizeToSlug(slug);
       console.log(`🔍 Normalize edilmiş slug: ${normalizedSlug}`);
 
       // Debug: Arama öncesi bilgiler
