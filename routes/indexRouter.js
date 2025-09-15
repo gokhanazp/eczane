@@ -984,9 +984,9 @@ router.get(
     let normalizedSlug = ''; // Scope sorunu çözümü
     let allPharmacies = []; // Scope sorunu çözümü
 
-    // TIMEOUT ÖNLEME - 8 SANİYE LİMİT
+    // TIMEOUT ÖNLEME - 9 SANİYE LİMİT
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Eczane detay timeout - 8 saniye')), 8000);
+      setTimeout(() => reject(new Error('Eczane detay timeout - 9 saniye')), 9000);
     });
 
     try {
@@ -1517,7 +1517,7 @@ router.get("/test-quick", async (req, res) => {
 
     // Timeout kontrolü - 8 saniye sonra durdur
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Function timeout - 8 saniye')), 8000);
+      setTimeout(() => reject(new Error('Function timeout - 9 saniye')), 9000);
     });
 
     const dataPromise = _getAllData();

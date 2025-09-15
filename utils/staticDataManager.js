@@ -44,7 +44,7 @@ async function fetchAllPharmacies() {
   let allPharmacies = [];
   let currentPage = 1;
   let hasMore = true;
-  const MAX_PAGES = 12; // TIMEOUT ÇÖZÜLDÜ: 12 sayfa (300 eczane) - Optimal sayı
+  const MAX_PAGES = 50; // TÜM ECZANELER: 50 sayfa limiti (API'den gelen tüm veri)
 
   while (hasMore && currentPage <= MAX_PAGES) {
     try {
@@ -52,7 +52,7 @@ async function fetchAllPharmacies() {
 
       // Timeout ile API çağrısı
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 saniye timeout (daha fazla sayfa için)
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout (tüm eczaneler için)
 
       // Çalışan endpoint: /pharmacies/sentry-pharmacies/{page}
       const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
