@@ -1293,6 +1293,50 @@ router.get("/test-api", async (req, res) => {
   }
 });
 
+// ECZANE DETAY TEST - DOĞRUDAN VERİ KONTROLÜ
+router.get("/test-pharmacy-detail", async (req, res) => {
+  try {
+    console.log("🔍 Eczane detay test başlatılıyor...");
+
+    // Statik veriyi al
+    const staticData = await getStaticData();
+
+    if (!staticData || !staticData.pharmacies) {
+      return res.json({
+        success: false,
+        error: "Statik veri yok",
+        totalPharmacies: 0,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // İlk 3 eczaneyi al
+    const samplePharmacies = staticData.pharmacies.slice(0, 3).map(pharmacy => ({
+      id: pharmacy.id,
+      name: pharmacy.name,
+      city: pharmacy.city,
+      district: pharmacy.district,
+      url: `/eczaneler/${pharmacy.id}`
+    }));
+
+    res.json({
+      success: true,
+      message: "Eczane detay test başarılı",
+      totalPharmacies: staticData.pharmacies.length,
+      samplePharmacies,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error("❌ Eczane detay test hatası:", error);
+    res.json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // ACİL TIMEOUT TEST - MİNİMAL İŞLEM
 router.get("/test-timeout", async (req, res) => {
   try {
