@@ -9,6 +9,29 @@ const { getStaticData } = require("../utils/staticDataManager");
 const { testLimiter, cacheLimiter } = require("../middleware/rateLimiter");
 const { getMessages, redirectWithError, redirectWithSuccess } = require("../utils/messageHelper");
 
+// TÜRKÇE KARAKTER NORMALİZASYONU - URL-SAFE SLUG OLUŞTURMA
+function normalizeToSlug(text) {
+  if (!text) return '';
+
+  return text
+    .toLowerCase()
+    // Türkçe karakterleri İngilizce karşılıklarına çevir
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    // Boşlukları tire ile değiştir
+    .replace(/\s+/g, '-')
+    // Özel karakterleri kaldır (sadece harf, rakam ve tire kalsın)
+    .replace(/[^a-z0-9-]/g, '')
+    // Çoklu tireleri tek tire yap
+    .replace(/-+/g, '-')
+    // Başındaki ve sonundaki tireleri kaldır
+    .replace(/^-+|-+$/g, '');
+}
+
 const router = Router();
 
 // VERCEL SERVERLESS İÇİN MEMORY CACHE KALDIRILDI - TOKEN TASARRUFU
@@ -975,47 +998,57 @@ router.get(
 
       console.log(`🔍 Arama yapılacak slug: ${slug}`);
 
+      // Türkçe karakter normalizasyonu
+      const normalizedSlug = normalizeToSlug(slug);
+      console.log(`🔍 Normalize edilmiş slug: ${normalizedSlug}`);
+
       // 1. Önce tam slug ile ara (yeni API formatı)
       pharmacy = allPharmacies.find(p => p.id === slug);
       console.log(`🔍 Tam slug arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
 
       if (!pharmacy) {
-        // 2. Case insensitive arama
+        // 2. Normalize edilmiş slug ile arama
+        pharmacy = allPharmacies.find(p => p.id === normalizedSlug);
+        console.log(`🔍 Normalize slug arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
+      }
+
+      if (!pharmacy) {
+        // 3. Case insensitive arama
         pharmacy = allPharmacies.find(p => p.id && p.id.toLowerCase() === slug.toLowerCase());
         console.log(`🔍 Case insensitive arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
       }
 
       if (!pharmacy) {
-        // 3. Partial slug matching - en az 3 kelime eşleşmesi
-        const urlParts = slug.toLowerCase().split('-').filter(part => part.length > 2);
-        console.log(`🔍 URL parçaları: ${urlParts.join(', ')}`);
+        // 4. Partial slug matching - Türkçe karakter normalizasyonu ile
+        const normalizedUrlParts = normalizedSlug.split('-').filter(part => part.length > 2);
+        console.log(`🔍 Normalize URL parçaları: ${normalizedUrlParts.join(', ')}`);
 
         pharmacy = allPharmacies.find(p => {
           if (!p.id) return false;
           const pharmacySlugParts = p.id.toLowerCase().split('-');
 
-          const matchCount = urlParts.filter(urlPart =>
+          const matchCount = normalizedUrlParts.filter(urlPart =>
             pharmacySlugParts.some(slugPart =>
               slugPart.includes(urlPart) || urlPart.includes(slugPart)
             )
           ).length;
 
-          console.log(`🔍 ${p.name} için eşleşme sayısı: ${matchCount}/${urlParts.length}`);
-          return matchCount >= Math.min(3, urlParts.length);
+          console.log(`🔍 ${p.name} için eşleşme sayısı: ${matchCount}/${normalizedUrlParts.length}`);
+          return matchCount >= Math.min(3, normalizedUrlParts.length);
         });
 
         console.log(`🔍 Partial matching sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
       }
 
       if (!pharmacy) {
-        // 4. Name-based arama (fallback)
-        const slugParts = slug.split('-');
+        // 5. Name-based arama (fallback) - Türkçe karakter normalizasyonu ile
+        const normalizedUrlParts = normalizedSlug.split('-');
         pharmacy = allPharmacies.find(p => {
-          const normalizedName = p.name.toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^a-z0-9-]/g, "");
+          const normalizedName = normalizeToSlug(p.name);
 
-          return slugParts.some(part => normalizedName.includes(part) && part.length > 2);
+          return normalizedUrlParts.some(part =>
+            normalizedName.includes(part) && part.length > 2
+          );
         });
 
         console.log(`🔍 Name-based arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
@@ -1158,16 +1191,18 @@ router.get("/test-data-format", async (req, res) => {
 
     console.log(`📊 Toplam eczane sayısı: ${allPharmacies.length}`);
 
-    // İlk 3 eczaneyi detaylı göster
+    // İlk 3 eczaneyi detaylı göster - Türkçe karakter testi ile
     const samplePharmacies = allPharmacies.slice(0, 3).map(p => ({
       name: p.name,
       id: p.id,
+      normalizedId: normalizeToSlug(p.name), // Test için normalize edilmiş ID
       city: p.city,
       district: p.district,
       slug: p.slug,
       coordinates: p.coordinates,
       latitude: p.latitude,
-      longitude: p.longitude
+      longitude: p.longitude,
+      hasTurkishChars: /[ğüşıöç]/i.test(p.name) // Türkçe karakter var mı?
     }));
 
     console.log("📋 İlk 3 eczane örneği:", JSON.stringify(samplePharmacies, null, 2));

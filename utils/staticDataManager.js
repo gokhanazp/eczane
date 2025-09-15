@@ -15,6 +15,29 @@ const newApiHeaders = {
   "Content-Type": "application/json",
 };
 
+// TÜRKÇE KARAKTER NORMALİZASYONU - URL-SAFE SLUG OLUŞTURMA
+function normalizeToSlug(text) {
+  if (!text) return '';
+
+  return text
+    .toLowerCase()
+    // Türkçe karakterleri İngilizce karşılıklarına çevir
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    // Boşlukları tire ile değiştir
+    .replace(/\s+/g, '-')
+    // Özel karakterleri kaldır (sadece harf, rakam ve tire kalsın)
+    .replace(/[^a-z0-9-]/g, '')
+    // Çoklu tireleri tek tire yap
+    .replace(/-+/g, '-')
+    // Başındaki ve sonundaki tireleri kaldır
+    .replace(/^-+|-+$/g, '');
+}
+
 // YENİ API - TÜM NÖBETÇI ECZANELER SAYFALAMA İLE
 async function fetchAllPharmacies() {
   console.log("📄 Tüm nöbetçi eczaneler sayfalama ile çekiliyor...");
@@ -132,8 +155,9 @@ class StaticDataManager {
             sentry_date: pharmacy.sentry_date,
             updated_at: pharmacy.updated_at,
             note: pharmacy.note || "",
-            // Eczane detay sayfası için ID alanı (slug'ın tamamını kullan)
-            id: pharmacy.slug || `${pharmacy.city.toLowerCase()}-${pharmacy.district.toLowerCase()}-${pharmacy.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
+            // Eczane detay sayfası için ID alanı (Türkçe karakter normalizasyonu ile)
+            id: pharmacy.slug ? normalizeToSlug(pharmacy.slug) :
+                `${normalizeToSlug(pharmacy.city)}-${normalizeToSlug(pharmacy.district)}-${normalizeToSlug(pharmacy.name)}`
           };
 
           dailyPharmacies[city][district].push(transformedPharmacy);
