@@ -64,26 +64,19 @@ app.use("*", (req, res) => {
   });
 });
 
-// Startup cache preloading
-const preloadCache = async () => {
+// GÜNLÜK TEK API ÇAĞRISI SİSTEMİ - SÜPER TOKEN TASARRUFU
+let DAILY_STATIC_DATA = null; // Günlük statik veri
+let LAST_FETCH_DATE = null; // Son çekme tarihi
+
+const fetchDailyData = async () => {
   try {
-    console.log("🚀 Startup cache preloading başlatılıyor...");
+    console.log("🌅 GÜNLÜK VERİ ÇEKİMİ BAŞLATIYOR - TEK API ÇAĞRISI");
     const startTime = Date.now();
 
     // DutyPharmacyService'i import et
     const DutyPharmacyService = require("./services/DutyPharmacyService");
-    const { cacheManage, CacheNames } = require("./utils/cacheManage");
-    const { dutyTTLGenerate, dutyPharmacyTTL } = require("./utils/dutyTTLGenerate");
 
-    // Cache kontrolü
-    const cachedData = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
-
-    if (cachedData) {
-      console.log("✅ Cache zaten mevcut, preload gerekmiyor");
-      return;
-    }
-
-    console.log("📡 API'den veri preload ediliyor... (TEK SEFERLIK TOKEN KULLANIMI)");
+    console.log("📡 API'den günlük veri çekiliyor... (GÜNDE SADECE 1 KEZ)");
 
     // TEK API ÇAĞRISI - PARALEL
     const [pharmaciesRes, citiesRes] = await Promise.all([
@@ -101,29 +94,53 @@ const preloadCache = async () => {
         dailyPharmacies[city][district].push(pharmacy);
       });
 
-      // Cache'e kaydet - AKILLI GÜN BAZLI CACHE
-      const pharmacyTTL = dutyPharmacyTTL(); // Sabah 8'e kadar
-      const citiesTTL = dutyTTLGenerate(90); // 90 gün
+      // STATİK VERİYE KAYDET - API'YE GİTMEYECEK
+      DAILY_STATIC_DATA = {
+        dailyPharmacies,
+        cities: citiesRes,
+        pharmacies: pharmaciesRes,
+        fetchTime: new Date(),
+        fetchDate: new Date().toDateString()
+      };
 
-      await Promise.all([
-        cacheManage.setCache(CacheNames.DAILY_PHARMACIES, dailyPharmacies, pharmacyTTL),
-        cacheManage.setCache(CacheNames.PHARMACIES, pharmaciesRes, pharmacyTTL),
-        cacheManage.setCache("cities_cache", citiesRes, citiesTTL)
-      ]);
-
-      console.log("✅ Startup cache akıllı TTL ile ayarlandı:", {
-        pharmacyTTL: Math.round(pharmacyTTL / (1000 * 60 * 60)) + " saat",
-        citiesTTL: Math.round(citiesTTL / (1000 * 60 * 60 * 24)) + " gün"
-      });
+      LAST_FETCH_DATE = new Date().toDateString();
 
       const loadTime = Date.now() - startTime;
-      console.log(`✅ Startup cache preload tamamlandı! (${loadTime}ms)`);
-      console.log(`📊 ${Object.keys(dailyPharmacies).length} şehir, ${pharmaciesRes.length} eczane yüklendi`);
+      console.log(`✅ GÜNLÜK VERİ ÇEKİMİ TAMAMLANDI! (${loadTime}ms)`);
+      console.log(`📊 ${Object.keys(dailyPharmacies).length} şehir, ${pharmaciesRes.length} eczane statik veriye kaydedildi`);
+      console.log(`🗓️ Sonraki çekim: Yarın sabah 8:00`);
+
+      return DAILY_STATIC_DATA;
     } else {
-      console.log("❌ Startup preload başarısız - API'den veri alınamadı");
+      console.log("❌ Günlük veri çekimi başarısız - API'den veri alınamadı");
+      return null;
     }
   } catch (error) {
-    console.error("❌ Startup cache preload hatası:", error.message);
+    console.error("❌ Günlük veri çekimi hatası:", error.message);
+    return null;
+  }
+};
+
+// STATİK VERİ ALMA FONKSİYONU - API'YE GİTMEZ
+const getStaticData = async () => {
+  const today = new Date().toDateString();
+
+  // Eğer bugün veri çekilmemişse veya veri yoksa çek
+  if (!DAILY_STATIC_DATA || LAST_FETCH_DATE !== today) {
+    console.log("🔄 Günlük veri güncelleme gerekiyor...");
+    await fetchDailyData();
+  }
+
+  if (DAILY_STATIC_DATA) {
+    console.log("✅ STATİK VERİDEN SUNULUYOR - 0 TOKEN HARCAMA");
+    return DAILY_STATIC_DATA;
+  } else {
+    console.log("❌ Statik veri mevcut değil");
+    return {
+      dailyPharmacies: {},
+      cities: [],
+      pharmacies: []
+    };
   }
 };
 
@@ -134,13 +151,17 @@ const start = async () => {
       console.log(`🚀 Server ${PORT} portunda çalışıyor...`);
     });
 
-    // VERCEL SERVERLESS İÇİN PRELOAD DEVRE DIŞI - TOKEN TASARRUFU
-    console.log("🚫 Preload cache devre dışı (Vercel serverless için TOKEN TASARRUFU)");
-    // preloadCache(); // DEVRE DIŞI - Her function restart'ta token harcıyordu
+    // GÜNLÜK VERİ ÇEKİMİ SİSTEMİ - VERCEL SERVERLESS UYUMLU
+    console.log("🌅 Günlük veri çekimi sistemi aktif - SÜPER TOKEN TASARRUFU");
+    console.log("📅 İlk veri çekimi: İlk istek geldiğinde");
+    console.log("🔄 Sonraki çekimler: Günlük otomatik");
 
   } catch (error) {
     console.log("❌ Server başlatma hatası:", error);
   }
 };
+
+// STATİK VERİ FONKSİYONUNU EXPORT ET
+module.exports = { app, getStaticData };
 
 start();
