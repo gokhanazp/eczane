@@ -982,13 +982,19 @@ router.get(
     console.log(`🔍 URL'den gelen slug: ${slug}`);
     let pharmacy = null;
 
+    // TIMEOUT ÖNLEME - 6 SANİYE LİMİT
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Eczane detay timeout - 6 saniye')), 6000);
+    });
+
     try {
+      const dataPromise = (async () => {
       // ECZANE DETAY STATİK VERİ - 0 TOKEN HARCAMA
       console.log(`💊 Eczane detay sayfası yükleniyor - STATİK VERİ SİSTEMİ (0 TOKEN)`);
-      console.log(`🔍 Aranan eczane ID: ${id}`);
+      console.log(`🔍 Aranan eczane slug: ${slug}`);
 
       // STATİK VERİDEN TÜM ECZANELER AL
-      const allData = await _getAllData();
+      const allData = await getStaticData();
       const allPharmacies = allData.pharmacies || [];
 
       console.log(`📊 Statik veride toplam eczane sayısı: ${allPharmacies.length}`);
@@ -1098,6 +1104,13 @@ router.get(
           id: p.id
         })));
       }
+
+      return pharmacy;
+      })();
+
+      // Promise.race ile timeout kontrolü
+      pharmacy = await Promise.race([dataPromise, timeoutPromise]);
+
     } catch (error) {
       console.log("❌ Eczane detay hatası:", error.message);
     }
