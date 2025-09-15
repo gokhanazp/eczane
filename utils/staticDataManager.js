@@ -44,13 +44,23 @@ async function fetchAllPharmacies() {
   let allPharmacies = [];
   let currentPage = 1;
   let hasMore = true;
+  const MAX_PAGES = 100; // Güvenlik önlemi: Maksimum 100 sayfa
 
-  while (hasMore) {
+  while (hasMore && currentPage <= MAX_PAGES) {
     try {
+      console.log(`🔄 Sayfa ${currentPage} çekiliyor...`);
+
+      // Timeout ile API çağrısı
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
+
       const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
         method: "GET",
         headers: newApiHeaders,
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       const resJson = await response.json();
       console.log(`🚨 API ÇAĞRISI: Sayfa ${currentPage} - ${resJson.data?.length || 0} eczane`);
@@ -68,11 +78,22 @@ async function fetchAllPharmacies() {
       }
     } catch (error) {
       console.error(`❌ Sayfa ${currentPage} çekilemedi:`, error.message);
+
+      // Timeout hatası veya network hatası durumunda çık
+      if (error.name === 'AbortError' || error.message.includes('timeout')) {
+        console.error(`⏰ Timeout hatası - API çağrısı durduruluyor`);
+      }
+
       hasMore = false;
+      break; // Hata durumunda döngüden çık
     }
   }
 
-  console.log(`✅ Toplam ${allPharmacies.length} nöbetçi eczane çekildi`);
+  if (currentPage > MAX_PAGES) {
+    console.warn(`⚠️ Maksimum sayfa limitine ulaşıldı (${MAX_PAGES}). Veri çekimi durduruldu.`);
+  }
+
+  console.log(`✅ Toplam ${allPharmacies.length} nöbetçi eczane çekildi (${currentPage-1} sayfa)`);
   return allPharmacies;
 }
 

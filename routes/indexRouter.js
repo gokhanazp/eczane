@@ -1221,6 +1221,38 @@ router.get("/terms-and-conditions", async (req, res) => {
   });
 });
 
+// ACİL DURUM TEST ENDPOINT'İ - HIZLI KONTROL
+router.get("/test-quick", async (req, res) => {
+  try {
+    console.log("⚡ Hızlı test başlatılıyor...");
+
+    const startTime = Date.now();
+    const allData = await _getAllData();
+    const endTime = Date.now();
+
+    console.log(`⏱️ Veri yükleme süresi: ${endTime - startTime}ms`);
+
+    res.json({
+      success: true,
+      loadTime: `${endTime - startTime}ms`,
+      totalPharmacies: allData.pharmacies?.length || 0,
+      totalCities: allData.cities?.length || 0,
+      dailyPharmaciesKeys: allData.dailyPharmacies ? Object.keys(allData.dailyPharmacies).length : 0,
+      timestamp: new Date().toISOString(),
+      message: "Hızlı test tamamlandı"
+    });
+
+  } catch (error) {
+    console.error("❌ Hızlı test hatası:", error);
+    res.json({
+      success: false,
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // VERİ FORMATI TEST ENDPOINT'İ - ECZANE BULUNAMADI SORUNU İÇİN
 router.get("/test-data-format", async (req, res) => {
   try {
