@@ -94,8 +94,8 @@ const _getAllData = async (forceRefresh = false) => {
       citiesCount: citiesRes.length
     });
 
-    // Cache'leri kaydet - AKILLI GÜN BAZLI CACHE
-    const pharmacyTTL = dutyPharmacyTTL(); // Sabah 8'e kadar
+    // Cache'leri kaydet - UZUN CACHE (TOKEN TASARRUFU)
+    const pharmacyTTL = dutyTTLGenerate(1); // 24 saat cache - TOKEN TASARRUFU
     const citiesTTL = dutyTTLGenerate(90); // 90 gün
 
     await Promise.all([
@@ -104,7 +104,7 @@ const _getAllData = async (forceRefresh = false) => {
       cacheManage.setCache("cities_cache", citiesRes, citiesTTL)
     ]);
 
-    console.log("✅ İlk cache başarıyla kaydedildi:", {
+    console.log("✅ İlk cache başarıyla kaydedildi (24 SAAT CACHE - TOKEN TASARRUFU):", {
       pharmacyTTL: Math.round(pharmacyTTL / (1000 * 60 * 60)) + " saat",
       citiesTTL: Math.round(citiesTTL / (1000 * 60 * 60 * 24)) + " gün"
     });
@@ -578,28 +578,56 @@ router.get("/", async function (req, res) {
   let allDutyPharmaciesCount = 0;
 
   try {
-    // TEK API ÇAĞRISI - TOKEN TASARRUFU
-    console.log("🏠 Ana sayfa yükleniyor - Tek API çağrısı ile");
-    const allData = await _getAllData();
+    // ANASAYFA CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
+    console.log("🏠 Ana sayfa yükleniyor - Cache kontrolü ile TOKEN TASARRUFU");
 
-    cities = allData.cities.map(c => c.cities);
-    const pharms = allData.dailyPharmacies;
+    // Önce cache'i kontrol et - API çağrısı yapmadan
+    const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
+    const cachedCities = await cacheManage.getCache("cities_cache");
 
-    // Şehir bazında eczane sayılarını hesapla
-    for (const city in pharms) {
-      let count = 0;
-      for (const district in pharms[city]) {
-        allDutyPharmaciesCount += pharms[city][district].length;
-        count += pharms[city][district].length;
+    if (cachedDailyPharmacies && cachedCities) {
+      console.log("✅ Anasayfa cache'den yüklendi - 0 TOKEN HARCAMA");
+      cities = cachedCities.map(c => c.cities);
+      const pharms = cachedDailyPharmacies;
+
+      // Şehir bazında eczane sayılarını hesapla
+      for (const city in pharms) {
+        let count = 0;
+        for (const district in pharms[city]) {
+          allDutyPharmaciesCount += pharms[city][district].length;
+          count += pharms[city][district].length;
+        }
+        pharmacyByCities[city] = count;
       }
-      pharmacyByCities[city] = count;
-    }
 
-    console.log("✅ Ana sayfa verisi hazır:", {
-      cityCount: cities.length,
-      totalPharmacies: allDutyPharmaciesCount,
-      cacheHit: "memory/file cache kullanıldı"
-    });
+      console.log("✅ Anasayfa verisi cache'den hazır:", {
+        cityCount: cities.length,
+        totalPharmacies: allDutyPharmaciesCount,
+        cacheHit: "Keyv cache kullanıldı - 0 TOKEN"
+      });
+    } else {
+      console.log("❌ Cache boş, _getAllData çağrılıyor...");
+      const allData = await _getAllData();
+
+      cities = allData.cities.map(c => c.cities);
+      const pharms = allData.dailyPharmacies;
+
+      // Şehir bazında eczane sayılarını hesapla
+      for (const city in pharms) {
+        let count = 0;
+        for (const district in pharms[city]) {
+          allDutyPharmaciesCount += pharms[city][district].length;
+          count += pharms[city][district].length;
+        }
+        pharmacyByCities[city] = count;
+      }
+
+      console.log("✅ Ana sayfa verisi hazır (API'den):", {
+        cityCount: cities.length,
+        totalPharmacies: allDutyPharmaciesCount,
+        cacheHit: "API çağrısı yapıldı"
+      });
+    }
   } catch (error) {
     console.log("❌ API Hatası:", error.message);
 
