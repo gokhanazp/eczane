@@ -1012,6 +1012,13 @@ router.get(
       pharmacy = allPharmacies.find(p => p.id === slug);
       console.log(`🔍 Tam slug arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
 
+      // Debug: İlk 5 eczane ID'sini göster
+      console.log(`📋 İlk 5 eczane ID'si:`, allPharmacies.slice(0, 5).map(p => p.id));
+
+      // Debug: Aranan slug ile benzer ID'leri göster
+      const similarIds = allPharmacies.filter(p => p.id && p.id.includes('ankara')).slice(0, 5);
+      console.log(`📋 Ankara içeren ID'ler:`, similarIds.map(p => p.id));
+
       if (!pharmacy) {
         // 2. Normalize edilmiş slug ile arama
         pharmacy = allPharmacies.find(p => p.id === normalizedSlug);
@@ -1333,11 +1340,37 @@ router.get("/test-pharmacy-detail", async (req, res) => {
       rawPharmacy: pharmacy // Debug için ham veri
     }));
 
+    // Ankara'daki Yazıcı Eczanesi'ni ara
+    const yaziciEczanesi = staticData.pharmacies.find(p =>
+      p.name && p.name.toLowerCase().includes('yazıcı') &&
+      p.city && p.city.toLowerCase().includes('ankara')
+    );
+
+    // Ankara'daki tüm eczaneleri listele
+    const ankaraPharmacies = staticData.pharmacies.filter(p =>
+      p.city && p.city.toLowerCase().includes('ankara')
+    ).slice(0, 10).map(p => ({
+      id: p.id,
+      name: p.name,
+      city: p.city,
+      district: p.district,
+      url: `/eczaneler/${p.id}`
+    }));
+
     res.json({
       success: true,
       message: "Eczane detay test başarılı",
       totalPharmacies: staticData.pharmacies.length,
       samplePharmacies,
+      yaziciEczanesi: yaziciEczanesi ? {
+        id: yaziciEczanesi.id,
+        name: yaziciEczanesi.name,
+        city: yaziciEczanesi.city,
+        district: yaziciEczanesi.district,
+        url: `/eczaneler/${yaziciEczanesi.id}`,
+        rawPharmacy: yaziciEczanesi
+      } : null,
+      ankaraPharmacies,
       timestamp: new Date().toISOString()
     });
 
