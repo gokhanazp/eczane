@@ -124,11 +124,16 @@ class StaticDataManager {
             city: pharmacy.city,
             district: pharmacy.district,
             coordinates: pharmacy.coordinates,
+            // Eczane detay sayfası için latitude/longitude alanları
+            latitude: pharmacy.coordinates?.lat,
+            longitude: pharmacy.coordinates?.lon,
             workingHours: pharmacy.workingHours,
             is_sentry: pharmacy.is_sentry,
             sentry_date: pharmacy.sentry_date,
             updated_at: pharmacy.updated_at,
-            note: pharmacy.note || ""
+            note: pharmacy.note || "",
+            // Eczane detay sayfası için ID alanı (slug'dan oluştur)
+            id: pharmacy.slug ? pharmacy.slug.split('-').pop() : Math.random().toString(36).substr(2, 9)
           };
 
           dailyPharmacies[city][district].push(transformedPharmacy);

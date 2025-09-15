@@ -961,20 +961,43 @@ router.get(
     let pharmacy = null;
 
     try {
-      const cachePharmacies = await cacheManage.getCache(CacheNames.PHARMACIES);
-      const pharmacies = [...(cachePharmacies ?? [])];
+      // ECZANE DETAY STATİK VERİ - 0 TOKEN HARCAMA
+      console.log(`💊 Eczane detay sayfası yükleniyor - STATİK VERİ SİSTEMİ (0 TOKEN)`);
+      console.log(`🔍 Aranan eczane ID: ${id}`);
 
-      if (pharmacies.length === 0 || !pharmacies.find(p => p.id == id)) {
-        console.log("🚫 Eczane detay API çağrısı TOKEN TASARRUFU için devre dışı");
-        // TOKEN TASARRUFU - getPharmacyById devre dışı
-        // const newPharmacy = await DutyPharmacyService.getPharmacyById(id);
-        // pharmacies.push(newPharmacy);
-        // await cacheManage.setCache(CacheNames.PHARMACIES, pharmacies, dutyTTLGenerate(7));
+      // STATİK VERİDEN TÜM ECZANELER AL
+      const allData = await _getAllData();
+      const allPharmacies = allData.pharmacies || [];
+
+      console.log(`📊 Statik veride toplam eczane sayısı: ${allPharmacies.length}`);
+
+      // ID ile eczane ara - statik veriden
+      pharmacy = allPharmacies.find(p => {
+        // Yeni API formatında ID olmayabilir, name ile eşleştirme yapalım
+        if (p.id && p.id == id) return true;
+
+        // Name-based matching için nameAndId'den ismi çıkar
+        const nameFromUrl = paramValues.slice(0, -1).join("-");
+        const normalizedPharmacyName = p.name.toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
+
+        return normalizedPharmacyName === nameFromUrl;
+      });
+
+      if (pharmacy) {
+        console.log(`✅ Eczane STATİK VERİDEN bulundu: ${pharmacy.name} (${pharmacy.city}/${pharmacy.district})`);
+
+        // Eczane ID'si yoksa URL'den çıkarılan ID'yi ata
+        if (!pharmacy.id) {
+          pharmacy.id = id;
+        }
+      } else {
+        console.log(`❌ Eczane STATİK VERİDE bulunamadı - ID: ${id}, Name: ${paramValues.slice(0, -1).join("-")}`);
+        console.log(`📋 İlk 5 eczane örneği:`, allPharmacies.slice(0, 5).map(p => ({ name: p.name, id: p.id })));
       }
-
-      pharmacy = pharmacies.find(p => p.id == id);
     } catch (error) {
-      console.log("❌ Pharmacy not found:", error.message);
+      console.log("❌ Eczane detay hatası:", error.message);
     }
 
     const { error } = getMessages(req);
