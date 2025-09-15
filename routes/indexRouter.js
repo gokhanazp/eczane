@@ -1063,9 +1063,40 @@ router.get(
           pharmacy.id = slug;
         }
       } else {
-        console.log(`❌ Eczane STATİK VERİDE bulunamadı - Slug: ${slug}`);
-        console.log(`📋 İlk 5 eczane örneği:`, allPharmacies.slice(0, 5).map(p => ({ name: p.name, id: p.id })));
+        console.log(`❌ ECZANE STATİK VERİDE BULUNAMADI - DETAYLI DEBUG:`);
+        console.log(`🔍 Aranan slug: ${slug}`);
+        console.log(`🔍 Normalize slug: ${normalizedSlug}`);
         console.log(`📋 Toplam eczane sayısı: ${allPharmacies.length}`);
+
+        // İlk 10 eczaneyi detaylı göster
+        console.log(`📋 İlk 10 eczane detaylı:`, allPharmacies.slice(0, 10).map(p => ({
+          name: p.name,
+          id: p.id,
+          city: p.city,
+          district: p.district,
+          slug: p.slug,
+          hasTurkishChars: /[ğüşıöç]/i.test(p.name)
+        })));
+
+        // Slug ile başlayan eczaneleri ara
+        const slugStartsWith = allPharmacies.filter(p =>
+          p.id && p.id.startsWith(slug.split('-')[0])
+        ).slice(0, 5);
+        console.log(`📋 Slug ile başlayan eczaneler:`, slugStartsWith.map(p => ({
+          name: p.name,
+          id: p.id
+        })));
+
+        // Benzer isimli eczaneleri ara
+        const similarNames = allPharmacies.filter(p =>
+          p.name && slug.split('-').some(part =>
+            p.name.toLowerCase().includes(part) && part.length > 2
+          )
+        ).slice(0, 5);
+        console.log(`📋 Benzer isimli eczaneler:`, similarNames.map(p => ({
+          name: p.name,
+          id: p.id
+        })));
       }
     } catch (error) {
       console.log("❌ Eczane detay hatası:", error.message);
@@ -1075,7 +1106,7 @@ router.get(
     res.status(200).render("pages/pharmacy", {
       title: pharmacy
         ? `${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district} Nöbetçi Eczane`
-        : "Eczane Bulunamadı",
+        : "Eczane Bulunamadı - Debug",
       breadcrumbList: [
         { name: "Nöbetçi Eczaneler", url: undefined },
         { name: pharmacy?.city, url: `/nobetcieczane/${pharmacy?.city}` },
@@ -1084,6 +1115,15 @@ router.get(
       ],
       error,
       pharmacy,
+      // Debug bilgileri
+      slug: slug,
+      req: req,
+      debugInfo: {
+        slug: slug,
+        normalizedSlug: normalizedSlug,
+        totalPharmacies: allPharmacies.length,
+        timestamp: new Date().toISOString()
+      }
     });
   }
 );

@@ -53,4 +53,44 @@
     }
   }
 </script>
+<% } else { %>
+<!-- ECZANE BULUNAMADI DEBUG BİLGİSİ -->
+<div class="w-full overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-900 flex flex-col">
+  <div class="flex justify-between items-center gap-4 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-700">
+    <h1 class="text-xl text-white font-semibold">🚨 Eczane Bulunamadı - Debug Bilgisi</h1>
+  </div>
+
+  <div class="flex flex-col gap-4 p-4">
+    <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+      <h3 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">🔍 Debug Bilgileri:</h3>
+      <div class="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+        <p><strong>URL:</strong> <%= typeof req !== 'undefined' ? req.originalUrl : 'N/A' %></p>
+        <p><strong>Aranan Slug:</strong> <%= typeof slug !== 'undefined' ? slug : 'N/A' %></p>
+        <p><strong>Timestamp:</strong> <%= new Date().toLocaleString('tr-TR') %></p>
+      </div>
+    </div>
+
+    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+      <h3 class="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">💡 Çözüm Önerileri:</h3>
+      <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
+        <li>Vercel function logs'unu kontrol edin</li>
+        <li><a href="/test-data-format" class="underline hover:text-blue-900 dark:hover:text-blue-100">Test endpoint'ini</a> çalıştırın</li>
+        <li>URL'deki Türkçe karakterleri kontrol edin</li>
+        <li>Eczane adını doğru yazdığınızdan emin olun</li>
+        <li><a href="/" class="underline hover:text-blue-900 dark:hover:text-blue-100">Ana sayfaya</a> dönüp tekrar deneyin</li>
+      </ul>
+    </div>
+
+    <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">🏠 Hızlı Linkler:</h3>
+      <div class="flex flex-wrap gap-2">
+        <a href="/" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">Ana Sayfa</a>
+        <a href="/nobetcieczane/istanbul" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">İstanbul</a>
+        <a href="/nobetcieczane/ankara" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">Ankara</a>
+        <a href="/nobetcieczane/izmir" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm">İzmir</a>
+        <a href="/test-data-format" class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm">Debug Test</a>
+      </div>
+    </div>
+  </div>
+</div>
 <% } %>
