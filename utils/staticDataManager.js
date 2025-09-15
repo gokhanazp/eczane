@@ -44,7 +44,7 @@ async function fetchAllPharmacies() {
   let allPharmacies = [];
   let currentPage = 1;
   let hasMore = true;
-  const MAX_PAGES = 10; // API ÇALIŞIYOR: 10 sayfa (250 eczane) - Vercel 10s limit
+  const MAX_PAGES = 3; // HALA TIMEOUT: 3 sayfa (75 eczane) - Vercel 10s limit
 
   while (hasMore && currentPage <= MAX_PAGES) {
     try {
@@ -52,7 +52,7 @@ async function fetchAllPharmacies() {
 
       // Timeout ile API çağrısı
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 saniye timeout (Vercel limit)
+      const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 saniye timeout (Vercel limit)
 
       // Çalışan endpoint: /pharmacies/sentry-pharmacies/{page}
       const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
@@ -127,26 +127,31 @@ class StaticDataManager {
       // YENİ API SİSTEMİ - ECZANELER.ORG
       console.log("🚨 YENİ API SİSTEMİ - ECZANELER.ORG ÇAĞRILIYOR");
 
-      const [pharmaciesRes, citiesRes] = await Promise.all([
-        // Tüm nöbetçi eczaneleri çek (sayfalama ile)
-        fetchAllPharmacies(),
+      // TIMEOUT ÖNLEME: Sıralı çağrı (paralel değil)
+      console.log("🔄 Önce şehir verisi çekiliyor (hızlı)...");
+      const citiesRes = await fetch(`${NEW_API_URL}/pharmacies/cities`, {
+        method: "GET",
+        headers: newApiHeaders,
+      }).then(async (response) => {
+        const resJson = await response.json();
+        console.log("✅ Şehir verisi çekildi");
 
-        // Şehirler listesini çek
-        fetch(`${NEW_API_URL}/pharmacies/cities`, {
-          method: "GET",
-          headers: newApiHeaders,
-        }).then(async (response) => {
-          const resJson = await response.json();
-          console.log("🚨 API ÇAĞRISI: Şehirler listesi çekiliyor");
-          console.log("💰 Yeni API kullanımı: cities endpoint");
+        if (!resJson.cities) {
+          throw new Error(`API Error: Cities data not found`);
+        }
 
-          if (!resJson.cities) {
-            throw new Error(`API Error: Cities data not found`);
-          }
+        return resJson.cities;
+      });
 
-          return resJson.cities;
-        })
-      ]);
+      console.log("🔄 Sonra eczane verisi çekiliyor (yavaş)...");
+      let pharmaciesRes = [];
+      try {
+        pharmaciesRes = await fetchAllPharmacies();
+        console.log("✅ Eczane verisi çekildi");
+      } catch (pharmacyError) {
+        console.error("❌ Eczane verisi çekilemedi, sadece şehir verisi ile devam:", pharmacyError.message);
+        pharmaciesRes = []; // Boş array ile devam et
+      }
 
       if (pharmaciesRes && pharmaciesRes.length > 0) {
         // YENİ API VERİ İŞLEME
@@ -248,13 +253,13 @@ class StaticDataManager {
       }
     }
     
-    // ACİL TIMEOUT ÇÖZÜMÜ: Veri varsa kullan, yoksa çek
-    if (!DAILY_STATIC_DATA) {
+    // ULTRA AGRESİF TIMEOUT ÇÖZÜMÜ: Sadece veri yoksa çek
+    if (!DAILY_STATIC_DATA || Object.keys(DAILY_STATIC_DATA).length === 0) {
       console.log("🔄 İlk veri çekimi gerekiyor...");
       await this.fetchDailyData();
-    } else if (LAST_FETCH_DATE !== today) {
-      console.log("⚡ Günlük veri güncelleme atlandı - TIMEOUT ÖNLEME");
-      console.log("📊 Mevcut veri kullanılıyor (timeout önleme)");
+    } else {
+      console.log("⚡ MEVCUT VERİ KULLANILIYOR - TIMEOUT ÖNLEME");
+      console.log(`📊 Cache'de ${DAILY_STATIC_DATA.pharmacies?.length || 0} eczane mevcut`);
     }
     
     if (DAILY_STATIC_DATA) {

@@ -1324,7 +1324,7 @@ router.get("/test-quick", async (req, res) => {
 
     // Timeout kontrolü - 8 saniye sonra durdur
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Function timeout - 8 saniye')), 8000);
+      setTimeout(() => reject(new Error('Function timeout - 6 saniye')), 6000);
     });
 
     const dataPromise = _getAllData();
