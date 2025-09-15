@@ -982,6 +982,7 @@ router.get(
     console.log(`🔍 URL'den gelen slug: ${slug}`);
     let pharmacy = null;
     let normalizedSlug = ''; // Scope sorunu çözümü
+    let allPharmacies = []; // Scope sorunu çözümü
 
     // TIMEOUT ÖNLEME - 6 SANİYE LİMİT
     const timeoutPromise = new Promise((_, reject) => {
@@ -996,7 +997,7 @@ router.get(
 
       // STATİK VERİDEN TÜM ECZANELER AL
       const allData = await getStaticData();
-      const allPharmacies = allData.pharmacies || [];
+      allPharmacies = allData.pharmacies || [];
 
       console.log(`📊 Statik veride toplam eczane sayısı: ${allPharmacies.length}`);
 
