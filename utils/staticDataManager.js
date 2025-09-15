@@ -132,8 +132,8 @@ class StaticDataManager {
             sentry_date: pharmacy.sentry_date,
             updated_at: pharmacy.updated_at,
             note: pharmacy.note || "",
-            // Eczane detay sayfası için ID alanı (slug'dan oluştur)
-            id: pharmacy.slug ? pharmacy.slug.split('-').pop() : Math.random().toString(36).substr(2, 9)
+            // Eczane detay sayfası için ID alanı (slug'ın tamamını kullan)
+            id: pharmacy.slug || `${pharmacy.city.toLowerCase()}-${pharmacy.district.toLowerCase()}-${pharmacy.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`
           };
 
           dailyPharmacies[city][district].push(transformedPharmacy);

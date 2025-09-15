@@ -971,19 +971,45 @@ router.get(
 
       console.log(`📊 Statik veride toplam eczane sayısı: ${allPharmacies.length}`);
 
-      // ID ile eczane ara - statik veriden
-      pharmacy = allPharmacies.find(p => {
-        // Yeni API formatında ID olmayabilir, name ile eşleştirme yapalım
-        if (p.id && p.id == id) return true;
+      // ECZANE ARAMA SİSTEMİ - SLUG BAZLI
+      // URL formatı: /eczaneler/adana-cukurova-aygul-eczanesi veya /eczaneler/eczane-adi-123
 
-        // Name-based matching için nameAndId'den ismi çıkar
+      // Önce tam slug ile ara (yeni API formatı)
+      pharmacy = allPharmacies.find(p => p.id === nameAndId);
+
+      if (!pharmacy) {
+        // Eski format için: son kısım ID, geri kalanı isim
         const nameFromUrl = paramValues.slice(0, -1).join("-");
-        const normalizedPharmacyName = p.name.toLowerCase()
-          .replace(/\s+/g, "-")
-          .replace(/[^a-z0-9-]/g, "");
 
-        return normalizedPharmacyName === nameFromUrl;
-      });
+        // ID ile ara
+        pharmacy = allPharmacies.find(p => p.id == id);
+
+        if (!pharmacy) {
+          // Name-based arama
+          pharmacy = allPharmacies.find(p => {
+            const normalizedPharmacyName = p.name.toLowerCase()
+              .replace(/\s+/g, "-")
+              .replace(/[^a-z0-9-]/g, "");
+            return normalizedPharmacyName === nameFromUrl;
+          });
+        }
+
+        if (!pharmacy) {
+          // Slug'ın bir kısmı ile ara (partial match)
+          pharmacy = allPharmacies.find(p => {
+            if (!p.id) return false;
+            const pharmacySlugParts = p.id.toLowerCase().split('-');
+            const urlParts = nameAndId.toLowerCase().split('-');
+
+            // En az 2 kelime eşleşmesi
+            const matchCount = urlParts.filter(part =>
+              pharmacySlugParts.some(slugPart => slugPart.includes(part) || part.includes(slugPart))
+            ).length;
+
+            return matchCount >= 2;
+          });
+        }
+      }
 
       if (pharmacy) {
         console.log(`✅ Eczane STATİK VERİDEN bulundu: ${pharmacy.name} (${pharmacy.city}/${pharmacy.district})`);
@@ -1009,7 +1035,7 @@ router.get(
         { name: "Nöbetçi Eczaneler", url: undefined },
         { name: pharmacy?.city, url: `/nobetcieczane/${pharmacy?.city}` },
         { name: pharmacy?.district, url: `/nobetcieczane/${pharmacy?.city}/${pharmacy?.district}` },
-        { name: pharmacy?.name, url: `/eczaneler/${pharmacy?.name}-${pharmacy?.id}` },
+        { name: pharmacy?.name, url: `/eczaneler/${pharmacy?.id}` },
       ],
       error,
       pharmacy,
