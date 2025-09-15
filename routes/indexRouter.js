@@ -1008,21 +1008,36 @@ router.get(
       const normalizedSlug = normalizeToSlug(slug);
       console.log(`🔍 Normalize edilmiş slug: ${normalizedSlug}`);
 
-      // 1. Önce tam slug ile ara (yeni API formatı)
-      pharmacy = allPharmacies.find(p => p.id === slug);
-      console.log(`🔍 Tam slug arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
+      // Debug: Arama öncesi bilgiler
+      console.log(`📊 Toplam eczane sayısı: ${allPharmacies.length}`);
+      console.log(`🔍 Aranan slug: "${slug}"`);
+      console.log(`🔍 Normalize slug: "${normalizedSlug}"`);
 
       // Debug: İlk 5 eczane ID'sini göster
       console.log(`📋 İlk 5 eczane ID'si:`, allPharmacies.slice(0, 5).map(p => p.id));
 
-      // Debug: Aranan slug ile benzer ID'leri göster
-      const similarIds = allPharmacies.filter(p => p.id && p.id.includes('ankara')).slice(0, 5);
-      console.log(`📋 Ankara içeren ID'ler:`, similarIds.map(p => p.id));
+      // Debug: Ankara içeren ID'leri göster
+      const ankaraIds = allPharmacies.filter(p => p.id && p.id.includes('ankara')).slice(0, 10);
+      console.log(`📋 Ankara içeren ID'ler (${ankaraIds.length}):`, ankaraIds.map(p => p.id));
+
+      // Debug: Yazıcı içeren ID'leri göster
+      const yaziciIds = allPharmacies.filter(p => p.id && p.id.includes('yazici')).slice(0, 5);
+      console.log(`📋 Yazıcı içeren ID'ler (${yaziciIds.length}):`, yaziciIds.map(p => p.id));
+
+      // 1. Tam slug eşleştirmesi
+      pharmacy = allPharmacies.find(p => p.id === slug);
+      console.log(`🔍 Tam slug arama sonucu: ${pharmacy ? 'BULUNDU ✅' : 'BULUNAMADI ❌'}`);
+      if (pharmacy) {
+        console.log(`✅ Bulunan eczane: ${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district}`);
+      }
 
       if (!pharmacy) {
         // 2. Normalize edilmiş slug ile arama
         pharmacy = allPharmacies.find(p => p.id === normalizedSlug);
-        console.log(`🔍 Normalize slug arama sonucu: ${pharmacy ? 'BULUNDU' : 'BULUNAMADI'}`);
+        console.log(`🔍 Normalize slug arama sonucu: ${pharmacy ? 'BULUNDU ✅' : 'BULUNAMADI ❌'}`);
+        if (pharmacy) {
+          console.log(`✅ Bulunan eczane: ${pharmacy.name} - ${pharmacy.city} - ${pharmacy.district}`);
+        }
       }
 
       if (!pharmacy) {
