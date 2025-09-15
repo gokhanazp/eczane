@@ -1221,13 +1221,43 @@ router.get("/terms-and-conditions", async (req, res) => {
   });
 });
 
+// ACİL TIMEOUT TEST - MİNİMAL İŞLEM
+router.get("/test-timeout", async (req, res) => {
+  try {
+    console.log("⚡ Timeout test - minimal işlem...");
+
+    res.json({
+      success: true,
+      message: "Timeout test başarılı - function çalışıyor",
+      timestamp: new Date().toISOString(),
+      serverTime: Date.now()
+    });
+
+  } catch (error) {
+    console.error("❌ Timeout test hatası:", error);
+    res.json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // ACİL DURUM TEST ENDPOINT'İ - HIZLI KONTROL
 router.get("/test-quick", async (req, res) => {
   try {
     console.log("⚡ Hızlı test başlatılıyor...");
 
     const startTime = Date.now();
-    const allData = await _getAllData();
+
+    // Timeout kontrolü - 8 saniye sonra durdur
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Function timeout - 8 saniye')), 8000);
+    });
+
+    const dataPromise = _getAllData();
+
+    const allData = await Promise.race([dataPromise, timeoutPromise]);
     const endTime = Date.now();
 
     console.log(`⏱️ Veri yükleme süresi: ${endTime - startTime}ms`);
@@ -1247,7 +1277,7 @@ router.get("/test-quick", async (req, res) => {
     res.json({
       success: false,
       error: error.message,
-      stack: error.stack,
+      isTimeout: error.message.includes('timeout'),
       timestamp: new Date().toISOString()
     });
   }

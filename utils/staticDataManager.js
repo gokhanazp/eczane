@@ -38,13 +38,13 @@ function normalizeToSlug(text) {
     .replace(/^-+|-+$/g, '');
 }
 
-// YENİ API - TÜM NÖBETÇI ECZANELER SAYFALAMA İLE
+// YENİ API - ACİL TIMEOUT ÇÖZÜMÜ: SADECE İLK SAYFA
 async function fetchAllPharmacies() {
-  console.log("📄 Tüm nöbetçi eczaneler sayfalama ile çekiliyor...");
+  console.log("⚡ ACİL TIMEOUT ÇÖZÜMÜ: Sadece ilk sayfa çekiliyor...");
   let allPharmacies = [];
   let currentPage = 1;
   let hasMore = true;
-  const MAX_PAGES = 100; // Güvenlik önlemi: Maksimum 100 sayfa
+  const MAX_PAGES = 1; // ACİL TIMEOUT ÇÖZÜMÜ: Sadece 1 sayfa (Vercel 10s limit)
 
   while (hasMore && currentPage <= MAX_PAGES) {
     try {
@@ -52,7 +52,7 @@ async function fetchAllPharmacies() {
 
       // Timeout ile API çağrısı
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 saniye timeout
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 saniye timeout (Vercel limit)
 
       const response = await fetch(`${NEW_API_URL}/pharmacies/sentry-pharmacies/${currentPage}`, {
         method: "GET",
@@ -248,10 +248,13 @@ class StaticDataManager {
       }
     }
     
-    // Eğer bugün veri çekilmemişse veya veri yoksa çek
-    if (!DAILY_STATIC_DATA || LAST_FETCH_DATE !== today) {
-      console.log("🔄 Günlük veri güncelleme gerekiyor...");
+    // ACİL TIMEOUT ÇÖZÜMÜ: Veri varsa kullan, yoksa çek
+    if (!DAILY_STATIC_DATA) {
+      console.log("🔄 İlk veri çekimi gerekiyor...");
       await this.fetchDailyData();
+    } else if (LAST_FETCH_DATE !== today) {
+      console.log("⚡ Günlük veri güncelleme atlandı - TIMEOUT ÖNLEME");
+      console.log("📊 Mevcut veri kullanılıyor (timeout önleme)");
     }
     
     if (DAILY_STATIC_DATA) {
