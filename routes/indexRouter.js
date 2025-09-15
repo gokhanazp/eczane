@@ -644,20 +644,12 @@ router.get(
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
 
-      // ŞEHIR SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
-      console.log(`🏙️ ${city} sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU`);
+      // ŞEHİR SAYFASI STATİK VERİ - 0 TOKEN HARCAMA
+      console.log(`🏙️ ${city} sayfası yükleniyor - STATİK VERİ SİSTEMİ (0 TOKEN)`);
 
-      // Önce cache'i kontrol et - API çağrısı yapmadan
-      const cachedCities = await cacheManage.getCache("cities_cache");
-
-      if (cachedCities) {
-        console.log(`✅ ${city} sayfası cache'den yüklendi - 0 TOKEN HARCAMA`);
-        cities = cachedCities;
-      } else {
-        console.log("❌ Cache boş, _getAllData çağrılıyor...");
-        const allData = await _getAllData();
-        cities = allData.cities;
-      }
+      // STATİK VERİDEN AL - HİÇBİR CACHE KONTROLÜ YOK
+      const allData = await _getAllData();
+      cities = allData.cities;
 
       // Şehir ismi eşleştirme - Türkçe karakter desteği
       const targetCity = city.toLowerCase();
@@ -700,13 +692,13 @@ router.get(
         currentCity = city; // Fallback
       }
 
-      // İlçeleri cache'den al - EXTRA API ÇAĞRISI YOK
+      // İlçeleri statik veriden al - 0 TOKEN HARCAMA
       const pharmacies = allData.dailyPharmacies;
 
-      // İlçeleri eczane verisinden çıkar - API çağrısı yerine
+      // İlçeleri eczane verisinden çıkar - statik veri
       if (pharmacies[currentCity]) {
         districts = Object.keys(pharmacies[currentCity]);
-        console.log(`✅ ${currentCity} ilçeleri cache'den alındı:`, districts.length);
+        console.log(`✅ ${currentCity} ilçeleri STATİK VERİDEN alındı:`, districts.length);
       } else {
         districts = [];
         console.log(`❌ ${currentCity} için ilçe verisi bulunamadı`);
@@ -792,25 +784,13 @@ router.get(
     try {
       city = city[0].toLocaleUpperCase() + city.slice(1);
 
-      // İLÇE SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
-      console.log(`🏘️ ${city}/${district} sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU`);
+      // İLÇE SAYFASI STATİK VERİ - 0 TOKEN HARCAMA
+      console.log(`🏘️ ${city}/${district} sayfası yükleniyor - STATİK VERİ SİSTEMİ (0 TOKEN)`);
 
-      // Önce cache'i kontrol et - API çağrısı yapmadan
-      const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
-      const cachedCities = await cacheManage.getCache("cities_cache");
-
-      let pharmacies, citiesData;
-      if (cachedDailyPharmacies && cachedCities) {
-        console.log(`✅ ${city}/${district} sayfası cache'den yüklendi - 0 TOKEN HARCAMA`);
-        pharmacies = cachedDailyPharmacies;
-        citiesData = cachedCities;
-        cities = citiesData;
-      } else {
-        console.log("❌ Cache boş, _getAllData çağrılıyor...");
-        const allData = await _getAllData();
-        cities = allData.cities;
-        pharmacies = allData.dailyPharmacies;
-      }
+      // STATİK VERİDEN AL - HİÇBİR CACHE KONTROLÜ YOK
+      const allData = await _getAllData();
+      cities = allData.cities;
+      const pharmacies = allData.dailyPharmacies;
 
       // Şehir ismi eşleştirme - Türkçe karakter desteği
       const targetCity = city.toLowerCase();
@@ -853,7 +833,7 @@ router.get(
         currentCity = city; // Fallback
       }
 
-      // İlçeleri cache'den al - API çağrısı yok
+      // İlçeleri statik veriden al - 0 TOKEN HARCAMA
       if (pharmacies[currentCity]) {
         districts = Object.keys(pharmacies[currentCity]);
 
@@ -1043,35 +1023,23 @@ router.get(
     let selectedDistrict = district || "";
 
     try {
-      // ŞEHIR DETAY SAYFASI CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
-      console.log("🏙️ Şehir detay sayfası yükleniyor - Cache kontrolü ile TOKEN TASARRUFU");
+      // ŞEHIR DETAY SAYFASI STATİK VERİ - 0 TOKEN HARCAMA
+      console.log("🏙️ Şehir detay sayfası yükleniyor - STATİK VERİ SİSTEMİ (0 TOKEN)");
 
-      // Önce cache'i kontrol et - API çağrısı yapmadan
-      const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
-      const cachedCities = await cacheManage.getCache("cities_cache");
-
-      let pharms, citiesData;
-      if (cachedDailyPharmacies && cachedCities) {
-        console.log("✅ Şehir detay sayfası cache'den yüklendi - 0 TOKEN HARCAMA");
-        pharms = cachedDailyPharmacies;
-        citiesData = cachedCities;
-        cities = citiesData.map(c => c.cities);
-      } else {
-        console.log("❌ Cache boş, _getAllData çağrılıyor...");
-        const allData = await _getAllData();
-        cities = allData.cities.map(c => c.cities);
-        pharms = allData.dailyPharmacies;
-      }
+      // STATİK VERİDEN AL - HİÇBİR CACHE KONTROLÜ YOK
+      const allData = await _getAllData();
+      cities = allData.cities.map(c => c.cities);
+      const pharms = allData.dailyPharmacies;
 
       if (city) {
         selectedCity = city;
-        // İlçeleri cache'den al - API çağrısı yok
+        // İlçeleri statik veriden al - 0 TOKEN HARCAMA
         if (pharms && pharms[city]) {
           selectableDistricts = Object.keys(pharms[city]);
-          console.log("✅ İlçeler cache'den alındı:", { city, districtCount: selectableDistricts.length });
+          console.log("✅ İlçeler STATİK VERİDEN alındı:", { city, districtCount: selectableDistricts.length });
         } else {
-          console.log("❌ Cache'de şehir bulunamadı, boş liste döndürülüyor - TOKEN TASARRUFU");
-          selectableDistricts = []; // Fallback API çağrısı devre dışı - TOKEN TASARRUFU
+          console.log("❌ Statik veride şehir bulunamadı, boş liste döndürülüyor - 0 TOKEN");
+          selectableDistricts = []; // Fallback API çağrısı devre dışı - 0 TOKEN
         }
       }
 
