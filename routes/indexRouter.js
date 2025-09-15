@@ -513,56 +513,30 @@ router.get("/", async function (req, res) {
   let allDutyPharmaciesCount = 0;
 
   try {
-    // ANASAYFA CACHE KONTROLÜ - SÜPER TOKEN TASARRUFU
-    console.log("🏠 Ana sayfa yükleniyor - Cache kontrolü ile TOKEN TASARRUFU");
+    // ANASAYFA STATİK VERİ - 0 TOKEN HARCAMA
+    console.log("🏠 Ana sayfa yükleniyor - STATİK VERİ SİSTEMİ (0 TOKEN)");
 
-    // Önce cache'i kontrol et - API çağrısı yapmadan
-    const cachedDailyPharmacies = await cacheManage.getCache(CacheNames.DAILY_PHARMACIES);
-    const cachedCities = await cacheManage.getCache("cities_cache");
+    // STATİK VERİDEN AL - HİÇBİR CACHE KONTROLÜ YOK
+    const allData = await _getAllData();
 
-    if (cachedDailyPharmacies && cachedCities) {
-      console.log("✅ Anasayfa cache'den yüklendi - 0 TOKEN HARCAMA");
-      cities = cachedCities.map(c => c.cities);
-      const pharms = cachedDailyPharmacies;
+    cities = allData.cities.map(c => c.cities);
+    const pharms = allData.dailyPharmacies;
 
-      // Şehir bazında eczane sayılarını hesapla
-      for (const city in pharms) {
-        let count = 0;
-        for (const district in pharms[city]) {
-          allDutyPharmaciesCount += pharms[city][district].length;
-          count += pharms[city][district].length;
-        }
-        pharmacyByCities[city] = count;
+    // Şehir bazında eczane sayılarını hesapla
+    for (const city in pharms) {
+      let count = 0;
+      for (const district in pharms[city]) {
+        allDutyPharmaciesCount += pharms[city][district].length;
+        count += pharms[city][district].length;
       }
-
-      console.log("✅ Anasayfa verisi cache'den hazır:", {
-        cityCount: cities.length,
-        totalPharmacies: allDutyPharmaciesCount,
-        cacheHit: "Keyv cache kullanıldı - 0 TOKEN"
-      });
-    } else {
-      console.log("❌ Cache boş, _getAllData çağrılıyor...");
-      const allData = await _getAllData();
-
-      cities = allData.cities.map(c => c.cities);
-      const pharms = allData.dailyPharmacies;
-
-      // Şehir bazında eczane sayılarını hesapla
-      for (const city in pharms) {
-        let count = 0;
-        for (const district in pharms[city]) {
-          allDutyPharmaciesCount += pharms[city][district].length;
-          count += pharms[city][district].length;
-        }
-        pharmacyByCities[city] = count;
-      }
-
-      console.log("✅ Ana sayfa verisi hazır (API'den):", {
-        cityCount: cities.length,
-        totalPharmacies: allDutyPharmaciesCount,
-        cacheHit: "API çağrısı yapıldı"
-      });
+      pharmacyByCities[city] = count;
     }
+
+    console.log("✅ Anasayfa verisi STATİK VERİDEN hazır - 0 TOKEN:", {
+      cityCount: cities.length,
+      totalPharmacies: allDutyPharmaciesCount,
+      dataSource: "Statik veri deposu - 0 TOKEN HARCAMA"
+    });
   } catch (error) {
     console.log("❌ API Hatası:", error.message);
 
