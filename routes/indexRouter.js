@@ -1148,4 +1148,57 @@ router.get("/terms-and-conditions", async (req, res) => {
   });
 });
 
+// VERİ FORMATI TEST ENDPOINT'İ - ECZANE BULUNAMADI SORUNU İÇİN
+router.get("/test-data-format", async (req, res) => {
+  try {
+    console.log("🔍 VERİ FORMATI TEST EDİLİYOR...");
+
+    const allData = await _getAllData();
+    const allPharmacies = allData.pharmacies || [];
+
+    console.log(`📊 Toplam eczane sayısı: ${allPharmacies.length}`);
+
+    // İlk 3 eczaneyi detaylı göster
+    const samplePharmacies = allPharmacies.slice(0, 3).map(p => ({
+      name: p.name,
+      id: p.id,
+      city: p.city,
+      district: p.district,
+      slug: p.slug,
+      coordinates: p.coordinates,
+      latitude: p.latitude,
+      longitude: p.longitude
+    }));
+
+    console.log("📋 İlk 3 eczane örneği:", JSON.stringify(samplePharmacies, null, 2));
+
+    // Adana'daki eczaneleri göster
+    const adanaPharmacies = allPharmacies.filter(p =>
+      p.city && p.city.toLowerCase().includes('adana')
+    ).slice(0, 5).map(p => ({
+      name: p.name,
+      id: p.id,
+      city: p.city,
+      district: p.district
+    }));
+
+    console.log("📋 Adana eczaneleri:", JSON.stringify(adanaPharmacies, null, 2));
+
+    res.json({
+      success: true,
+      totalPharmacies: allPharmacies.length,
+      samplePharmacies,
+      adanaPharmacies,
+      message: "Veri formatı test edildi - Vercel logs'a bakın"
+    });
+
+  } catch (error) {
+    console.error("❌ Veri formatı test hatası:", error);
+    res.json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
