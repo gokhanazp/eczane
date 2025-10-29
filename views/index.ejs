@@ -46,8 +46,8 @@
                         onchange="onChangeCity(event)" required>
                   <option value="" disabled selected>İl Seçin</option>
                   <% cities.forEach(city => { %>
-                  <option value="<%= city %>" <%= (typeof selectedCity !== 'undefined' && selectedCity.toLocaleLowerCase('tr-TR')==city.toLocaleLowerCase('tr-TR')) ? 'selected' : '' %>>
-                    <%= city[0].toLocaleUpperCase('tr-TR') + city.slice(1).toLocaleLowerCase('tr-TR') %>
+                  <option value="<%= city.slug %>" <%= (typeof selectedCity !== 'undefined' && selectedCity.toLocaleLowerCase('tr-TR')==city.slug.toLocaleLowerCase('tr-TR')) ? 'selected' : '' %>>
+                    <%= city.cities %> <% if (city.district_count) { %>(<%= city.district_count %> ilçe)<% } %>
                   </option>
                   <% }); %>
                 </select>
@@ -220,10 +220,51 @@
 <%- include('components/citiesShow', { cities, pharmacyByCities }); %>
 
 <script>
-  function onChangeCity(event) {
+  async function onChangeCity(event) {
     const selectedCity = document.getElementById('districtsCity').value;
+    const districtSelect = document.getElementById('districtsDistrict');
 
-    window.location.href = `/onSelectCity/${selectedCity}`;
+    if (!selectedCity) {
+      // İl seçilmemişse ilçe listesini temizle
+      districtSelect.innerHTML = '<option value="" disabled selected>İlçe Seçin</option>';
+      return;
+    }
+
+    try {
+      // Loading state
+      districtSelect.innerHTML = '<option value="" disabled selected>Yükleniyor...</option>';
+      districtSelect.disabled = true;
+
+      console.log(`🏙️ İlçeler yükleniyor: ${selectedCity}`);
+
+      // AJAX ile ilçeleri yükle
+      const response = await fetch(`/api/districts/${selectedCity}`);
+      const data = await response.json();
+
+      if (data.success && data.districts && data.districts.length > 0) {
+        // İlçeleri select'e ekle
+        let optionsHtml = '<option value="" disabled selected>İlçe Seçin</option>';
+
+        data.districts.forEach(district => {
+          const displayName = district.charAt(0).toUpperCase() + district.slice(1).toLowerCase();
+          optionsHtml += `<option value="${district}">${displayName}</option>`;
+        });
+
+        districtSelect.innerHTML = optionsHtml;
+        console.log(`✅ ${data.districts.length} ilçe yüklendi: ${selectedCity}`);
+      } else {
+        // İlçe bulunamadı
+        districtSelect.innerHTML = '<option value="" disabled selected>İlçe bulunamadı</option>';
+        console.log(`❌ İlçe bulunamadı: ${selectedCity}`);
+      }
+
+    } catch (error) {
+      console.error('❌ İlçe yükleme hatası:', error);
+      districtSelect.innerHTML = '<option value="" disabled selected>Hata oluştu</option>';
+    } finally {
+      // Loading state'i kaldır
+      districtSelect.disabled = false;
+    }
   }
 </script>
 
