@@ -1,0 +1,662 @@
+{
+  "tarih": "2025-11-03T11:57:02.261Z",
+  "kaynak": "https://www.eczaneler.gen.tr/nobetci-istanbul",
+  "toplam": 131,
+  "eczaneler": [
+    {
+      "isim": "Burgazada Eczanesi",
+      "adres": "Burgazadası Mahallesi, Çınarlık Sokak No:3 Burgazada / Adalar / İstanbul",
+      "telefon": "0 (216) 381-21-12"
+    },
+    {
+      "isim": "Yeni Eczane",
+      "adres": "Nizam Mahallesi, Çınar Caddesi No:7/B Büyükada / Adalar / İstanbul",
+      "telefon": "0 (216) 382-38-00"
+    },
+    {
+      "isim": "Hayat Eczanesi",
+      "adres": "Heybeliada Mahallesi, Ayyıldız Caddesi No:43 Heybeliada / Adalar / İstanbul",
+      "telefon": "0 (216) 351-99-07"
+    },
+    {
+      "isim": "Deniz Eczanesi",
+      "adres": "Kınalıada Mahallesi, İskele Sokak No:3/B Kınalıada Adalar / İstanbul",
+      "telefon": "0 (216) 381-51-81"
+    },
+    {
+      "isim": "Boğazköy Şifa Eczanesi",
+      "adres": "Yunus Emre Mahallesi, 30 Ağustos Caddesi No:98/C Arnavutköy / İstanbul",
+      "telefon": "0 (212) 597-18-08"
+    },
+    {
+      "isim": "Can Eczanesi",
+      "adres": "Hadımköy Mahallesi, Çarşamba Sokak No:6-8A Arnavutköy / İstanbul",
+      "telefon": "0 (212) 634-04-78"
+    },
+    {
+      "isim": "Aile Eczanesi",
+      "adres": "Mustafa Kemal Paşa Mahallesi, Eski Edirne Asfaltı Caddesi No:1548/7 Arnavutköy / İstanbul",
+      "telefon": "0 (538) 899-60-22"
+    },
+    {
+      "isim": "Lacivert Eczanesi",
+      "adres": "Atatürk Mahallesi, Sedef Caddesi No:12-53 Ataşehir / İstanbul",
+      "telefon": "0 (216) 456-29-18"
+    },
+    {
+      "isim": "Melike Eczanesi",
+      "adres": "İçerenköy Mahallesi, Karslı Ahmet Caddesi No:34/B Ataşehir / İstanbul",
+      "telefon": "0 (216) 572-17-87"
+    },
+    {
+      "isim": "Ataşehir Pak Eczanesi",
+      "adres": "Küçükbakkalköy Mahallesi, Fırın Caddesi No:6-8/B Ataşehir / İstanbul",
+      "telefon": "0 (216) 766-42-65"
+    },
+    {
+      "isim": "Gönül Eczanesi",
+      "adres": "Aşık Veysel Mahallesi, 3001.Cadde No:98/A Ataşehir / İstanbul",
+      "telefon": "0 (216) 317-78-38"
+    },
+    {
+      "isim": "Gülistan Eczanesi",
+      "adres": "Ambarlı Mahallesi, Hasat Sokak No:16/A Ambarlı / Avcılar / İstanbul",
+      "telefon": "0 (212) 509-63-81"
+    },
+    {
+      "isim": "Mertin Eczanesi",
+      "adres": "Mustafa Kemal Paşa Mahallesi, Yıldırım Beyazıt Caddesi, No:48/A Parseller Avcılar / İstanbul",
+      "telefon": "0 (212) 690-06-59"
+    },
+    {
+      "isim": "Cansızoğlu Eczanesi",
+      "adres": "Yenigün Mahallesi, Bağcılar Caddesi No:191 Bağcılar / İstanbul",
+      "telefon": "0 (212) 462-93-30"
+    },
+    {
+      "isim": "Demet Eczanesi",
+      "adres": "Sancaktepe Mahallesi, 892.Sokak No:3/A Bağcılar / İstanbul",
+      "telefon": "0 (212) 462-83-88"
+    },
+    {
+      "isim": "Şeza Eczanesi",
+      "adres": "Barbaros Mahallesi, 173.Sokak No:19/A Barbaros / Bağcılar / İstanbul",
+      "telefon": "0 (212) 656-37-62"
+    },
+    {
+      "isim": "Refhan Eczanesi",
+      "adres": "Yeni Mahalle, Bağcılar Asfaltı Caddesi No:104/A Çiftlik / Bağcılar / İstanbul",
+      "telefon": "0 (212) 651-06-77"
+    },
+    {
+      "isim": "Ulaş Eczanesi",
+      "adres": "15 Temmuz Mahallesi, İstiklal Caddesi No:33/A Güneşli / Bağcılar / İstanbul",
+      "telefon": "0 (212) 550-75-72"
+    },
+    {
+      "isim": "Yeni Eylül Eczanesi",
+      "adres": "Yüzyıl Mahallesi, 2158.Sokak No:15 Bağcılar / İstanbul",
+      "telefon": "0 (212) 629-02-72"
+    },
+    {
+      "isim": "Bahçelievler Eczanesi",
+      "adres": "Bahçelievler Mahallesi, Talatpaşa Caddesi No:56/B Bahçelievler / İstanbul",
+      "telefon": "0 (212) 555-13-43"
+    },
+    {
+      "isim": "Gülay Eczanesi",
+      "adres": "Hürriyet Mahallesi, Hürriyet Caddesi, No:84 Şirinevler Bahçelievler / İstanbul",
+      "telefon": "0 (212) 552-70-21"
+    },
+    {
+      "isim": "Kent Eczanesi",
+      "adres": "Siyavuşpaşa Mahallesi, Barbaros Caddesi, No:40/A Siyavuşpaşa Bahçelievler / İstanbul",
+      "telefon": "0 (212) 442-46-42"
+    },
+    {
+      "isim": "Üstüntepe Eczanesi",
+      "adres": "Fevziçakmak Mahallesi, Fatih Caddesi No:38/A Yenibosna / Bahçelievler / İstanbul",
+      "telefon": "0 (212) 653-52-63"
+    },
+    {
+      "isim": "Bayraktar Eczanesi",
+      "adres": "Şenlikköy Mahallesi, Harman Sokak No:43/4B Florya / Bakırköy / İstanbul",
+      "telefon": "0 (212) 573-11-12"
+    },
+    {
+      "isim": "Filiz Eczanesi",
+      "adres": "Kartaltepe Mahallesi, Filiz Sokak No:47/A Kartaltepe / Bakırköy / İstanbul",
+      "telefon": "0 (212) 466-36-35"
+    },
+    {
+      "isim": "Referans Eczanesi",
+      "adres": "Osmaniye Mahallesi, Cami Sokak No:77/J Osmaniye / Bakırköy / İstanbul",
+      "telefon": "0 (212) 809-28-56"
+    },
+    {
+      "isim": "Yeşilyurt Eczanesi",
+      "adres": "Yeşilyurt Mahallesi, Sipahioğlu Caddesi No:13/B Yeşilyurt Bakırköy / İstanbul",
+      "telefon": "0 (212) 573-15-20"
+    },
+    {
+      "isim": "Medikule Eczanesi",
+      "adres": "Başakşehir Mahallesi, Olimpiyat Bulvarı, Medikule Sıra Dükkanlar G1 Blok No:41 Başakşehir / İstanbul",
+      "telefon": "0 (212) 777-00-12"
+    },
+    {
+      "isim": "Orkide Eczanesi",
+      "adres": "Başak Mahallesi, Yunus Emre Caddesi No:18/1A Başakşehir / İstanbul",
+      "telefon": "0 (212) 488-67-76"
+    },
+    {
+      "isim": "Zülal Eczanesi",
+      "adres": "Şahintepe Mahallesi, Kurban Sokak No:14/A Altınşehir Başakşehir / İstanbul",
+      "telefon": "0 (212) 648-48-46"
+    },
+    {
+      "isim": "Bahçeşehir Aydın Eczanesi",
+      "adres": "Bahçeşehir 2. Kısım Mahallesi, Avni Akyol Bulvarı No:2 Bahçeşehir Başakşehir / İstanbul",
+      "telefon": "0 (212) 608-00-37"
+    },
+    {
+      "isim": "Burç Eczanesi",
+      "adres": "Muratpaşa Mahallesi, Cumhuriyet Caddesi No:126/A Bayrampaşa / İstanbul",
+      "telefon": "0 (212) 497-22-85"
+    },
+    {
+      "isim": "Aydın Eczanesi",
+      "adres": "Yıldırım Mahallesi, Ali Fuat Başgil Caddesi, No:22/1B Yıldırım Bayrampaşa / İstanbul",
+      "telefon": "0 (212) 618-00-51"
+    },
+    {
+      "isim": "Bihter Anaç Eczanesi",
+      "adres": "Yıldız Mahallesi, Çırağan Caddesi No:39 Beşiktaş / İstanbul",
+      "telefon": "0 (212) 227-09-61"
+    },
+    {
+      "isim": "Yeni Eczane",
+      "adres": "Mecidiye Mahallesi, Dereboyu Caddesi No:179/B Ortaköy / Beşiktaş / İstanbul",
+      "telefon": "0 (212) 261-84-44"
+    },
+    {
+      "isim": "Galen Eczanesi",
+      "adres": "Ulus Mahallesi, Ahmet Adnan Saygun Caddesi, Kelaynak Sokak No:28/B Beşiktaş / İstanbul",
+      "telefon": "0 (212) 270-46-06"
+    },
+    {
+      "isim": "Beykoz Eczanesi",
+      "adres": "Fatih Mahallesi, Çavuşbaşı Cumhuriyet Caddesi No:202/B Beykoz / İstanbul",
+      "telefon": "0 (216) 537-02-03"
+    },
+    {
+      "isim": "Topkar Eczanesi",
+      "adres": "Soğuksu Mahallesi, Mehmet Akif Ersoy Caddesi, No:103/A Paşabahçe Beykoz / İstanbul",
+      "telefon": "0 (216) 413-06-17"
+    },
+    {
+      "isim": "Erkan Eczanesi",
+      "adres": "Barış Mahallesi, Gazi Yüzbaşı Turgay Salih Canoğlu Sokak No:9/30 Beylikdüzü / İstanbul",
+      "telefon": "0 (212) 801-63-22"
+    },
+    {
+      "isim": "Yakuplu Eczanesi",
+      "adres": "Yakuplu Merkez Mahallesi, Hürriyet Bulvarı No:187/C Yakuplu Beylikdüzü / İstanbul",
+      "telefon": "0 (212) 875-66-96"
+    },
+    {
+      "isim": "Hut Eczanesi",
+      "adres": "Camiikebir Mahallesi, Dereboyu Caddesi No:18/1-A Beyoğlu / İstanbul",
+      "telefon": "0 (212) 253-70-83"
+    },
+    {
+      "isim": "Fatih Eczanesi",
+      "adres": "Piyalepaşa Mahallesi, Fatih Sultan Caddesi No:12 Okmeydanı / Beyoğlu / İstanbul",
+      "telefon": "0 (212) 255-19-43"
+    },
+    {
+      "isim": "Itır Eczanesi",
+      "adres": "Gümüşsuyu Mahallesi, Sıraselviler Caddesi, No:9/B Taksim / Beyoğlu / İstanbul",
+      "telefon": "0 (212) 244-43-25"
+    },
+    {
+      "isim": "Yağmur Eczanesi",
+      "adres": "Atatürk Mahallesi, Turgut Özal Bulvarı No:44/A Büyükçekmece / İstanbul",
+      "telefon": "0 (212) 883-61-75"
+    },
+    {
+      "isim": "Beykent Bulvar Eczanesi",
+      "adres": "Pınartepe Mahallesi, Yavuz Sultan Selim Bulvarı No:6/D Büyükçekmece / İstanbul",
+      "telefon": "0 (212) 883-04-21"
+    },
+    {
+      "isim": "Limon Eczanesi",
+      "adres": "Mimar Sinan Merkez Mahallesi, Çizmeci Sokak No:2/C Mimarsinan / Büyükçekmece / İstanbul",
+      "telefon": "0 (212) 690-90-17"
+    },
+    {
+      "isim": "Selin Eczanesi",
+      "adres": "Ulus Mahallesi, Atatürk Caddesi No:26/B Tepecik / Büyükçekmece / İstanbul",
+      "telefon": "0 (212) 861-13-03"
+    },
+    {
+      "isim": "Tamay Eczanesi",
+      "adres": "Ferhatpaşa Mahallesi, Ulus Caddesi No:9/A Çatalca / İstanbul",
+      "telefon": "0 (212) 789-12-35"
+    },
+    {
+      "isim": "Kaya Eczanesi",
+      "adres": "Merkez Mahallesi, Oğuzhan Caddesi No:7/B Çekmeköy / İstanbul",
+      "telefon": "0 (216) 641-42-55"
+    },
+    {
+      "isim": "Zeynep Eczanesi",
+      "adres": "Soğukpınar Mahallesi, Adnan Kahveci Caddesi No:20/A Taşdelen / Çekmeköy / İstanbul",
+      "telefon": "0 (216) 429-62-66"
+    },
+    {
+      "isim": "Sefa Eczanesi",
+      "adres": "Namık Kemal Mahallesi, Namık Kemal Caddesi No:50/A Esenler / İstanbul",
+      "telefon": "0 (212) 482-66-65"
+    },
+    {
+      "isim": "Tarçın Eczanesi",
+      "adres": "Menderes Mahallesi, 353.Sokak No:4/A Esenler / İstanbul",
+      "telefon": "0 (212) 562-34-35"
+    },
+    {
+      "isim": "Ekin Eczanesi",
+      "adres": "Fatih Mahallesi, Ondokuz Mayıs Bulvarı No:61/D Esenyurt / İstanbul",
+      "telefon": "0 (212) 450-31-92"
+    },
+    {
+      "isim": "Han Eczanesi",
+      "adres": "Piri Reis Mahallesi, 2066.Sokak No:8/M Esenyurt / İstanbul",
+      "telefon": "0 (212) 813-84-11"
+    },
+    {
+      "isim": "Mutlu Eczanesi",
+      "adres": "Sultaniye Mahallesi, Balık Yolu Caddesi, Zuanka Residence No:5/C Esenyurt / İstanbul",
+      "telefon": "0 (212) 877-28-28"
+    },
+    {
+      "isim": "Pınar Eczanesi",
+      "adres": "Pınar Mahallesi, 1241.Sokak No:3/1 Esenyurt / İstanbul",
+      "telefon": "0 (212) 450-60-36"
+    },
+    {
+      "isim": "Gültekin Eczanesi",
+      "adres": "İstiklal Mahallesi, Cumhuriyet Caddesi No:22/A Esenyurt / İstanbul",
+      "telefon": "0 (212) 691-78-15"
+    },
+    {
+      "isim": "Nur Eczanesi",
+      "adres": "Nişanca Mahallesi, Otakçılar Caddesi, No:75/A Eyüp / İstanbul",
+      "telefon": "0 (212) 674-26-90"
+    },
+    {
+      "isim": "Göktürk Sibel Eczanesi",
+      "adres": "Göktürk Merkez Mahallesi, Göktürk Caddesi No:48/D Göktürk Eyüp / İstanbul",
+      "telefon": "0 (212) 322-11-59"
+    },
+    {
+      "isim": "Ceylan Eczanesi",
+      "adres": "Yeşilpınar Mahallesi, Şükran Caddesi No:8/B Eyüp / İstanbul",
+      "telefon": "0 (212) 618-89-90"
+    },
+    {
+      "isim": "Müge Eczanesi",
+      "adres": "Şehremini Mahallesi, Turgut Özal Millet Caddesi No:135/D Fatih / İstanbul",
+      "telefon": "0 (212) 586-01-79"
+    },
+    {
+      "isim": "Ayasofya Eczanesi",
+      "adres": "Alemdar Mahallesi, Divan Yolu Caddesi No:26/B Eminönü / Fatih / İstanbul",
+      "telefon": "0 (212) 513-72-15"
+    },
+    {
+      "isim": "Mert Eczanesi",
+      "adres": "Kocamustafapaşa Mahallesi, Org. Nafiz Gürman Caddesi, Çelik Apt. No:85/A Fatih / İstanbul",
+      "telefon": "0 (212) 530-53-43"
+    },
+    {
+      "isim": "Çevik Eczanesi",
+      "adres": "Ali Kuşçu Mahallesi, Yavuz Selim Caddesi No:6/A Fatih / İstanbul",
+      "telefon": "0 (212) 631-53-90"
+    },
+    {
+      "isim": "Yurdakul Eczanesi",
+      "adres": "Yenidoğan Mahallesi, Ordu Caddesi, No:147-A Gaziosmanpaşa / İstanbul",
+      "telefon": "0 (212) 563-66-99"
+    },
+    {
+      "isim": "Natura Eczanesi",
+      "adres": "Karayolları Mahallesi, 621.Sokak No:58-1/A Fevziçakmak Gaziosmanpaşa / İstanbul",
+      "telefon": "0 (212) 477-44-15"
+    },
+    {
+      "isim": "Kent Eczanesi",
+      "adres": "Fevzi Çakmak Mahallesi, Cengiz Topel Caddesi, No:172 Küçükköy Gaziosmanpaşa / İstanbul",
+      "telefon": "0 (212) 535-11-70"
+    },
+    {
+      "isim": "Karanfil Eczanesi",
+      "adres": "Mareşal Çakmak Mahallesi, Bağcılar Caddesi No:150/A Camlı Kahve Güngören / İstanbul",
+      "telefon": "0 (212) 642-74-14"
+    },
+    {
+      "isim": "Yiğit Eczanesi",
+      "adres": "Tozkoparan Mahallesi, Onur Sokak No:2/C Güngören / İstanbul",
+      "telefon": "0 (212) 482-17-67"
+    },
+    {
+      "isim": "Nur Karataş Eczanesi",
+      "adres": "Caferağa Mahallesi, Moda Caddesi No:106/A Kadıköy / İstanbul",
+      "telefon": "0 (216) 755-06-87"
+    },
+    {
+      "isim": "Tılsım Eczanesi",
+      "adres": "Feneryolu Mahallesi, Bağdat Caddesi No:155/A Feneryolu / Kadıköy / İstanbul",
+      "telefon": "0 (216) 418-15-33"
+    },
+    {
+      "isim": "Göktuğ Eczanesi",
+      "adres": "Koşuyolu Mahallesi, Koşuyolu Caddesi No:150/A Kadıköy / İstanbul",
+      "telefon": "0 (216) 325-47-47"
+    },
+    {
+      "isim": "Yeni Güven Eczanesi",
+      "adres": "Kozyatağı Mahallesi, Sarı Kanarya Sokak No:6-D Kozyatağı Kadıköy / İstanbul",
+      "telefon": "0 (216) 361-50-95"
+    },
+    {
+      "isim": "Merkez Eczanesi",
+      "adres": "Merdivenköy Mahallesi, Ressam Salih Erimez Caddesi No:7/C Kadıköy / İstanbul",
+      "telefon": "0 (216) 565-68-13"
+    },
+    {
+      "isim": "Ülkü Eczanesi",
+      "adres": "Sahrayıcedit Mahallesi, İnönü Caddesi No:25/B Sahrayıcedit / Kadıköy / İstanbul",
+      "telefon": "0 (216) 356-49-64"
+    },
+    {
+      "isim": "Sezgi Eczanesi",
+      "adres": "Suadiye Mahallesi, Çolak İsmail Sokak No:26/A Suadiye / Kadıköy / İstanbul",
+      "telefon": "0 (216) 629-62-69"
+    },
+    {
+      "isim": "Muradhan Eczanesi",
+      "adres": "Emniyetevleri Mahallesi, Taşkent Sokak No:2-D Emniyetevleri Kağıthane / İstanbul",
+      "telefon": "0 (212) 282-34-98"
+    },
+    {
+      "isim": "Derman Eczanesi",
+      "adres": "Ortabayır Mahallesi, Talatpaşa Caddesi No:57 Gültepe / Kağıthane / İstanbul",
+      "telefon": "0 (532) 606-26-98"
+    },
+    {
+      "isim": "Hamidiye Eczanesi",
+      "adres": "Hamidiye Mahallesi, Karaman Sokak No:2/A Hamidiye / Kağıthane / İstanbul",
+      "telefon": "0 (212) 321-81-51"
+    },
+    {
+      "isim": "Cevizli Derman Eczanesi",
+      "adres": "Cevizli Mahallesi, Denizer Caddesi No:25/A Kartal / İstanbul",
+      "telefon": "0 (216) 305-04-73"
+    },
+    {
+      "isim": "Dilşat Eczanesi",
+      "adres": "Karlıktepe Mahallesi, Yaşardoğu Caddesi No:3/A Esentepe / Kartal / İstanbul",
+      "telefon": "0 (216) 387-65-40"
+    },
+    {
+      "isim": "Cemil Eczanesi",
+      "adres": "Orta Mahallesi, Kaptanıderya Caddesi No:40/B Kartal / İstanbul",
+      "telefon": "0 (216) 377-08-48"
+    },
+    {
+      "isim": "Deyyaroğlu Eczanesi",
+      "adres": "Çarşı Mahallesi, Yakakent Caddesi No:15/A Yakacık / Kartal / İstanbul",
+      "telefon": "0 (216) 671-09-88"
+    },
+    {
+      "isim": "Özge Eczanesi",
+      "adres": "Yeni Mahallesi, Cengiz Sokak No:14/C Küçükçekmece / İstanbul",
+      "telefon": "0 (212) 601-01-63"
+    },
+    {
+      "isim": "Meydan Halkalı Eczanesi",
+      "adres": "Halkalı Merkez Mahallesi, 1.İkitelli Caddesi No:2/F A-Blok Bağımsız Bölüm 6 Küçükçekmece / İstanbul",
+      "telefon": "0 (212) 741-12-44"
+    },
+    {
+      "isim": "Bahar Eczanesi",
+      "adres": "Atatürk Mahallesi, Salı Pazarı Caddesi, No:35/A İkitelli Küçükçekmece / İstanbul",
+      "telefon": "0 (212) 696-95-37"
+    },
+    {
+      "isim": "Yaşam Eczanesi",
+      "adres": "Kanarya Mahallesi, Şahin Caddesi, No:37/1 Küçükçekmece / İstanbul",
+      "telefon": "0 (212) 424-08-98"
+    },
+    {
+      "isim": "Şeker Eczanesi",
+      "adres": "Kemalpaşa Mahallesi, Bağlar Caddesi, No:35/C Sefaköy Küçükçekmece / İstanbul",
+      "telefon": "0 (212) 598-97-87"
+    },
+    {
+      "isim": "Selin Eczanesi",
+      "adres": "İnönü Mahallesi, Hakan Caddesi No:38/A Sefaköy Küçükçekmece / İstanbul",
+      "telefon": "0 (212) 693-23-53"
+    },
+    {
+      "isim": "Ayberk Eczanesi",
+      "adres": "Cevizli Mahallesi, Kır Sokak No:8 Cevizli Maltepe / İstanbul",
+      "telefon": "0 (216) 441-94-42"
+    },
+    {
+      "isim": "Esin Eczanesi",
+      "adres": "İdealtepe Mahallesi, Namık Kemal Caddesi, No:73/A İdealtepe Maltepe / İstanbul",
+      "telefon": "0 (216) 367-70-03"
+    },
+    {
+      "isim": "Ihlamur Eczanesi",
+      "adres": "Zümrütevler Mahallesi, Handegül Sokak No:129/1A Zümrütevler / Maltepe / İstanbul",
+      "telefon": "0 (216) 441-09-90"
+    },
+    {
+      "isim": "Zehra Eczanesi",
+      "adres": "Batı Mahallesi, Gezi Boyu Caddesi No:71/A Pendik / İstanbul",
+      "telefon": "0 (216) 484-66-25"
+    },
+    {
+      "isim": "Arif Ekiz Eczanesi",
+      "adres": "Fevzi Çakmak Mahallesi, Selanik Sokak No:3/B Kaynarca Pendik / İstanbul",
+      "telefon": "0 (216) 596-49-99"
+    },
+    {
+      "isim": "Ihlamur Eczanesi",
+      "adres": "Yenişehir Mahallesi, Eşref Bitlis Bulvarı No:31/1 D:108 Pendik / İstanbul",
+      "telefon": "0 (216) 629-90-91"
+    },
+    {
+      "isim": "Mineral Eczanesi",
+      "adres": "Kemal Türkler Mahallesi, Osmangazi Caddesi No:23 Sancaktepe / İstanbul",
+      "telefon": "0 (216) 622-02-89"
+    },
+    {
+      "isim": "Bereket Eczanesi",
+      "adres": "Abdurrahmangazi Mahallesi, Florya Sokak No:2/A Osmangazi / Sancaktepe / İstanbul",
+      "telefon": "0 (216) 311-71-72"
+    },
+    {
+      "isim": "Çelik Eczanesi",
+      "adres": "Atatürk Mahallesi, Atatürk Caddesi No:161/A Sarıgazi / Sancaktepe / İstanbul",
+      "telefon": "0 (216) 621-54-52"
+    },
+    {
+      "isim": "Büyük Eczanesi",
+      "adres": "Yenidoğan Mahallesi, Atatürk Caddesi No:295/A Sancaktepe / İstanbul",
+      "telefon": "0 (216) 430-91-77"
+    },
+    {
+      "isim": "Doğa Eczanesi",
+      "adres": "Ayazağa Mahallesi, Şehit İlhan Yurt Sokak No:69/D Sarıyer / İstanbul",
+      "telefon": "0 (212) 289-05-62"
+    },
+    {
+      "isim": "Sevinç Cansu Eczanesi",
+      "adres": "Çayırbaşı Mahallesi, Bahçeköy Caddesi, No:54/E Büyükdere Sarıyer / İstanbul",
+      "telefon": "0 (212) 277-55-79"
+    },
+    {
+      "isim": "Çobanoğlu Eczanesi",
+      "adres": "Fatih Sultan Mehmet Mahallesi, Evren Paşa Caddesi No:25/B Sarıyer / İstanbul",
+      "telefon": "0 (212) 229-90-50"
+    },
+    {
+      "isim": "Ufuk Eczanesi",
+      "adres": "Çavuş Mahallesi, Üsküdar Caddesi No:192/A Şile / İstanbul",
+      "telefon": "0 (216) 704-20-88"
+    },
+    {
+      "isim": "Ağva Şifa Eczanesi",
+      "adres": "Ağva Merkez Mahallesi, Yakuplu Caddesi No:7 Ağva / Şile / İstanbul",
+      "telefon": "0 (216) 721-81-69"
+    },
+    {
+      "isim": "Semih Eczanesi",
+      "adres": "Piri Mehmet Paşa Mahallesi, Marmara Sokak No:33 Silivri / İstanbul",
+      "telefon": "0 (212) 727-63-90"
+    },
+    {
+      "isim": "Ulus Eczanesi",
+      "adres": "Alibey Mahallesi, Altın Sokak No:2/1-B Silivri / İstanbul",
+      "telefon": "0 (212) 727-21-22"
+    },
+    {
+      "isim": "Silviya Eczanesi",
+      "adres": "Selimpaşa Mahallesi, 2159.Sokak No:41 Silivri / İstanbul",
+      "telefon": "0 (541) 404-49-64"
+    },
+    {
+      "isim": "Fulya Yaşam Eczanesi",
+      "adres": "19 Mayıs Mahallesi, Mehmetçik Caddesi No:112/A Şişli / İstanbul",
+      "telefon": "0 (212) 275-88-90"
+    },
+    {
+      "isim": "Yeni Violet Eczanesi",
+      "adres": "Feriköy Mahallesi, Kurtuluş Caddesi No:150/B Feriköy / Şişli / İstanbul",
+      "telefon": "0 (212) 225-26-80"
+    },
+    {
+      "isim": "Kuştepe Eczanesi",
+      "adres": "Kuştepe Mahallesi, İnönü Caddesi No:25/C Mecidiyeköy Şişli / İstanbul",
+      "telefon": "0 (212) 212-16-40"
+    },
+    {
+      "isim": "Profilo Eczanesi",
+      "adres": "Merkez Mahallesi, Hasat Sokak No:18/A Şişli / İstanbul",
+      "telefon": "0 (212) 213-56-20"
+    },
+    {
+      "isim": "Yaşam Eczanesi",
+      "adres": "Battalgazi Mahallesi, Karadeniz Caddesi No:6/A Sultanbeyli / İstanbul",
+      "telefon": "0 (533) 086-52-82"
+    },
+    {
+      "isim": "Onur Eczanesi",
+      "adres": "Mehmet Akif Mahallesi, Erdoğan Sokak No:2-B Sultanbeyli / İstanbul",
+      "telefon": "0 (216) 419-04-79"
+    },
+    {
+      "isim": "Bahtiyar Eczanesi",
+      "adres": "Yunus Emre Mahallesi, Adem Yavuz Caddesi No:71/B Sultangazi / İstanbul",
+      "telefon": "0 (212) 650-76-56"
+    },
+    {
+      "isim": "Efe Eczanesi",
+      "adres": "Esentepe Mahallesi, 2417.Sokak No:40 Sultançiftliği Sultangazi / İstanbul",
+      "telefon": "0 (212) 475-00-85"
+    },
+    {
+      "isim": "Naciye Eczanesi",
+      "adres": "Esentepe Mahallesi, 2388/1.Sokak No:8/A Sultançiftliği Sultangazi / İstanbul",
+      "telefon": "0 (552) 156-57-58"
+    },
+    {
+      "isim": "Somuncubaba Eczanesi",
+      "adres": "Uğur Mumcu Mahallesi, Belediye Sokak No:2/C Sultançiftliği / Sultangazi / İstanbul",
+      "telefon": "0 (546) 527-56-42"
+    },
+    {
+      "isim": "Horoz Eczanesi",
+      "adres": "Aydınlı Mahallesi, Bahçeler Sokak No:2/B Tuzla / İstanbul",
+      "telefon": "0 (544) 654-83-52"
+    },
+    {
+      "isim": "Erdem Eczanesi",
+      "adres": "Şifa Mahallesi, Emiroğlu Caddesi No:91/B Tuzla / İstanbul",
+      "telefon": "0 (531) 249-19-21"
+    },
+    {
+      "isim": "Eda Eczanesi",
+      "adres": "Evliya Çelebi Mahallesi, Müştak Sokak No:19/A Tersaneler / Tuzla / İstanbul",
+      "telefon": "0 (551) 724-04-30"
+    },
+    {
+      "isim": "Beyaz Eczanesi",
+      "adres": "İstiklal Mahallesi, Gelibolu Caddesi, No:14/A Atakent Ümraniye / İstanbul",
+      "telefon": "0 (216) 329-75-21"
+    },
+    {
+      "isim": "Ümraniye Ada Eczanesi",
+      "adres": "Armağanevler Mahallesi, Güngör Sokak No:4 Ümraniye / İstanbul",
+      "telefon": "0 (216) 335-75-34"
+    },
+    {
+      "isim": "Deval Eczanesi",
+      "adres": "Mehmet Akif Mahallesi, Elalmış Caddesi No:27 Çakmak / Ümraniye / İstanbul",
+      "telefon": "0 (216) 415-91-20"
+    },
+    {
+      "isim": "Topağacı Eczanesi",
+      "adres": "Topağacı Mahallesi, Asil Caddesi No:47 Kazımkarabekir / Ümraniye / İstanbul",
+      "telefon": "0 (216) 360-21-60"
+    },
+    {
+      "isim": "Dörtyol Deva Eczanesi",
+      "adres": "Namık Kemal Mahallesi, Cengiz Topel Caddesi No:94/A Namıkkemal / Ümraniye / İstanbul",
+      "telefon": "0 (216) 481-81-75"
+    },
+    {
+      "isim": "Duru Eczanesi",
+      "adres": "Bulgurlu Mahallesi, Yurtsever Sokak No:3 Bulgurlu Üsküdar / İstanbul",
+      "telefon": "0 (216) 650-86-81"
+    },
+    {
+      "isim": "Yeni Sümer Eczanesi",
+      "adres": "Kısıklı Mahallesi, Yunus Emre Sokak No:26/A Üsküdar / İstanbul",
+      "telefon": "0 (216) 321-97-72"
+    },
+    {
+      "isim": "Kuzguncuk Eczanesi",
+      "adres": "Kuzguncuk Mahallesi, İcadiye Caddesi No:35/A Kuzguncuk / Üsküdar / İstanbul",
+      "telefon": "0 (216) 553-87-58"
+    },
+    {
+      "isim": "İrem Eczanesi",
+      "adres": "Selami Ali Mahallesi, Güner Sokak Cumhuriyet Caddesi No:70/A Üsküdar / İstanbul",
+      "telefon": "0 (216) 310-43-73"
+    },
+    {
+      "isim": "Beyaz Eczanesi",
+      "adres": "Çırpıcı Mahallesi, Prof.Dr.Turan Güneş Caddesi No:264 Zeytinburnu / İstanbul",
+      "telefon": "0 (212) 415-55-70"
+    },
+    {
+      "isim": "Saadet Eczanesi",
+      "adres": "Nuripaşa Mahallesi, Merv Caddesi, No:59/A Zeytinburnu / İstanbul",
+      "telefon": "0 (212) 547-72-81"
+    }
+  ]
+}
